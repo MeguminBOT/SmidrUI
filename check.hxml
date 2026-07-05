@@ -1,0 +1,10 @@
+# Typecheck the whole library against OpenFL on the hxcpp (native) target.
+# Run:  haxe check.hxml
+# Requires (local .haxelib):  lime, openfl, hxcpp
+-cp src
+-lib lime
+-lib openfl
+-lib hxcpp
+--macro include('smidr')
+-cpp bin/check
+--no-output

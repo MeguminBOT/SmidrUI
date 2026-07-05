@@ -1,0 +1,14 @@
+{
+	"name": "smidr",
+	"url": "https://github.com/AutisticLulu/smidr",
+	"license": "MIT",
+	"tags": ["openfl", "ui", "gui", "widget", "toolkit", "cross"],
+	"description": "SmiðrUI — a lightweight retained-mode UI toolkit for OpenFL. Themable widgets (panels, menus, docks, scroll panes, inputs) that repaint only when invalidated, with pluggable fonts and localization.",
+	"version": "0.1.0",
+	"classPath": "src",
+	"releasenote": "Initial release.",
+	"contributors": ["AutisticLulu"],
+	"dependencies": {
+		"openfl": ""
+	}
+}

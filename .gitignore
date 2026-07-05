@@ -1,0 +1,14 @@
+# Haxe / haxelib
+.haxelib/
+dump/
+*.hxb
+
+# OpenFL / Lime build output
+export/
+bin/
+.temp/
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+*.swp
