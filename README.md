@@ -7,6 +7,12 @@ no dependency on any game framework (flixel, HaxeFlixel, etc.) — just OpenFL.
 
 > The name is Old Norse *smiðr* ("smith / craftsman"); the package id is `smidr`.
 
+## Why Smidr was made
+
+I got frustrated with how Flixel UI was extremely draw heavy on more elaborate UIs, then I tried HaxeUI immediately wanted to get rid of it as it's slightly too burdensome to use.
+So I opted to make my own instead which is meant to be used either standalone or above other frameworks without any weird initialisations, no weird hitbox or hover logic,
+it's all handled by the UIComponents themselves.
+
 ## Features
 
 - **Retained + invalidation-driven** — `render()` runs on a widget only after `invalidate()`
