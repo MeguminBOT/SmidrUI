@@ -13,6 +13,10 @@ doc/xml/
 doc/site/
 doc/_typecheck/
 
+# Local haxelib packaging: the submission zip and the private packaging script
+smidr.zip
+package.sh
+
 # Editors / OS
 .DS_Store
 Thumbs.db
