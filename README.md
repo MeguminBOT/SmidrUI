@@ -7,6 +7,9 @@ no dependency on any game framework (flixel, HaxeFlixel, etc.) — just OpenFL.
 
 > The name is Old Norse *smiðr* ("smith / craftsman"); the package id is `smidr`.
 
+SmiðrUI is distributed as a **[haxelib](https://lib.haxe.org/)** named `smidr` — install it with
+`haxelib` and add `<haxelib name="smidr" />` to your `project.xml` (see [Install](#install)).
+
 ## Why Smidr was made
 
 I got frustrated with how Flixel UI was extremely draw heavy on more elaborate UIs, then I tried HaxeUI immediately wanted to get rid of it as it's slightly too burdensome to use.
@@ -32,7 +35,7 @@ it's all handled by the UIComponents themselves.
 
 ```bash
 # from git (recommended until published)
-haxelib git smidr https://github.com/AutisticLulu/smidr.git
+haxelib git smidr https://github.com/MeguminBOT/SmidrUI.git
 
 # or, once published to haxelib
 haxelib install smidr
@@ -87,6 +90,31 @@ class Main extends Sprite {
 
 When tearing a screen down, call `ui.dispose()` to remove listeners and free the tree.
 
+## Examples
+
+Runnable sources live in [`examples/`](examples/):
+
+| File | What it shows |
+| --- | --- |
+| [`SmallExample.hx`](examples/SmallExample.hx) | The minimum: attach a root, a panel, a label and a button. |
+| [`FullExample.hx`](examples/FullExample.hx) | Instantiates **every widget** — an icon rail switching three sections over a menu bar, with tabs, sliders, steppers, switches, checkboxes, segmented controls, icon buttons, a loading bar, a dropdown, text input, chip, keybind, icon, a data-bound list, collapsible accordions in a scroll pane, a modal, a context menu and toasts — plus font/theme/locale/tooltip setup. |
+| [`FlixelExample.hx`](examples/FlixelExample.hx) | The `smidr.flixel.FlxSmidr` bridge on an `FlxState`: viewport matching, cursor handling, input arbitration, and a HUD label anchored to a world object. |
+
+**Run** them as an OpenFL app (from the repo root):
+
+```bash
+lime test examples/project.xml windows              # FullExample (default)
+lime test examples/project.xml windows -Dex_small   # SmallExample
+lime test examples/project.xml windows -Dex_flixel  # FlixelExample (needs the flixel haxelib)
+```
+
+**Typecheck** them without a window (what CI runs):
+
+```bash
+haxe examples/check.hxml          # the two OpenFL examples
+haxe examples/check-flixel.hxml   # the Flixel bridge example (needs -lib flixel)
+```
+
 ## Architecture
 
 - **`UIRoot`** — the stage-attached root. Three layers (`content` < `popupLayer` < `tooltipLayer`),
@@ -128,4 +156,4 @@ Widgets with a `localize(key, fallback)` method (e.g. `UIButton`) resolve throug
 
 ## License
 
-[MIT](LICENSE) © AutisticLulu
+[MIT](LICENSE) © MeguminBOT
