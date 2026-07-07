@@ -1,6 +1,7 @@
 # SmiðrUI
 
 [![Haxelib](https://img.shields.io/haxelib/v/smidr.svg?logo=haxe&label=haxelib)](https://lib.haxe.org/p/smidr)
+[![API docs](https://img.shields.io/badge/docs-API-8A5EE0.svg)](https://meguminbot.github.io/SmidrUI/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Haxe 4.3+](https://img.shields.io/badge/Haxe-4.3%2B-orange.svg)
 ![OpenFL](https://img.shields.io/badge/OpenFL-required-1a6fc4.svg)
@@ -136,6 +137,8 @@ haxe examples/check-flixel.hxml   # the Flixel bridge example (needs -lib flixel
 ```
 
 ## Documentation
+
+**[Browse the API docs →](https://meguminbot.github.io/SmidrUI/)**
 
 Full API docs are generated with [dox](https://github.com/HaxeFoundation/dox) (the same tool
 behind the OpenFL and Flixel API sites) and published to GitHub Pages by
