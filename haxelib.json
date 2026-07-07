@@ -4,9 +4,9 @@
 	"license": "MIT",
 	"tags": ["openfl", "ui", "gui", "widget", "toolkit", "cross"],
 	"description": "SmiðrUI — a lightweight retained-mode UI toolkit for OpenFL. Two dozen themable widgets (buttons, lists, menus, sliders, inputs, modals and more) that repaint only when invalidated, with built-in vector icons, pluggable fonts and localization, and an optional Flixel bridge.",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"classPath": "src",
-	"releasenote": "Add the smidr.types enum abstracts (UIGlyph/UITone/UIEase/UICursorMode); fold UIIconButton into UIButton (UIButton.icon hosts a UIIcon); add a UIIcon glyph source; runnable examples and a dox API-docs site; quieter asset handling.",
+	"releasenote": "UIPanel is now theme-following by default (constructor takes a UISurface role; UIPanel.solid for fixed colours), so panels follow theme swaps like the rest of the library. Adds smidr.types.UISurface and a scrollable widget gallery. Breaking: the old UIPanel(w,h,fill:Int) and UIPanel.themed are removed.",
 	"contributors": ["MeguminBOT"],
 	"dependencies": {
 		"openfl": ""
