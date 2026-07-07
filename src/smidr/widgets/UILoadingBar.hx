@@ -8,6 +8,7 @@ import smidr.UILocale;
 import smidr.UIRoot;
 import smidr.UITheme;
 import smidr.UITween;
+import smidr.types.UIEase;
 
 /**
 	A progress bar for any long-running operation (downloads, uploads, decompression, loading).
@@ -105,7 +106,7 @@ final class UILoadingBar extends UIComponent {
 			invalidate();
 			return;
 		}
-		fillTween = UITween.to(applyShown, shown, value, 160, UITween.OUT_QUAD, clearTween);
+		fillTween = UITween.to(applyShown, shown, value, 160, OUT_QUAD, clearTween);
 	}
 
 	/**

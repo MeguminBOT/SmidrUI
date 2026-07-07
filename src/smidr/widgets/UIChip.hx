@@ -6,6 +6,7 @@ import smidr.UIComponent;
 import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
+import smidr.types.UIEase;
 
 /**
 	A compact pill chip. With `hasDot = true` it's a stateful toggle showing a status dot
@@ -67,7 +68,7 @@ final class UIChip extends UIComponent {
 				smidr.UITween.to(function(p:Float):Void {
 					dotPop = 1.6 - 0.6 * p;
 					invalidate();
-				}, 0, 1, 215, smidr.UITween.OUT_QUAD);
+				}, 0, 1, 215, OUT_QUAD);
 			if (onToggle != null)
 				onToggle(on);
 		}

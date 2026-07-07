@@ -8,6 +8,7 @@ import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
 import smidr.UITween;
+import smidr.types.UIEase;
 
 /**
 	An exclusive-choice segmented control (radio group): label left, equal-width segments in a
@@ -126,7 +127,7 @@ final class UISegmented extends UIComponent {
 		selectedIndex = idx;
 		killTween();
 		pillAnim = true;
-		pillTween = UITween.to(applyPill, from, boxX() + pad + idx * segW, 150, UITween.OUT_QUAD, endPill);
+		pillTween = UITween.to(applyPill, from, boxX() + pad + idx * segW, 150, OUT_QUAD, endPill);
 		invalidate();
 		if (onChange != null)
 			onChange(idx);

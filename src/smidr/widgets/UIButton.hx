@@ -5,13 +5,19 @@ import openfl.text.TextFormatAlign;
 import smidr.UIColor;
 import smidr.UIComponent;
 import smidr.UIFonts;
+import smidr.UIGlyphs;
 import smidr.UILocale;
 import smidr.UITheme;
+import smidr.types.UIGlyph;
 
 /**
 	A clickable button. Variants: default (panel surface), `accent` (primary action) and
 	`danger` (destructive). Hover lightens, press dips; the click fires on press-started
 	release (see `UIComponent`).
+
+	A button may show a label, a built-in `UIGlyph` icon, or both: assign `glyph` (or build an
+	icon-only button with `UIButton.icon(...)`). A toolbar-style toggle is just `accent` flipped
+	at runtime.
 **/
 final class UIButton extends UIComponent {
 	public var key(default, set):String = null;
@@ -19,6 +25,9 @@ final class UIButton extends UIComponent {
 	public var label(default, set):String;
 	public var accent(default, set):Bool = false;
 	public var danger(default, set):Bool = false;
+
+	/** A built-in vector glyph drawn beside/instead of the label; `< 0` (the default) means none. **/
+	public var glyph(default, set):UIGlyph = cast -1;
 
 	/** Base (unscaled) font size. **/
 	public var fontSize(default, set):Int = 13;
@@ -42,6 +51,20 @@ final class UIButton extends UIComponent {
 		addChild(tf);
 		resize(width, height);
 		render();
+	}
+
+	/**
+		Builds a square, icon-only button drawing a built-in `UIGlyph` (no label, no asset).
+		A toolbar toggle is just `accent` flipped at runtime.
+		@param glyph the glyph to draw
+		@param size the square edge length
+		@param onClick fired on a completed click
+		@return the configured button
+	**/
+	public static function icon(glyph:UIGlyph, size:Float, ?onClick:Void->Void):UIButton {
+		var b:UIButton = new UIButton("", size, size, onClick);
+		b.glyph = glyph;
+		return b;
 	}
 
 	/**
@@ -74,12 +97,30 @@ final class UIButton extends UIComponent {
 		var textColor:Int = (accent || danger) ? UITheme.text : UITheme.text2;
 		UIFonts.restyle(tf, UITheme.fs(fontSize), textColor, TextFormatAlign.CENTER);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.width = w;
-		tf.height = tf.textHeight + 4;
-		tf.x = 0;
-		tf.y = (h - tf.height) / 2 + (pressed ? 1 : 0); // press dip
+		if (resolved == null)
+			resolved = "";
+		var hasLabel:Bool = resolved != "";
+		var hasGlyph:Bool = (glyph : Int) >= 0;
+		var dip:Float = pressed ? 1 : 0;
+
+		tf.visible = hasLabel;
+		if (hasLabel) {
+			if (tf.text != resolved)
+				tf.text = resolved;
+			tf.width = w;
+			tf.height = tf.textHeight + 4;
+			// with an icon the glyph sits in the left inset; the label stays centred
+			tf.x = 0;
+			tf.y = (h - tf.height) / 2 + dip;
+		}
+
+		if (hasGlyph) {
+			// icon-only: fill and centre; icon + label: smaller, left-inset
+			var gs:Float = hasLabel ? h * 0.5 : h * 0.6;
+			var gx:Float = hasLabel ? UITheme.px(10) : (w - gs) / 2;
+			var gy:Float = (h - gs) / 2 + dip;
+			UIGlyphs.draw(g, glyph, gx, gy, gs, textColor);
+		}
 	}
 
 	function set_key(v:String):String {
@@ -96,6 +137,14 @@ final class UIButton extends UIComponent {
 
 	function set_accent(v:Bool):Bool {
 		accent = v;
+		invalidate();
+		return v;
+	}
+
+	function set_glyph(v:UIGlyph):UIGlyph {
+		if (glyph == v)
+			return v;
+		glyph = v;
 		invalidate();
 		return v;
 	}

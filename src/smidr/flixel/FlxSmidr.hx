@@ -7,6 +7,7 @@ import openfl.display.DisplayObject;
 import smidr.UIRoot;
 import smidr.input.UIFocus;
 import smidr.input.UIPointer;
+import smidr.types.UICursorMode;
 
 /**
 	Optional Flixel bridge (compiled only when the `flixel` haxelib is present).
@@ -29,17 +30,11 @@ import smidr.input.UIPointer;
 	list, which repins display objects to world points each `postUpdate`.
 **/
 final class FlxSmidr {
-	/** No cursor management (default). **/
-	public static inline var CURSOR_NONE:Int = 0;
-
-	/** Restores the system cursor while the pointer is over UI, hides it again off UI. **/
-	public static inline var CURSOR_SYSTEM_OVER_UI:Int = 1;
-
 	/** The bridged root, or `null` before `init`. **/
 	public static var root(default, null):UIRoot = null;
 
 	/** One of `CURSOR_NONE` / `CURSOR_SYSTEM_OVER_UI`. **/
-	public static var cursorMode:Int = CURSOR_NONE;
+	public static var cursorMode:UICursorMode = CURSOR_NONE;
 
 	/** Fired when the pointer enters/leaves the UI (custom cursor-art swaps). **/
 	public static var onOverUIChanged:Bool->Void = null;

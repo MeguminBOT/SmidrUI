@@ -6,6 +6,7 @@ import smidr.UIComponent;
 import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
+import smidr.types.UIEase;
 
 /**
 	A vertical icon rail (Blender/VSCode-style activity bar): fixed-width column of tabs,
@@ -75,7 +76,7 @@ final class UIIconRail extends UIComponent {
 			smidr.UITween.to(function(v:Float):Void {
 				indicatorY = v;
 				invalidate();
-			}, indicatorY, target, 170, smidr.UITween.OUT_QUAD);
+			}, indicatorY, target, 170, OUT_QUAD);
 		invalidate();
 		if (onSelect != null)
 			onSelect(index);

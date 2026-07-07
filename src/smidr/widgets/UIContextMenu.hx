@@ -8,6 +8,7 @@ import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UIRoot;
 import smidr.UITheme;
+import smidr.types.UIEase;
 
 /**
 	A popup menu shown on `UIRoot.popupLayer` behind a click-blocking backdrop. Used by
@@ -115,7 +116,7 @@ final class UIContextMenu {
 		smidr.UITween.to(function(p:Float):Void {
 			panel.alpha = p;
 			panel.scaleY = 0.96 + 0.04 * p;
-		}, 0, 1, 145, smidr.UITween.OUT_QUAD);
+		}, 0, 1, 145, OUT_QUAD);
 	}
 
 	/** Closes and disposes the menu. **/

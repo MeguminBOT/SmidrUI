@@ -9,6 +9,7 @@ import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UIRoot;
 import smidr.UITheme;
+import smidr.types.UIEase;
 
 /**
 	A labelled dropdown row: label left, value box right. Clicking the box opens a scrollable
@@ -203,7 +204,7 @@ final class UIDropdown extends UIComponent {
 		smidr.UITween.to(function(p:Float):Void {
 			panel.alpha = p;
 			panel.scaleY = 0.96 + 0.04 * p;
-		}, 0, 1, 145, smidr.UITween.OUT_QUAD);
+		}, 0, 1, 145, OUT_QUAD);
 
 		popupPane = new UIScrollPane(boxWidth, listH - UITheme.px(8));
 		popupPane.y = UITheme.px(4);

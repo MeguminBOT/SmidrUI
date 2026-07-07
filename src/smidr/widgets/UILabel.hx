@@ -7,11 +7,12 @@ import smidr.UIComponent;
 import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
+import smidr.types.UITone;
 
 /**
-	A themed, non-interactive text label. `tone` picks the theme text ramp (0 = primary,
-	1 = secondary, 2 = tertiary) so theme swaps restyle it; `colorOverride` pins an explicit
-	ARGB color instead. Set `key` (+ `fallback`) for localized text, or assign `text` directly.
+	A themed, non-interactive text label. `tone` picks the theme text ramp (`PRIMARY`/`SECONDARY`/
+	`TERTIARY`) so theme swaps restyle it; `colorOverride` pins an explicit ARGB color instead. Set
+	`key` (+ `fallback`) for localized text, or assign `text` directly.
 **/
 final class UILabel extends UIComponent {
 	/** Localization key; when set, `render()` resolves the text via `UILocale`. **/
@@ -23,8 +24,8 @@ final class UILabel extends UIComponent {
 	/** Raw text (used when `key` is null). **/
 	public var text(default, set):String = "";
 
-	/** 0 = theme.text, 1 = theme.text2, 2 = theme.text3. **/
-	public var tone(default, set):Int = 0;
+	/** `PRIMARY` = theme.text, `SECONDARY` = theme.text2, `TERTIARY` = theme.text3. **/
+	public var tone(default, set):UITone = PRIMARY;
 
 	/** Explicit ARGB color; overrides `tone` when != 0. **/
 	public var colorOverride(default, set):Int = 0;
@@ -45,7 +46,7 @@ final class UILabel extends UIComponent {
 		@param tone theme text ramp: 0 = primary, 1 = secondary, 2 = tertiary
 		@param align paragraph alignment (default LEFT)
 	**/
-	public function new(text:String = "", size:Int = 13, tone:Int = 0, ?align:TextFormatAlign) {
+	public function new(text:String = "", size:Int = 13, tone:UITone = PRIMARY, ?align:TextFormatAlign) {
 		super(false, false);
 		this.size = size;
 		this.tone = tone;
@@ -68,8 +69,8 @@ final class UILabel extends UIComponent {
 
 	inline function resolveColor():Int {
 		return (colorOverride != 0) ? colorOverride : switch (tone) {
-			case 1: UITheme.text2;
-			case 2: UITheme.text3;
+			case SECONDARY: UITheme.text2;
+			case TERTIARY: UITheme.text3;
 			default: UITheme.text;
 		};
 	}
@@ -131,7 +132,7 @@ final class UILabel extends UIComponent {
 		return v;
 	}
 
-	function set_tone(v:Int):Int {
+	function set_tone(v:UITone):UITone {
 		tone = v;
 		invalidate();
 		return v;

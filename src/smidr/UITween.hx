@@ -1,18 +1,15 @@
 package smidr;
 
+import smidr.types.UIEase;
+
 /**
 	Minimal pooled tween used for UI motion (dropdown pops, button dips, toasts).
 
 	One driver (`UIRoot`) calls `step(dtMs)` per frame; starting a tween reuses a pooled
 	instance, so steady-state UI motion performs zero allocations. Values are plain floats
-	delivered through a setter — no reflection, no `Dynamic`.
+	delivered through a setter — no reflection, no `Dynamic`. Easing curves are `UIEase` values.
 **/
 final class UITween {
-	public static inline var LINEAR:Int = 0;
-	public static inline var OUT_QUAD:Int = 1;
-	public static inline var OUT_BACK:Int = 2;
-	public static inline var IN_QUAD:Int = 3;
-
 	static final pool:Array<UITween> = [];
 	static final active:Array<UITween> = [];
 
@@ -21,7 +18,7 @@ final class UITween {
 	var endValue:Float = 0;
 	var duration:Float = 1;
 	var elapsed:Float = 0;
-	var ease:Int = OUT_QUAD;
+	var ease:UIEase = OUT_QUAD;
 	var onComplete:Void->Void = null;
 	var alive:Bool = false;
 
@@ -33,11 +30,11 @@ final class UITween {
 		@param from the start value
 		@param to the end value
 		@param durationMs total duration in milliseconds (clamped to >= 1)
-		@param ease one of `LINEAR`/`OUT_QUAD`/`OUT_BACK`/`IN_QUAD`
+		@param ease the easing curve (`LINEAR`/`OUT_QUAD`/`OUT_BACK`/`IN_QUAD`)
 		@param onComplete fired once after the final value is delivered
 		@return the running tween (hold it only if you may `cancel()`)
 	**/
-	public static function to(setter:Float->Void, from:Float, to:Float, durationMs:Float, ease:Int = OUT_QUAD, ?onComplete:Void->Void):UITween {
+	public static function to(setter:Float->Void, from:Float, to:Float, durationMs:Float, ease:UIEase = OUT_QUAD, ?onComplete:Void->Void):UITween {
 		var t:UITween = (pool.length > 0) ? pool.pop() : new UITween();
 		t.setter = setter;
 		t.startValue = from;
@@ -94,7 +91,7 @@ final class UITween {
 		step(0);
 	}
 
-	static function applyEase(ease:Int, p:Float):Float {
+	static function applyEase(ease:UIEase, p:Float):Float {
 		switch (ease) {
 			case OUT_QUAD:
 				return 1 - (1 - p) * (1 - p);

@@ -9,11 +9,16 @@ import openfl.utils.Assets;
 import smidr.UIColor;
 import smidr.UIComponent;
 import smidr.UIFonts;
+import smidr.UIGlyphs;
 import smidr.UITheme;
+import smidr.types.UIGlyph;
+import smidr.types.UITone;
 
 /**
 	A themed icon that can be dropped into any widget or layout. Sources:
 
+	- **Glyph** — a built-in `UIGlyph` drawn as a vector (no asset). Use `UIIcon.fromGlyph(...)`
+	  or assign `glyph`; takes precedence over `asset` when set.
 	- **SVG** (preferred) when the optional `svg` haxelib is present (`-lib svg` sets the
 	  `svg` define automatically) — rasterized once per (asset, pixel size) into a shared
 	  static cache, so N icons of the same glyph cost one texture and batch as bitmaps.
@@ -32,14 +37,17 @@ final class UIIcon extends UIComponent {
 	/** Base (unscaled) square edge length. **/
 	public var size(default, set):Float;
 
-	/** Tint from the theme text ramp: 0 = primary, 1 = secondary, 2 = tertiary. **/
-	public var tone(default, set):Int = 1;
+	/** Tint from the theme text ramp: `PRIMARY`, `SECONDARY` or `TERTIARY`. **/
+	public var tone(default, set):UITone = SECONDARY;
 
 	/** Explicit ARGB tint; overrides `tone` when != 0. **/
 	public var colorOverride(default, set):Int = 0;
 
 	/** `false` renders the source colours untouched (full-colour art). **/
 	public var tinted(default, set):Bool = true;
+
+	/** A built-in vector glyph to draw instead of an asset; `< 0` (the default) means none. **/
+	public var glyph(default, set):UIGlyph = cast -1;
 
 	static final rasterCache:Map<String, BitmapData> = new Map();
 	#if svg
@@ -53,9 +61,9 @@ final class UIIcon extends UIComponent {
 	/**
 		@param asset the icon asset path
 		@param size base (unscaled) square edge length
-		@param tone theme text ramp tint: 0 = primary, 1 = secondary, 2 = tertiary
+		@param tone theme text ramp tint (`PRIMARY`/`SECONDARY`/`TERTIARY`)
 	**/
-	public function new(asset:String, size:Float = 16, tone:Int = 1) {
+	public function new(asset:String, size:Float = 16, tone:UITone = SECONDARY) {
 		super(false, false);
 		@:bypassAccessor this.asset = asset;
 		@:bypassAccessor this.size = size;
@@ -63,6 +71,19 @@ final class UIIcon extends UIComponent {
 		bmp = new Bitmap(null, null, true);
 		addChild(bmp);
 		render();
+	}
+
+	/**
+		Builds an icon that draws a built-in vector `UIGlyph` (no asset needed).
+		@param glyph the glyph to draw
+		@param size base (unscaled) square edge length
+		@param tone theme text ramp tint (`PRIMARY`/`SECONDARY`/`TERTIARY`)
+		@return the configured icon
+	**/
+	public static function fromGlyph(glyph:UIGlyph, size:Float = 16, tone:UITone = SECONDARY):UIIcon {
+		var i:UIIcon = new UIIcon(null, size, tone);
+		i.glyph = glyph;
+		return i;
 	}
 
 	/**
@@ -132,8 +153,8 @@ final class UIIcon extends UIComponent {
 
 	inline function resolveColor():Int {
 		return (colorOverride != 0) ? colorOverride : switch (tone) {
-			case 0: UITheme.text;
-			case 2: UITheme.text3;
+			case PRIMARY: UITheme.text;
+			case TERTIARY: UITheme.text3;
 			default: UITheme.text2;
 		};
 	}
@@ -144,6 +165,12 @@ final class UIIcon extends UIComponent {
 		h = p;
 		var g = graphics;
 		g.clear();
+
+		if ((glyph : Int) >= 0) {
+			bmp.visible = false;
+			UIGlyphs.draw(g, glyph, 0, 0, p, resolveColor());
+			return;
+		}
 
 		var bd:BitmapData = getBitmap(asset, p);
 		if (bd == null) {
@@ -198,8 +225,16 @@ final class UIIcon extends UIComponent {
 		return v;
 	}
 
-	function set_tone(v:Int):Int {
+	function set_tone(v:UITone):UITone {
 		tone = v;
+		invalidate();
+		return v;
+	}
+
+	function set_glyph(v:UIGlyph):UIGlyph {
+		if (glyph == v)
+			return v;
+		glyph = v;
 		invalidate();
 		return v;
 	}

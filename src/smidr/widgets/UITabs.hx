@@ -8,6 +8,7 @@ import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
 import smidr.UITween;
+import smidr.types.UIEase;
 
 /** One `UITabs` tab definition. **/
 typedef UITabDef = {
@@ -91,7 +92,7 @@ final class UITabs extends UIComponent {
 				indX = fx + (toX - fx) * p;
 				indW = fw + (toW - fw) * p;
 				invalidate();
-			}, 0, 1, 170, UITween.OUT_QUAD, endInd);
+			}, 0, 1, 170, OUT_QUAD, endInd);
 		}
 		invalidate();
 		if (onSelect != null)

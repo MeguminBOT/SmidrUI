@@ -6,6 +6,7 @@ import smidr.UIFonts;
 import smidr.UIRoot;
 import smidr.UITheme;
 import smidr.UITween;
+import smidr.types.UIEase;
 
 /**
 	Transient status messages: slide up near the bottom of the viewport, hold, then fade out.
@@ -67,11 +68,11 @@ final class UIToast {
 		UITween.to(function(p:Float):Void {
 			panel.alpha = p;
 			panel.y = targetY + UITheme.px(12) * (1 - p);
-		}, 0, 1, 170, UITween.OUT_QUAD, function():Void {
+		}, 0, 1, 170, OUT_QUAD, function():Void {
 			hideTween = UITween.to(function(p:Float):Void {
 				panel.alpha = p;
-			}, 1, 1, holdMs, UITween.LINEAR, function():Void {
-				hideTween = UITween.to(function(p:Float):Void panel.alpha = p, 1, 0, 310, UITween.LINEAR);
+			}, 1, 1, holdMs, LINEAR, function():Void {
+				hideTween = UITween.to(function(p:Float):Void panel.alpha = p, 1, 0, 310, LINEAR);
 			});
 		});
 	}

@@ -6,6 +6,7 @@ import smidr.UIComponent;
 import smidr.UIRoot;
 import smidr.UITheme;
 import smidr.UITween;
+import smidr.types.UIEase;
 
 /**
 	A modal dialog panel centered over a dimmed, click-blocking backdrop on `UIRoot.popupLayer`.
@@ -67,7 +68,7 @@ final class UIModal extends UIComponent {
 		y = (vh - h) / 2;
 		UIRoot.pushOverlayCloser(requestClose);
 		alpha = 0;
-		UITween.to(setOpenProgress, 0, 1, 155, UITween.OUT_QUAD);
+		UITween.to(setOpenProgress, 0, 1, 155, OUT_QUAD);
 	}
 
 	function setOpenProgress(p:Float):Void {
@@ -89,7 +90,7 @@ final class UIModal extends UIComponent {
 			return;
 		closing = true;
 		UIRoot.removeOverlayCloser(requestClose);
-		UITween.to(setOpenProgress, 1, 0, 110, UITween.IN_QUAD, finishClose);
+		UITween.to(setOpenProgress, 1, 0, 110, IN_QUAD, finishClose);
 	}
 
 	function finishClose():Void {

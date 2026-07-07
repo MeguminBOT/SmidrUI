@@ -7,6 +7,7 @@ import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
 import smidr.UITween;
+import smidr.types.UIEase;
 
 /**
 	A labelled toggle switch row: label left, animated track + knob right. Clicking anywhere on
@@ -64,7 +65,7 @@ final class UISwitch extends UIComponent {
 
 	function animateKnob():Void {
 		killTween();
-		knobTween = UITween.to(applyKnob, knobP, on ? 1 : 0, 160, UITween.OUT_QUAD, endKnob);
+		knobTween = UITween.to(applyKnob, knobP, on ? 1 : 0, 160, OUT_QUAD, endKnob);
 	}
 
 	function applyKnob(v:Float):Void {

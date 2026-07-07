@@ -1,6 +1,7 @@
 package smidr;
 
 import openfl.display.Graphics;
+import smidr.types.UIGlyph;
 
 /**
 	The built-in vector glyph set, drawn directly into a `Graphics` at any size — no assets,

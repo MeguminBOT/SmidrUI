@@ -8,6 +8,7 @@ import smidr.UIFonts;
 import smidr.UIRoot;
 import smidr.UITheme;
 import smidr.UITween;
+import smidr.types.UIEase;
 
 /**
 	The shared hover tooltip. `install()` hooks it into `UIRoot`'s hover-delay driver; any widget
@@ -86,7 +87,7 @@ final class UITooltip {
 		panel.x = px;
 		panel.y = py;
 
-		UITween.to(function(a:Float):Void panel.alpha = a, 0, 1, 130, UITween.OUT_QUAD);
+		UITween.to(function(a:Float):Void panel.alpha = a, 0, 1, 130, OUT_QUAD);
 	}
 
 	static function hide():Void {

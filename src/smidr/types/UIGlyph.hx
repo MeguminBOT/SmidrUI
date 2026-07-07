@@ -1,4 +1,4 @@
-package smidr;
+package smidr.types;
 
 /**
 	Named ids for the built-in vector glyph set drawn by `UIGlyphs.draw`.
