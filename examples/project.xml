@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="SmiðrUI Examples" package="com.autisticlulu.smidrexamples" version="0.1.0" company="AutisticLulu" />
+
+	<!--
+		Runnable OpenFL/Lime build for the examples. Run from the repo root:
+
+		  lime test examples/project.xml windows              → FullExample (default)
+		  lime test examples/project.xml windows -Dex_small    → SmallExample
+		  lime test examples/project.xml windows -Dex_flixel   → FlixelExample (needs the flixel haxelib)
+
+		Swap `windows` for `mac`, `linux`, `html5`, `hl`, etc.
+	-->
+	<app main="SmallExample"  if="ex_small" />
+	<app main="FlixelExample" if="ex_flixel" />
+	<app main="FullExample"   unless="ex_small || ex_flixel" />
+	<app file="SmidrExample" path="bin" />
+
+	<window width="960" height="600" fps="60" background="#121214" vsync="true" />
+
+	<!-- the library sources, then the example mains (paths are relative to this file) -->
+	<source path="../src" />
+	<source path="." />
+
+	<haxelib name="openfl" />
+	<haxelib name="flixel" if="ex_flixel" />
+	<haxedef name="flixel" if="ex_flixel" />
+
+	<!--
+		The examples call UIFonts.register("assets/fonts/Inter.ttf"); it's optional — the
+		library falls back to a default font if the asset is missing. Drop a font in
+		examples/assets/fonts/ and build with -Dassets to embed it.
+	-->
+	<assets path="assets" rename="assets" if="assets" />
+</project>

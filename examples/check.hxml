@@ -1,0 +1,12 @@
+# Typecheck the OpenFL examples against the library (no window, no native compile).
+# Run from the repo root:  haxe examples/check.hxml
+# Requires (local .haxelib):  lime, openfl, hxcpp
+-cp src
+-cp examples
+-lib lime
+-lib openfl
+-lib hxcpp
+SmallExample
+FullExample
+-cpp examples/bin/check
+--no-output

@@ -1,0 +1,14 @@
+# Typecheck the Flixel bridge example (no window, no native compile).
+# Run from the repo root:  haxe examples/check-flixel.hxml
+# Requires (local .haxelib):  lime, openfl, flixel, hxcpp
+-cp src
+-cp examples
+-lib lime
+-lib openfl
+-lib flixel
+-lib hxcpp
+# smidr.flixel.FlxSmidr and FlixelExample are gated behind `-D flixel`.
+-D flixel
+FlixelExample
+-cpp examples/bin/check
+--no-output
