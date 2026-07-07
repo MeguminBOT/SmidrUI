@@ -10,14 +10,22 @@ All notable changes to this project are documented here. The format is based on
 - `examples/` -- runnable `SmallExample`, `FullExample` and `FlixelExample` with a `project.xml`
   and typecheck `hxml`s.
 - `UIFonts.libraryLoaded(id)` -- a silent guard for probing `openfl.utils.Assets`.
-- `UIGlyph` -- an `enum abstract Int` of the named glyph ids, so callers can write
-  `UIGlyphs.draw(g, CHEVRON_LEFT, ...)` (unqualified) or `UIGlyph.STAR`. Zero runtime cost and
-  interchangeable with plain ints.
+- `smidr.types` package of `enum abstract Int` value types -- `UIGlyph` (named glyph ids),
+  `UITone` (`PRIMARY`/`SECONDARY`/`TERTIARY`), `UIEase` (`LINEAR`/`OUT_QUAD`/`OUT_BACK`/`IN_QUAD`)
+  and `UICursorMode`. Each is just an `Int` at runtime, usable by name (unqualified where the type
+  is expected, e.g. `new UILabel("x", 13, SECONDARY)`), and interchangeable with plain ints.
+- `UIButton` now accepts a `UIGlyph` -- assign `glyph`, or build an icon-only button with
+  `UIButton.icon(glyph, size, ?onClick)`. Buttons can show a label, an icon, or both.
+- `UIIcon.fromGlyph(glyph, size, tone)` and a `glyph` property draw a built-in vector glyph with
+  no asset.
 
 ### Changed
-- The glyph id constants moved from `UIGlyphs` to `UIGlyph` (`UIGlyphs.PLAY` -> `UIGlyph.PLAY`,
-  `UIGlyphs.COUNT` -> `UIGlyph.COUNT`). `UIGlyphs.draw` now takes a `UIGlyph`; raw-int calls
-  still compile.
+- Glyph ids moved to `smidr.types.UIGlyph` (from `UIGlyphs`); `UIGlyphs.draw` takes a `UIGlyph`.
+- `UITween` easings moved to `UIEase` (from `UITween.OUT_QUAD` etc.); `UILabel`/`UIIcon` `tone`
+  now `UITone`; `FlxSmidr.cursorMode` now `UICursorMode` (the `CURSOR_*` consts moved onto it).
+  All still accept raw ints (`from Int`).
+- `UIIconButton` was removed and folded into `UIButton`: use `UIButton.icon(glyph, size)` and
+  toggle `accent` at runtime in place of the old `active`.
 
 ### Fixed
 - `UIFonts.register` and `UIIcon` no longer emit `ERROR: There is no asset library named

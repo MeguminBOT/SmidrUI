@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import smidr.flixel.FlxSmidr;
+import smidr.types.UICursorMode;
 import smidr.widgets.UIButton;
 import smidr.widgets.UILabel;
 import smidr.widgets.UIPanel;
@@ -41,7 +42,7 @@ class FlixelExample extends FlxState {
 
 		// With a custom FlxG.mouse cursor the system cursor is hidden, so widget
 		// hover cursors wouldn't show. Restore the system cursor while over the UI:
-		FlxSmidr.cursorMode = FlxSmidr.CURSOR_SYSTEM_OVER_UI;
+		FlxSmidr.cursorMode = CURSOR_SYSTEM_OVER_UI;
 
 		// Let the bridge disable FlxG.mouse while the pointer is over the UI, so a
 		// click on a button never also fires a click in the game world.

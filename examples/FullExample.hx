@@ -5,6 +5,8 @@ import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UIRoot;
 import smidr.UITheme;
+import smidr.types.UIGlyph;
+import smidr.types.UITone;
 import smidr.widgets.UIAccordion;
 import smidr.widgets.UIButton;
 import smidr.widgets.UICheckbox;
@@ -12,7 +14,6 @@ import smidr.widgets.UIChip;
 import smidr.widgets.UIContextMenu;
 import smidr.widgets.UIDropdown;
 import smidr.widgets.UIIcon;
-import smidr.widgets.UIIconButton;
 import smidr.widgets.UIIconRail;
 import smidr.widgets.UIKeybind;
 import smidr.widgets.UILabel;
@@ -206,15 +207,15 @@ class FullExample extends Sprite {
 		page.addChild(q);
 
 		// A transport row of vector-glyph icon buttons (no assets needed).
-		var transport = [UIIconButton.PREV, UIIconButton.PLAY, UIIconButton.NEXT, UIIconButton.LOOP];
+		var transport:Array<UIGlyph> = [PREV, PLAY, NEXT, LOOP];
 		for (n in 0...transport.length) {
 			var kind = transport[n];
-			var b = new UIIconButton(kind, 30, () -> {});
+			var b = UIButton.icon(kind, 30, () -> {});
 			b.x = n * 38;
 			b.y = 208;
 			b.onClick = () -> {
-				if (kind == UIIconButton.PLAY || kind == UIIconButton.LOOP)
-					b.active = !b.active;
+				if (kind == PLAY || kind == LOOP)
+					b.accent = !b.accent; // toolbar toggle
 				UIToast.show("transport " + n);
 			};
 			page.addChild(b);
@@ -248,13 +249,13 @@ class FullExample extends Sprite {
 		jump.y = 130;
 		page.addChild(jump);
 
-		// UIIcon renders an svg/png asset; without one embedded it stays blank (see the note).
-		var icon = new UIIcon("assets/icons/star.svg", 24);
+		// UIIcon drawing a built-in vector glyph (no asset needed); it can also load svg/png assets.
+		var icon = UIIcon.fromGlyph(STAR, 24);
 		icon.x = 0;
 		icon.y = 178;
 		page.addChild(icon);
 
-		var iconNote = new UILabel("← UIIcon draws an svg/png asset (embed one to see it)", 11, 2);
+		var iconNote = new UILabel("← UIIcon.fromGlyph(STAR) — vector, no asset (or pass an svg/png path)", 11, SECONDARY);
 		iconNote.x = 34;
 		iconNote.y = 182;
 		page.addChild(iconNote);

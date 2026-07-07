@@ -1,14 +1,17 @@
 # Typecheck the Flixel bridge example (no window, no native compile).
 # Run from the repo root:  haxe examples/check-flixel.hxml
-# Requires (local .haxelib):  lime, openfl, flixel, hxcpp
+# Requires (local .haxelib):  lime, openfl, flixel, hscript, hxcpp
 -cp src
 -cp examples
 -lib lime
 -lib openfl
 -lib flixel
+-lib hscript
 -lib hxcpp
-# smidr.flixel.FlxSmidr and FlixelExample are gated behind `-D flixel`.
+# smidr.flixel.FlxSmidr and FlixelExample are gated behind `-D flixel`. A raw hxml does not read
+# flixel's include.xml, so run its define-setup macro (defines FLX_MOUSE etc.) as that does.
 -D flixel
+--macro flixel.system.macros.FlxDefines.run()
 FlixelExample
 -cpp examples/bin/check
 --no-output
