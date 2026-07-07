@@ -1,5 +1,5 @@
 /*
-	SmiðrUI "Dark" palette applied to the dox default theme's dark mode.
+	smidr "Dark" palette applied to the dox default theme's dark mode.
 	Colours mirror UITheme.PRESETS[0] (the built-in Dark preset). This file is appended to the
 	generated dark-mode.css by doc/apply-theme.sh after dox runs (see doc.hxml / the docs
 	workflow), so it always loads last and wins.

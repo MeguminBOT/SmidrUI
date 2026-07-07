@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<meta title="SmiðrUI Examples" package="com.autisticlulu.smidrexamples" version="0.1.0" company="AutisticLulu" />
+	<meta title="SmiðrUI Examples" package="com.meguminbot.smidrexamples" version="0.1.0" company="MeguminBOT" />
 
 	<!--
 		Runnable OpenFL/Lime build for the examples. Run from the repo root:

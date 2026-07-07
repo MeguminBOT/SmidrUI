@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Applies the SmiðrUI "Dark" palette to a freshly generated dox site.
+# Applies the smidr "Dark" palette to a freshly generated dox site.
 # Run after dox, from the repo root:  bash doc/apply-theme.sh
 #
 # 1. Appends the palette override to the generated dark-mode.css (so it loads last and wins).
@@ -23,4 +23,4 @@ find "$site" -name '*.html' -exec sed -i \
 	-e 's/(!localStorage.theme \&\& systemDarkMode) || localStorage.theme == "dark"/localStorage.theme != "light"/g' \
 	-e 's/backgroundColor = "#111"/backgroundColor = "#121214"/g' {} +
 
-echo "Applied SmiðrUI Dark theme to $site"
+echo "Applied smidr Dark theme to $site"
