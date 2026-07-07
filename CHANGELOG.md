@@ -14,8 +14,9 @@ All notable changes to this project are documented here. The format is based on
   `UITone` (`PRIMARY`/`SECONDARY`/`TERTIARY`), `UIEase` (`LINEAR`/`OUT_QUAD`/`OUT_BACK`/`IN_QUAD`)
   and `UICursorMode`. Each is just an `Int` at runtime, usable by name (unqualified where the type
   is expected, e.g. `new UILabel("x", 13, SECONDARY)`), and interchangeable with plain ints.
-- `UIButton` now accepts a `UIGlyph` -- assign `glyph`, or build an icon-only button with
-  `UIButton.icon(glyph, size, ?onClick)`. Buttons can show a label, an icon, or both.
+- `UIButton` now hosts a `UIIcon` -- `UIButton.icon(icon, size, ?onClick)` for an icon-only
+  button, or `setIcon(icon)` for icon + label. The icon may be glyph- or asset-backed and follows
+  the button's foreground tone unless it pins its own colour.
 - `UIIcon.fromGlyph(glyph, size, tone)` and a `glyph` property draw a built-in vector glyph with
   no asset.
 
@@ -24,8 +25,8 @@ All notable changes to this project are documented here. The format is based on
 - `UITween` easings moved to `UIEase` (from `UITween.OUT_QUAD` etc.); `UILabel`/`UIIcon` `tone`
   now `UITone`; `FlxSmidr.cursorMode` now `UICursorMode` (the `CURSOR_*` consts moved onto it).
   All still accept raw ints (`from Int`).
-- `UIIconButton` was removed and folded into `UIButton`: use `UIButton.icon(glyph, size)` and
-  toggle `accent` at runtime in place of the old `active`.
+- `UIIconButton` was removed and folded into `UIButton`: use `UIButton.icon(UIIcon.fromGlyph(...),
+  size)` and toggle `accent` at runtime in place of the old `active`.
 
 ### Fixed
 - `UIFonts.register` and `UIIcon` no longer emit `ERROR: There is no asset library named

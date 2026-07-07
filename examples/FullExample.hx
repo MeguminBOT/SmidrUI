@@ -210,7 +210,7 @@ class FullExample extends Sprite {
 		var transport:Array<UIGlyph> = [PREV, PLAY, NEXT, LOOP];
 		for (n in 0...transport.length) {
 			var kind = transport[n];
-			var b = UIButton.icon(kind, 30, () -> {});
+			var b = UIButton.icon(UIIcon.fromGlyph(kind, 16), 30, () -> {});
 			b.x = n * 38;
 			b.y = 208;
 			b.onClick = () -> {
