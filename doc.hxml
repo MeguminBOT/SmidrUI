@@ -1,0 +1,16 @@
+# Emit type-info XML for dox (the API-docs generator).
+# Step 1 (this file):  haxe doc.hxml          -> doc/xml/smidr.xml
+# Step 2 (dox):        haxelib run dox -i doc/xml -o doc/site -in smidr --title "SmiðrUI API"
+# Then open doc/site/index.html (or publish doc/site to GitHub Pages).
+-cp src
+-lib openfl
+-lib lime
+-lib hxcpp
+# keep doc comments in the XML
+-D doc-gen
+# document the whole library
+--macro include('smidr')
+-xml doc/xml/smidr.xml
+# a target is only needed so platform-conditional code typechecks; nothing is emitted
+-cpp doc/_typecheck
+--no-output

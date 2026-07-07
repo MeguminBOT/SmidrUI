@@ -8,6 +8,11 @@ export/
 bin/
 .temp/
 
+# Generated API docs (dox) — see doc.hxml
+doc/xml/
+doc/site/
+doc/_typecheck/
+
 # Editors / OS
 .DS_Store
 Thumbs.db

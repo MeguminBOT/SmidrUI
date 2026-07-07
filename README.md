@@ -115,6 +115,21 @@ haxe examples/check.hxml          # the two OpenFL examples
 haxe examples/check-flixel.hxml   # the Flixel bridge example (needs -lib flixel)
 ```
 
+## Documentation
+
+Full API docs are generated with [dox](https://github.com/HaxeFoundation/dox) (the same tool
+behind the OpenFL and Flixel API sites) and published to GitHub Pages by
+[`.github/workflows/docs.yml`](.github/workflows/docs.yml).
+
+Build the site locally:
+
+```bash
+haxelib install dox
+haxe doc.hxml                                                      # -> doc/xml/smidr.xml
+haxelib run dox -i doc/xml -o doc/site -in smidr --title "SmiðrUI API"
+# open doc/site/index.html
+```
+
 ## Architecture
 
 - **`UIRoot`** — the stage-attached root. Three layers (`content` < `popupLayer` < `tooltipLayer`),
