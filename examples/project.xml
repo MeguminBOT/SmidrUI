@@ -18,7 +18,8 @@
 	<app main="FullExample"   unless="ex_small || ex_flixel || ex_gallery" />
 	<app file="SmidrExample" path="bin" />
 
-	<window width="960" height="600" fps="60" background="#121214" vsync="true" />
+	<window width="600" height="780" fps="60" background="#121214" vsync="true" resizable="true" if="ex_gallery" />
+	<window width="960" height="600" fps="60" background="#121214" vsync="true" unless="ex_gallery" />
 
 	<!-- the library sources, then the example mains (paths are relative to this file) -->
 	<source path="../src" />

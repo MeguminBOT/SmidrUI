@@ -3,15 +3,22 @@ package smidr.widgets;
 import smidr.UIColor;
 import smidr.UIComponent;
 import smidr.UITheme;
+import smidr.types.UISurface;
 
 /**
 	A filled surface: chrome bands, cards, placeholders. Non-interactive but blocking by default
 	(children stay interactive, pointer hits never fall through). `corner` rounds the fill;
 	the four `border*` flags draw 1px themed edges and `outline` draws a full 1px frame.
+
+	Give it an explicit ARGB `fill`, or bind it to a theme `surface` role (via `UIPanel.themed`)
+	so it re-reads the palette on every render and follows theme swaps.
 **/
 final class UIPanel extends UIComponent {
-	/** Fill color (ARGB). **/
+	/** Explicit fill color (ARGB); used when `surface` is unset (`< 0`). **/
 	public var fill(default, set):Int;
+
+	/** A theme surface role that overrides `fill` and follows theme swaps; `< 0` (default) = none. **/
+	public var surface(default, set):UISurface = cast -1;
 
 	/** Corner radius in scaled pixels (0 = square). **/
 	public var corner(default, set):Float = 0;
@@ -37,10 +44,37 @@ final class UIPanel extends UIComponent {
 		render();
 	}
 
+	/**
+		Builds a panel bound to a theme surface role, so its fill follows theme swaps.
+		@param surface the theme surface role (e.g. `PANEL2`, `CARD`)
+		@param width layout width
+		@param height layout height
+		@param blocking `true` swallows pointer hits (children stay interactive)
+		@return the configured panel
+	**/
+	public static function themed(surface:UISurface, width:Float, height:Float, blocking:Bool = true):UIPanel {
+		var p:UIPanel = new UIPanel(width, height, UITheme.bg, blocking);
+		p.surface = surface;
+		return p;
+	}
+
+	inline function resolveFill():Int {
+		return switch (surface) {
+			case BG: UITheme.bg;
+			case PANEL: UITheme.panel;
+			case PANEL2: UITheme.panel2;
+			case PANEL3: UITheme.panel3;
+			case CARD: UITheme.card;
+			case INPUT: UITheme.inputBg;
+			default: fill; // surface < 0 -> explicit fill
+		}
+	}
+
 	override public function render():Void {
 		var g = graphics;
 		g.clear();
-		g.beginFill(UIColor.rgb(fill), UIColor.alphaOf(fill));
+		var f:Int = resolveFill();
+		g.beginFill(UIColor.rgb(f), UIColor.alphaOf(f));
 		if (corner > 0)
 			g.drawRoundRect(0, 0, w, h, corner, corner);
 		else
@@ -71,6 +105,12 @@ final class UIPanel extends UIComponent {
 
 	function set_fill(v:Int):Int {
 		fill = v;
+		invalidate();
+		return v;
+	}
+
+	function set_surface(v:UISurface):UISurface {
+		surface = v;
 		invalidate();
 		return v;
 	}

@@ -2,12 +2,11 @@ package;
 
 import openfl.display.DisplayObject;
 import openfl.display.Sprite;
-import smidr.UIFonts;
+import openfl.events.Event;
 import smidr.UILocale;
 import smidr.UIRoot;
 import smidr.UITheme;
 import smidr.types.UIGlyph;
-import smidr.types.UITone;
 import smidr.widgets.UIAccordion;
 import smidr.widgets.UIButton;
 import smidr.widgets.UICheckbox;
@@ -36,7 +35,9 @@ import smidr.widgets.UITooltip;
 
 /**
 	A scrollable gallery of every widget, each wired to a status line. Meant to be compiled to a
-	small test executable so users can poke at the whole library in one window.
+	small test executable so users can poke at the whole library in one window. The layout is
+	responsive: a fixed-width column of widgets stays centred while the themed backdrop, menu bar
+	and status bar span the window and the scroll viewport grows with the window height.
 
 	Build it (from the repo root):
 	```bash
@@ -44,53 +45,106 @@ import smidr.widgets.UITooltip;
 	```
 **/
 class Gallery extends Sprite {
-	static inline var W:Float = 520;
-	static inline var H:Float = 700;
 	static inline var MENU_H:Float = 28;
 	static inline var STATUS_H:Float = 30;
-	static inline var COL:Float = 452; // widget column width inside the scroll pane
+	static inline var TOP:Float = MENU_H + 40; // where the scroll viewport starts
+	static inline var PANE_W:Float = 540;       // fixed content column width (kept, so widgets don't reflow)
+	static inline var INNER:Float = 14;         // left inset inside the scroll content
+	static inline var GUTTER:Float = 14;         // right gutter for the scrollbar
+	static inline var COL:Float = PANE_W - INNER - GUTTER;
 
 	var ui:UIRoot;
+	var backdrop:UIPanel;
+	var menubar:UIMenuBar;
+	var title:UILabel;
 	var scroll:UIScrollPane;
+	var statusBg:UIPanel;
 	var statusTf:UILabel;
-	var cy:Float = 0; // vertical cursor inside the scroll content
+	var bar:UILoadingBar;
+
+	var cy:Float = 0;        // build cursor inside the scroll content
+	var contentH:Float = 0;  // total content height (for refreshContent on resize)
+	var progT:Float = 0;     // continuous-progress accumulator
 
 	public function new() {
 		super();
 
 		UILocale.translate = (key, fallback) -> fallback;
 		UITheme.apply(UITheme.PRESETS[0].palette); // Dark
-		UITheme.setScale(1.0);
 
 		ui = new UIRoot();
 		ui.attach(this);
 		ui.setViewport(0, 0, 1, 1);
 		UITooltip.install();
 
+		// themed, full-window backdrop (follows theme swaps because it's bound to a surface role)
+		backdrop = UIPanel.themed(BG, 100, 100, false);
+		ui.content.addChild(backdrop);
+
 		buildMenuBar();
 
-		var title = new UILabel("SmiðrUI — widget gallery", 15, PRIMARY);
-		title.x = 16;
-		title.y = MENU_H + 8;
+		title = new UILabel("SmiðrUI — widget gallery", 15, PRIMARY);
 		ui.content.addChild(title);
 
-		scroll = new UIScrollPane(W - 24, H - MENU_H - 36 - STATUS_H);
-		scroll.x = 12;
-		scroll.y = MENU_H + 34;
+		scroll = new UIScrollPane(PANE_W, 100);
 		ui.content.addChild(scroll);
 
-		buildStatusBar();
+		statusBg = UIPanel.themed(PANEL2, 100, STATUS_H);
+		statusBg.borderTop = true;
+		ui.content.addChild(statusBg);
+		statusTf = new UILabel("", 12, SECONDARY);
+		ui.content.addChild(statusTf);
+
 		buildRows();
-		scroll.refreshContent(cy);
+		contentH = cy;
+		scroll.refreshContent(contentH);
+
+		UIRoot.addTicker(tick); // drive the continuous progress bar
+
+		addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+		if (stage != null)
+			layout();
 
 		setStatus("Ready — scroll and try the widgets.");
 	}
 
+	// ── responsive layout ───────────────────────────────────────────────────────
+	function onAddedToStage(_:Event):Void {
+		stage.addEventListener(Event.RESIZE, onResize);
+		layout();
+	}
+
+	function onResize(_:Event):Void {
+		layout();
+	}
+
+	function layout():Void {
+		var sw:Float = (stage != null) ? stage.stageWidth : 600;
+		var sh:Float = (stage != null) ? stage.stageHeight : 780;
+
+		backdrop.resize(sw, sh);
+		menubar.resize(sw, MENU_H);
+
+		var sx:Float = Math.max(0, (sw - PANE_W) / 2); // centre the fixed column
+		title.x = sx + INNER;
+		title.y = MENU_H + 8;
+
+		scroll.x = sx;
+		scroll.y = TOP;
+		scroll.resize(PANE_W, Math.max(80, sh - TOP - STATUS_H));
+		scroll.refreshContent(contentH);
+
+		statusBg.resize(sw, STATUS_H);
+		statusBg.y = sh - STATUS_H;
+		statusTf.x = sx + INNER;
+		statusTf.y = sh - STATUS_H + (STATUS_H - 16) / 2;
+	}
+
 	// ── scaffolding ─────────────────────────────────────────────────────────────
 	function buildMenuBar():Void {
-		var bar = new UIMenuBar(W, MENU_H);
-		bar.brand = "smidr";
-		bar.setMenus([
+		menubar = new UIMenuBar(100, MENU_H);
+		menubar.brand = "smidr";
+		menubar.setMenus([
 			{
 				title: "File",
 				items: () -> [
@@ -103,25 +157,16 @@ class Gallery extends Sprite {
 				title: "Theme",
 				items: () -> [for (i in 0...UITheme.PRESETS.length) {
 					label: UITheme.PRESETS[i].name,
-					onSelect: () -> {
-						UITheme.apply(UITheme.PRESETS[i].palette);
-						setStatus('Theme: ${UITheme.PRESETS[i].name}');
-					}
+					onSelect: applyTheme.bind(i)
 				}]
 			}
 		]);
-		ui.content.addChild(bar);
+		ui.content.addChild(menubar);
 	}
 
-	function buildStatusBar():Void {
-		var bg = new UIPanel(W, STATUS_H, UITheme.panel2);
-		bg.borderTop = true;
-		bg.y = H - STATUS_H;
-		ui.content.addChild(bg);
-		statusTf = new UILabel("", 12, SECONDARY);
-		statusTf.x = 14;
-		statusTf.y = H - STATUS_H + (STATUS_H - 16) / 2;
-		ui.content.addChild(statusTf);
+	function applyTheme(i:Int):Void {
+		UITheme.apply(UITheme.PRESETS[i].palette);
+		setStatus('Theme: ${UITheme.PRESETS[i].name}');
 	}
 
 	function setStatus(msg:String):Void {
@@ -129,18 +174,16 @@ class Gallery extends Sprite {
 		UIToast.show(msg);
 	}
 
-	/** Adds a small caption above the next widget. **/
 	function head(name:String):Void {
 		var l = new UILabel(name, 11, TERTIARY);
-		l.x = 0;
+		l.x = INNER;
 		l.y = cy;
 		scroll.content.addChild(l);
 		cy += 18;
 	}
 
-	/** Places a display object at the cursor and advances by its height + a gap. **/
 	function put(o:DisplayObject, height:Float):Void {
-		o.x = 0;
+		o.x = INNER;
 		o.y = cy;
 		scroll.content.addChild(o);
 		cy += height + 16;
@@ -148,19 +191,28 @@ class Gallery extends Sprite {
 
 	function rule():Void {
 		var s = new UISeparator(COL);
-		s.x = 0;
+		s.x = INNER;
 		s.y = cy;
 		scroll.content.addChild(s);
 		cy += 14;
 	}
 
+	// continuous progress: loop the bar 0 -> 1 forever
+	function tick(dtMs:Float):Void {
+		if (bar == null)
+			return;
+		progT += dtMs;
+		var period:Float = 2600;
+		bar.setProgress((progT % period) / period, false);
+	}
+
 	// ── the widgets ─────────────────────────────────────────────────────────────
 	function buildRows():Void {
-		// Label
+		cy = 10;
+
 		head("UILabel");
 		put(new UILabel("Primary / secondary / tertiary tones", 13, PRIMARY), 20);
 
-		// Buttons
 		head("UIButton — default / accent / danger");
 		var bDefault = new UIButton("Default", 120, 32, () -> setStatus("Button: Default"));
 		bDefault.tooltip = "A plain button";
@@ -175,7 +227,6 @@ class Gallery extends Sprite {
 		buttonRow.addChild(bDanger);
 		put(buttonRow, 32);
 
-		// Icon buttons (glyph-backed)
 		head("UIButton.icon — icon-only");
 		var iconRow = new Sprite();
 		var glyphs:Array<UIGlyph> = [PLAY, PAUSE, GEAR, SEARCH, TRASH, HEART];
@@ -187,7 +238,6 @@ class Gallery extends Sprite {
 		}
 		put(iconRow, 32);
 
-		// Icons
 		head("UIIcon.fromGlyph — vector icons, no assets");
 		var iconStrip = new Sprite();
 		var strip:Array<UIGlyph> = [STAR, BELL, HOME, USER, LOCK, IMAGE, FOLDER, CLOCK];
@@ -200,7 +250,6 @@ class Gallery extends Sprite {
 
 		rule();
 
-		// Checkbox / switch / chip
 		head("UICheckbox");
 		put(new UICheckbox("Enable feature", COL, true, (on) -> setStatus('Checkbox: $on')), 24);
 
@@ -212,7 +261,6 @@ class Gallery extends Sprite {
 
 		rule();
 
-		// Sliders / steppers / segmented
 		head("UISlider");
 		var slider = new UISlider("Volume", COL, 0, 1, 0.7, (v) -> setStatus('Slider: ${Math.round(v * 100)}%'));
 		slider.decimals = 2;
@@ -231,7 +279,6 @@ class Gallery extends Sprite {
 
 		rule();
 
-		// Dropdown / text input / keybind
 		head("UIDropdown");
 		var dd = new UIDropdown("Resolution", COL, (i, value) -> setStatus('Dropdown: $value'));
 		dd.setItems(["1280x720", "1920x1080", "2560x1440"]);
@@ -248,7 +295,6 @@ class Gallery extends Sprite {
 
 		rule();
 
-		// Tabs / icon rail
 		head("UITabs");
 		put(new UITabs(COL, [{label: "One"}, {label: "Two"}, {label: "Three"}], (i) -> setStatus('Tab: $i')), 34);
 
@@ -257,7 +303,6 @@ class Gallery extends Sprite {
 
 		rule();
 
-		// Accordion (toggles a small body; no reflow to keep the demo simple)
 		head("UIAccordion");
 		var bodyA = new Sprite();
 		var acc = new UIAccordion("Details", COL, true, (open) -> {
@@ -272,20 +317,13 @@ class Gallery extends Sprite {
 		bodyA.addChild(l2);
 		put(bodyA, 40);
 
-		// Loading bar + animate button
-		head("UILoadingBar");
-		var bar = new UILoadingBar("Downloading", COL, 0.3);
+		head("UILoadingBar — auto-animating");
+		bar = new UILoadingBar("Downloading", COL, 0.0);
 		bar.showPercent = true;
 		put(bar, 30);
-		var animate = new UIButton("Animate progress", 180, 30, () -> {
-			bar.setProgress(Math.random(), true);
-			setStatus("Loading bar animated");
-		});
-		put(animate, 30);
 
 		rule();
 
-		// Data-bound list
 		head("UIList — data-bound rows");
 		var items = ["Apple", "Banana", "Cherry", "Date", "Elderberry", "Fig", "Grape", "Kiwi"];
 		var list = new UIList(COL, 132);
@@ -296,12 +334,11 @@ class Gallery extends Sprite {
 
 		rule();
 
-		// Panel
-		head("UIPanel");
-		var panel = new UIPanel(COL, 56, UITheme.card);
+		head("UIPanel — theme-following card");
+		var panel = UIPanel.themed(CARD, COL, 56);
 		panel.corner = 8;
 		panel.outline = true;
-		var pl = new UILabel("A panel surface (card)", 12, SECONDARY);
+		var pl = new UILabel("A card surface that follows the theme", 12, SECONDARY);
 		pl.x = 12;
 		pl.y = 18;
 		panel.addChild(pl);
@@ -309,13 +346,12 @@ class Gallery extends Sprite {
 
 		rule();
 
-		// Overlays: modal, context menu, toast
 		head("UIModal / UIContextMenu / UIToast");
-		var openModal = new UIButton("Open modal", 130, 30, () -> openModal(), true);
+		var openBtn = new UIButton("Open modal", 130, 30, () -> openModal(), true);
 		var toastBtn = new UIButton("Show toast", 130, 30, () -> setStatus("Toast fired"));
 		toastBtn.x = 142;
 		var overlayRow = new Sprite();
-		overlayRow.addChild(openModal);
+		overlayRow.addChild(openBtn);
 		overlayRow.addChild(toastBtn);
 		put(overlayRow, 30);
 
@@ -328,7 +364,7 @@ class Gallery extends Sprite {
 				{label: "Delete", onSelect: () -> setStatus("Context: Delete")}
 			]);
 		};
-		put(rc, 20);
+		put(rc, 24);
 	}
 
 	function openModal():Void {
@@ -348,6 +384,10 @@ class Gallery extends Sprite {
 	}
 
 	public function destroy():Void {
+		UIRoot.removeTicker(tick);
+		removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+		if (stage != null)
+			stage.removeEventListener(Event.RESIZE, onResize);
 		if (ui != null) {
 			ui.dispose();
 			ui = null;
