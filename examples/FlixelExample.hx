@@ -34,14 +34,14 @@ class FlixelExample extends FlxState {
 		enemy = new FlxSprite(400, 300).makeGraphic(48, 48, 0xFFF05C7C);
 		add(enemy);
 
-		// ── Bridge init ──────────────────────────────────────────────────────
+		// Bridge init
 		// aboveGame = true (default) parents the UIRoot inside FlxG.game below the
 		// cursor container: UI coordinates == game coordinates under every scale mode,
 		// with zero per-frame viewport syncing, and Flixel's custom cursor draws on top.
 		FlxSmidr.init(true);
 
 		// With a custom FlxG.mouse cursor the system cursor is hidden, so widget
-		// hover cursors wouldn't show. Restore the system cursor while over the UI:
+		// hover cursors wouldn't show. So you can restore the system cursor while over the UI:
 		FlxSmidr.cursorMode = CURSOR_SYSTEM_OVER_UI;
 
 		// Let the bridge disable FlxG.mouse while the pointer is over the UI, so a

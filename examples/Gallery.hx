@@ -108,7 +108,7 @@ class Gallery extends Sprite {
 		setStatus("Ready — scroll and try the widgets.");
 	}
 
-	// ── responsive layout ───────────────────────────────────────────────────────
+	// responsive layout
 	function onAddedToStage(_:Event):Void {
 		stage.addEventListener(Event.RESIZE, onResize);
 		layout();
@@ -140,7 +140,7 @@ class Gallery extends Sprite {
 		statusTf.y = sh - STATUS_H + (STATUS_H - 16) / 2;
 	}
 
-	// ── scaffolding ─────────────────────────────────────────────────────────────
+	// scaffolding
 	function buildMenuBar():Void {
 		menubar = new UIMenuBar(100, MENU_H);
 		menubar.brand = "smidr";
@@ -206,7 +206,7 @@ class Gallery extends Sprite {
 		bar.setProgress((progT % period) / period, false);
 	}
 
-	// ── the widgets ─────────────────────────────────────────────────────────────
+	// the widgets
 	function buildRows():Void {
 		cy = 10;
 

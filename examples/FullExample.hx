@@ -68,14 +68,14 @@ class FullExample extends Sprite {
 	public function new() {
 		super();
 
-		// ── Global setup (once, before building widgets) ───────────────────────
+		// Global setup (once, before building widgets)
 		UIFonts.register("assets/fonts/Inter.ttf");     // optional; no-ops if the asset is absent
 		UILocale.translate = (key, fallback) -> fallback; // wire to your own i18n lookup
 		UITheme.apply(UITheme.PRESETS[themeIndex].palette); // "Midnight"
 		UITheme.applyAccent(0xFF3AA0FF);
 		UITheme.setScale(1.0);
 
-		// ── Root ───────────────────────────────────────────────────────────────
+		// Root
 		ui = new UIRoot();
 		ui.attach(this);
 		ui.setViewport(0, 0, 1, 1);
@@ -87,7 +87,7 @@ class FullExample extends Sprite {
 		showSection(0);
 	}
 
-	// ── UIMenuBar ──────────────────────────────────────────────────────────────
+	// UIMenuBar
 	function buildMenuBar():Void {
 		var bar = new UIMenuBar(960, MENU_H);
 		bar.brand = "SmiðrUI Demo";
@@ -122,7 +122,7 @@ class FullExample extends Sprite {
 		UIToast.show('Theme: ${UITheme.PRESETS[themeIndex].name}');
 	}
 
-	// ── UIIconRail (left activity bar, switches sections) ────────────────────────
+	// UIIconRail (left activity bar, switches sections)
 	function buildRail():Void {
 		var rail = new UIIconRail(RAIL_W, 600 - MENU_H, [
 			{caption: "SET", tooltipFallback: "Controls"},
@@ -151,7 +151,7 @@ class FullExample extends Sprite {
 			sections[n].visible = (n == i);
 	}
 
-	// ── Section 0: UITabs over the input widgets ─────────────────────────────────
+	// Section 0: UITabs over the input widgets
 	function buildControls(page:Sprite):Void {
 		var panel = new UIPanel(560, 512, UITheme.panel);
 		panel.corner = 10;
@@ -261,7 +261,7 @@ class FullExample extends Sprite {
 		page.addChild(iconNote);
 	}
 
-	// ── Section 1: UIList + a scrolling UIScrollPane of accordions ───────────────
+	// Section 1: UIList + a scrolling UIScrollPane of accordions
 	function buildData(page:Sprite):Void {
 		var heading = new UILabel("Saved profiles", 13, 1);
 		page.addChild(heading);
@@ -336,7 +336,7 @@ class FullExample extends Sprite {
 		dataScroll.refreshContent(y);
 	}
 
-	// ── Section 2: labels, a primary and a danger button, a modal trigger ────────
+	// Section 2: labels, a primary and a danger button, a modal trigger
 	function buildAbout(page:Sprite):Void {
 		var title = new UILabel("SmiðrUI", 22, 0);
 		page.addChild(title);
