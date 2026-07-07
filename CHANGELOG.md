@@ -10,6 +10,14 @@ All notable changes to this project are documented here. The format is based on
 - `examples/` -- runnable `SmallExample`, `FullExample` and `FlixelExample` with a `project.xml`
   and typecheck `hxml`s.
 - `UIFonts.libraryLoaded(id)` -- a silent guard for probing `openfl.utils.Assets`.
+- `UIGlyph` -- an `enum abstract Int` of the named glyph ids, so callers can write
+  `UIGlyphs.draw(g, CHEVRON_LEFT, ...)` (unqualified) or `UIGlyph.STAR`. Zero runtime cost and
+  interchangeable with plain ints.
+
+### Changed
+- The glyph id constants moved from `UIGlyphs` to `UIGlyph` (`UIGlyphs.PLAY` -> `UIGlyph.PLAY`,
+  `UIGlyphs.COUNT` -> `UIGlyph.COUNT`). `UIGlyphs.draw` now takes a `UIGlyph`; raw-int calls
+  still compile.
 
 ### Fixed
 - `UIFonts.register` and `UIIcon` no longer emit `ERROR: There is no asset library named

@@ -7,86 +7,22 @@ import openfl.display.Graphics;
 	crisp at every `UITheme.scale`, tinted by whatever colour the caller passes (so theme
 	swaps re-tint for free in the widget's own render pass).
 
-	Glyph ids are grouped: media (0..9), actions (10..23), navigation (24..33),
-	files (34..39), system/status (40..58). `COUNT` bounds iteration for pickers/demos.
-	All geometry lives inside a ~0.22..0.78 margin of the unit box so glyphs share optical
-	weight when mixed.
+	Glyph ids are the named `UIGlyph` values (grouped media / actions / navigation / files /
+	system-status); `UIGlyph.COUNT` bounds iteration for pickers/demos. All geometry lives inside
+	a ~0.22..0.78 margin of the unit box so glyphs share optical weight when mixed.
 **/
 final class UIGlyphs {
-	public static inline var PLAY:Int = 0;
-	public static inline var PAUSE:Int = 1;
-	public static inline var STOP:Int = 2;
-	public static inline var PREV:Int = 3;
-	public static inline var NEXT:Int = 4;
-	public static inline var RECORD:Int = 5;
-	public static inline var LOOP:Int = 6;
-	public static inline var SHUFFLE:Int = 7;
-	public static inline var VOLUME:Int = 8;
-	public static inline var MUTE:Int = 9;
-	public static inline var PLUS:Int = 10;
-	public static inline var MINUS:Int = 11;
-	public static inline var CLOSE:Int = 12;
-	public static inline var CHECK:Int = 13;
-	public static inline var SEARCH:Int = 14;
-	public static inline var GEAR:Int = 15;
-	public static inline var REFRESH:Int = 16;
-	public static inline var TRASH:Int = 17;
-	public static inline var EDIT:Int = 18;
-	public static inline var COPY:Int = 19;
-	public static inline var DOWNLOAD:Int = 20;
-	public static inline var UPLOAD:Int = 21;
-	public static inline var EXTERNAL:Int = 22;
-	public static inline var FILTER:Int = 23;
-	public static inline var CHEVRON_LEFT:Int = 24;
-	public static inline var CHEVRON_RIGHT:Int = 25;
-	public static inline var CHEVRON_UP:Int = 26;
-	public static inline var CHEVRON_DOWN:Int = 27;
-	public static inline var ARROW_LEFT:Int = 28;
-	public static inline var ARROW_RIGHT:Int = 29;
-	public static inline var ARROW_UP:Int = 30;
-	public static inline var ARROW_DOWN:Int = 31;
-	public static inline var MENU:Int = 32;
-	public static inline var MORE:Int = 33;
-	public static inline var FILE:Int = 34;
-	public static inline var FOLDER:Int = 35;
-	public static inline var FOLDER_OPEN:Int = 36;
-	public static inline var IMAGE:Int = 37;
-	public static inline var SAVE:Int = 38;
-	public static inline var CLIPBOARD:Int = 39;
-	public static inline var INFO:Int = 40;
-	public static inline var WARNING:Int = 41;
-	public static inline var ERROR:Int = 42;
-	public static inline var HOME:Int = 43;
-	public static inline var LOCK:Int = 44;
-	public static inline var UNLOCK:Int = 45;
-	public static inline var EYE:Int = 46;
-	public static inline var STAR:Int = 47;
-	public static inline var HEART:Int = 48;
-	public static inline var BELL:Int = 49;
-	public static inline var CLOCK:Int = 50;
-	public static inline var POWER:Int = 51;
-	public static inline var USER:Int = 52;
-	public static inline var GRID:Int = 53;
-	public static inline var LIST:Int = 54;
-	public static inline var DRAG:Int = 55;
-	public static inline var FULLSCREEN:Int = 56;
-	public static inline var PIN:Int = 57;
-	public static inline var DOT:Int = 58;
-
-	/** Number of glyphs (ids are 0..COUNT-1). **/
-	public static inline var COUNT:Int = 59;
-
 	/**
 		Draws a glyph into a `Graphics` (call inside a widget's `render()`; does not `clear()`).
 		@param g the target graphics
-		@param glyph one of the glyph id constants
+		@param glyph the glyph to draw (a `UIGlyph`, e.g. `CHEVRON_LEFT`)
 		@param x the icon box left edge
 		@param y the icon box top edge
 		@param s the icon box edge length (glyphs pad themselves within it)
 		@param color the tint (`0xRRGGBB`; alpha bits masked off — use `a` for opacity)
 		@param a opacity 0..1
 	**/
-	public static function draw(g:Graphics, glyph:Int, x:Float, y:Float, s:Float, color:Int, a:Float = 1):Void {
+	public static function draw(g:Graphics, glyph:UIGlyph, x:Float, y:Float, s:Float, color:Int, a:Float = 1):Void {
 		var c:Int = color & 0xFFFFFF;
 		var t:Float = s * 0.1;
 		if (t < 1.5)
