@@ -1,11 +1,12 @@
 package smidr.types;
 
 /**
-	A theme surface role for `UIPanel`. Unlike an explicit fill colour, a panel bound to a
-	`UISurface` re-reads the matching `UITheme` value every render, so it follows theme swaps.
+	A theme surface role for `UIPanel`. A panel is bound to a `UISurface` by default, so it
+	re-reads the matching `UITheme` value every render and follows theme swaps; pass a fixed colour
+	via `UIPanel.solid` only for the rare static case.
 
-	An `enum abstract` over `Int`, so it is just an `Int` at runtime. Use it via
-	`UIPanel.themed(PANEL2, w, h)` or by assigning `panel.surface`.
+	An `enum abstract` over `Int`, so it is just an `Int` at runtime. Unlike the value-carrying
+	types it is `to Int` only (no `from Int`), so a theme colour int can't be mistaken for a role.
 
 	- `BG` -> `UITheme.bg`        (window/backdrop)
 	- `PANEL` -> `UITheme.panel`  (base surface)
@@ -14,7 +15,7 @@ package smidr.types;
 	- `CARD` -> `UITheme.card`    (grouped content)
 	- `INPUT` -> `UITheme.inputBg`(recessed input well)
 **/
-enum abstract UISurface(Int) from Int to Int {
+enum abstract UISurface(Int) to Int {
 	var BG = 0;
 	var PANEL = 1;
 	var PANEL2 = 2;

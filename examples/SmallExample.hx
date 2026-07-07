@@ -28,7 +28,7 @@ class SmallExample extends Sprite {
 		ui.attach(this);
 
 		// 2. A background panel (rounded corner just to show it off).
-		var panel = new UIPanel(260, 120, 0xFF1E1E21);
+		var panel = new UIPanel(260, 120, PANEL);
 		panel.x = 40;
 		panel.y = 40;
 		panel.corner = 10;

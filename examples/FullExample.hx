@@ -153,7 +153,7 @@ class FullExample extends Sprite {
 
 	// Section 0: UITabs over the input widgets
 	function buildControls(page:Sprite):Void {
-		var panel = new UIPanel(560, 512, UITheme.panel);
+		var panel = new UIPanel(560, 512, PANEL);
 		panel.corner = 10;
 		panel.outline = true;
 		page.addChild(panel);

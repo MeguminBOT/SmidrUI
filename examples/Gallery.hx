@@ -78,7 +78,7 @@ class Gallery extends Sprite {
 		UITooltip.install();
 
 		// themed, full-window backdrop (follows theme swaps because it's bound to a surface role)
-		backdrop = UIPanel.themed(BG, 100, 100, false);
+		backdrop = new UIPanel(100, 100, BG, false);
 		ui.content.addChild(backdrop);
 
 		buildMenuBar();
@@ -89,7 +89,7 @@ class Gallery extends Sprite {
 		scroll = new UIScrollPane(PANE_W, 100);
 		ui.content.addChild(scroll);
 
-		statusBg = UIPanel.themed(PANEL2, 100, STATUS_H);
+		statusBg = new UIPanel(100, STATUS_H, PANEL2);
 		statusBg.borderTop = true;
 		ui.content.addChild(statusBg);
 		statusTf = new UILabel("", 12, SECONDARY);
@@ -335,7 +335,7 @@ class Gallery extends Sprite {
 		rule();
 
 		head("UIPanel — theme-following card");
-		var panel = UIPanel.themed(CARD, COL, 56);
+		var panel = new UIPanel(COL, 56, CARD);
 		panel.corner = 8;
 		panel.outline = true;
 		var pl = new UILabel("A card surface that follows the theme", 12, SECONDARY);

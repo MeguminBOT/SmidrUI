@@ -10,15 +10,16 @@ import smidr.types.UISurface;
 	(children stay interactive, pointer hits never fall through). `corner` rounds the fill;
 	the four `border*` flags draw 1px themed edges and `outline` draws a full 1px frame.
 
-	Give it an explicit ARGB `fill`, or bind it to a theme `surface` role (via `UIPanel.themed`)
-	so it re-reads the palette on every render and follows theme swaps.
+	Themed by default: a panel is bound to a `UISurface` role (`PANEL` unless you pass another),
+	so it re-reads the palette every render and follows theme swaps like the rest of the library.
+	For the rare fixed-colour surface (a static backdrop, brand splash) use `UIPanel.solid`.
 **/
 final class UIPanel extends UIComponent {
-	/** Explicit fill color (ARGB); used when `surface` is unset (`< 0`). **/
-	public var fill(default, set):Int;
+	/** The theme surface role driving the fill; follows theme swaps. `< 0` means use `fill`. **/
+	public var surface(default, set):UISurface = PANEL;
 
-	/** A theme surface role that overrides `fill` and follows theme swaps; `< 0` (default) = none. **/
-	public var surface(default, set):UISurface = cast -1;
+	/** Fixed ARGB fill, used only when `surface` is cleared (via `UIPanel.solid` / setting `fill`). **/
+	public var fill(default, set):Int = 0;
 
 	/** Corner radius in scaled pixels (0 = square). **/
 	public var corner(default, set):Float = 0;
@@ -34,27 +35,28 @@ final class UIPanel extends UIComponent {
 	/**
 		@param width layout width
 		@param height layout height
-		@param fill the fill color (ARGB)
+		@param surface the theme surface role driving the fill (follows theme swaps)
 		@param blocking `true` swallows pointer hits (children stay interactive)
 	**/
-	public function new(width:Float, height:Float, fill:Int, blocking:Bool = true) {
+	public function new(width:Float, height:Float, surface:UISurface = PANEL, blocking:Bool = true) {
 		super(false, blocking);
-		@:bypassAccessor this.fill = fill;
+		@:bypassAccessor this.surface = surface;
 		resize(width, height);
 		render();
 	}
 
 	/**
-		Builds a panel bound to a theme surface role, so its fill follows theme swaps.
-		@param surface the theme surface role (e.g. `PANEL2`, `CARD`)
+		Builds a panel with a fixed ARGB fill that does NOT follow theme swaps (static backdrops,
+		brand colours). Prefer the themed constructor for normal chrome.
 		@param width layout width
 		@param height layout height
+		@param fill the fixed fill colour (ARGB)
 		@param blocking `true` swallows pointer hits (children stay interactive)
 		@return the configured panel
 	**/
-	public static function themed(surface:UISurface, width:Float, height:Float, blocking:Bool = true):UIPanel {
-		var p:UIPanel = new UIPanel(width, height, UITheme.bg, blocking);
-		p.surface = surface;
+	public static function solid(width:Float, height:Float, fill:Int, blocking:Bool = true):UIPanel {
+		var p:UIPanel = new UIPanel(width, height, PANEL, blocking);
+		p.fill = fill; // set_fill clears `surface`, switching to the fixed colour
 		return p;
 	}
 
@@ -105,6 +107,7 @@ final class UIPanel extends UIComponent {
 
 	function set_fill(v:Int):Int {
 		fill = v;
+		surface = cast -1; // a fixed colour clears the theme role
 		invalidate();
 		return v;
 	}
