@@ -41,6 +41,9 @@ jobs:
       - name: Build docs site
         run: haxelib run dox -i doc/xml -o doc/site -in smidr --title "SmiðrUI API"
 
+      - name: Apply SmiðrUI Dark theme
+        run: bash doc/apply-theme.sh
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

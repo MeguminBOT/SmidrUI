@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Applies the SmiðrUI "Dark" palette to a freshly generated dox site.
+# Run after dox, from the repo root:  bash doc/apply-theme.sh
+#
+# 1. Appends the palette override to the generated dark-mode.css (so it loads last and wins).
+# 2. Defaults the site to dark (the toggle still switches to light) by relaxing the
+#    no-flash bootstrap condition in every page from "system-dark or stored-dark" to
+#    "anything except explicitly stored light".
+set -euo pipefail
+
+site="doc/site"
+here="$(dirname "$0")"
+
+if [ ! -d "$site" ]; then
+	echo "error: $site not found - run 'haxe doc.hxml' and dox first" >&2
+	exit 1
+fi
+
+cat "$here/theme/smidr-dark.css" >> "$site/dark-mode.css"
+
+# default to dark unless the user explicitly picked light, and match the anti-flash colour
+find "$site" -name '*.html' -exec sed -i \
+	-e 's/(!localStorage.theme \&\& systemDarkMode) || localStorage.theme == "dark"/localStorage.theme != "light"/g' \
+	-e 's/backgroundColor = "#111"/backgroundColor = "#121214"/g' {} +
+
+echo "Applied SmiðrUI Dark theme to $site"

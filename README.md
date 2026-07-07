@@ -130,6 +130,7 @@ haxelib install dox
 haxelib install flixel   # the smidr.flixel bridge is documented too, so flixel is required
 haxe doc.hxml                                                      # -> doc/xml/smidr.xml
 haxelib run dox -i doc/xml -o doc/site -in smidr --title "SmiðrUI API"
+bash doc/apply-theme.sh                                            # recolor to the "Dark" palette
 # open doc/site/index.html
 ```
 

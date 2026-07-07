@@ -1,0 +1,195 @@
+/*
+	SmiðrUI "Dark" palette applied to the dox default theme's dark mode.
+	Colours mirror UITheme.PRESETS[0] (the built-in Dark preset). This file is appended to the
+	generated dark-mode.css by doc/apply-theme.sh after dox runs (see doc.hxml / the docs
+	workflow), so it always loads last and wins.
+
+	bg #121214  panel #1E1E21  panel2 #26262B  panel3 #34343B  card #2C2C32  inputBg #17171B
+	border #3C3C44  border2 #585864  text #E9E7EF  text2 #B2B0BC  text3 #7F7D8A
+	accent #8A5EE0  accentDark #6B3FC4  accentAlt #C558D6  highlight #E6AEEF
+	success #63D68A  danger #F05C7C  warning #FFCA6E
+*/
+
+/* surfaces + base text */
+.dark-theme,
+.dark-theme body {
+	background-color: #121214 !important;
+	color: #E9E7EF;
+}
+
+.dark-theme .navbar-inner,
+.dark-theme .dropdown-menu,
+.dark-theme table.params th {
+	background-color: #1E1E21 !important;
+	background-image: none !important;
+}
+
+.dark-theme .well,
+.dark-theme pre {
+	background-color: #1E1E21 !important;
+	border: 1px solid #3C3C44 !important;
+}
+
+.dark-theme .section.site-footer {
+	background: #121214 !important;
+}
+
+/* headings + brand */
+.dark-theme h1,
+.dark-theme h2,
+.dark-theme h3,
+.dark-theme h4,
+.dark-theme .brand {
+	color: #E9E7EF !important;
+}
+
+/* secondary text */
+.dark-theme .copyright > p,
+.dark-theme .last-modified,
+.dark-theme .availability,
+.dark-theme .section-availability {
+	color: #7F7D8A !important;
+}
+
+/* links + accent */
+.dark-theme a,
+.dark-theme code a,
+.dark-theme .dropdown-menu > li > a {
+	color: #8A5EE0;
+}
+
+.dark-theme a:hover,
+.dark-theme a:focus {
+	color: #E6AEEF;
+}
+
+/* nav + active selection */
+.dark-theme .nav > li > a:hover,
+.dark-theme .nav > li > a:focus,
+.dark-theme .dropdown-menu > li > a:hover,
+.dark-theme .dropdown-menu > li > a:focus {
+	background-color: #34343B !important;
+	background-image: none !important;
+	color: #E9E7EF !important;
+}
+
+.dark-theme .nav-list > .active > a {
+	background-color: #34343B !important;
+}
+
+.dark-theme .nav-list > .active > a.treeLink,
+.dark-theme .nav-list > .active > a.treeLink:hover,
+.dark-theme .nav-list > .active > a.treeLink:focus {
+	background: #6B3FC4 !important;
+}
+
+/* buttons + inputs + badges */
+.dark-theme .btn {
+	color: #E9E7EF !important;
+	background-color: #26262B !important;
+	background-image: none !important;
+	border: 1px solid #3C3C44 !important;
+}
+
+.dark-theme .btn:focus,
+.dark-theme .btn:hover {
+	color: #FFFFFF !important;
+	background-color: #34343B !important;
+}
+
+.dark-theme input,
+.dark-theme textarea {
+	background-color: #17171B !important;
+	border: 1px solid #3C3C44 !important;
+	color: #E9E7EF;
+}
+
+.dark-theme .label,
+.dark-theme .badge {
+	color: #E9E7EF;
+	background-color: #26262B;
+}
+
+.dark-theme .label.label-meta {
+	background: #6B3FC4;
+}
+
+/* separators + borders */
+.dark-theme hr,
+.dark-theme .page-header,
+.dark-theme .section {
+	border-bottom: 1px solid #3C3C44;
+}
+
+.dark-theme .field + .field {
+	border-top: 1px solid #3C3C44;
+}
+
+.dark-theme .table th,
+.dark-theme .table td,
+.dark-theme .table-bordered,
+.dark-theme .table-bordered th,
+.dark-theme .table-bordered td {
+	border-color: #3C3C44 !important;
+}
+
+.dark-theme table.params {
+	border-left: 5px solid #3C3C44;
+}
+
+.dark-theme .indent {
+	border-left: 5px solid #3C3C44;
+}
+
+/* inline code + syntax highlighting */
+.dark-theme code {
+	color: #E6AEEF;
+	background-color: #17171B;
+	border: 1px solid #3C3C44;
+}
+
+.dark-theme code,
+.dark-theme pre {
+	color: #E9E7EF;
+}
+
+.dark-theme code .identifier {
+	color: #E9E7EF;
+}
+
+.dark-theme code .type,
+.dark-theme pre .type {
+	color: #C558D6;
+}
+
+.dark-theme pre .kwd {
+	color: #8A5EE0;
+}
+
+.dark-theme pre .val {
+	color: #F05C7C;
+}
+
+.dark-theme div.pre .str,
+.dark-theme pre .str,
+.dark-theme pre .str .kwd,
+.dark-theme pre .str .type,
+.dark-theme pre .str .val {
+	color: #63D68A;
+}
+
+.dark-theme pre .cmt,
+.dark-theme pre .cmt .kwd,
+.dark-theme pre .cmt .str,
+.dark-theme pre .cmt .type,
+.dark-theme pre .cmt .val {
+	color: #7F7D8A;
+}
+
+/* alerts / deprecation notices */
+.dark-theme .alert,
+.dark-theme .alert h4 {
+	color: #FFCA6E;
+	background-color: #2C2C32;
+	border: 1px solid #3C3C44;
+}
