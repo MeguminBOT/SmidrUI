@@ -1,5 +1,10 @@
 # SmiðrUI
 
+[![Haxelib](https://img.shields.io/haxelib/v/smidr.svg?logo=haxe&label=haxelib)](https://lib.haxe.org/p/smidr)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Haxe 4.3+](https://img.shields.io/badge/Haxe-4.3%2B-orange.svg)
+![OpenFL](https://img.shields.io/badge/OpenFL-required-1a6fc4.svg)
+
 A lightweight **retained-mode UI toolkit for [OpenFL](https://www.openfl.org/)**. Widgets are
 plain `openfl.display.Sprite`s that repaint **only when invalidated** — an idle UI does zero
 per-frame work. Theming is plain ints, fonts and localization are pluggable hooks, and there is
@@ -12,11 +17,13 @@ SmiðrUI is distributed as a **[haxelib](https://lib.haxe.org/)** named `smidr` 
 
 ## Why Smidr was made
 
-I got frustrated with how Flixel UI was extremely draw heavy on more elaborate UIs, then I tried HaxeUI immediately wanted to get rid of it as it's slightly too burdensome to use.
-So I opted to make my own instead which is meant to be used either standalone or above other frameworks without any weird initialisations, no weird hitbox or hover logic,
-it's all handled by the UIComponents themselves.
+I got frustrated with how Flixel UI was extremely draw-heavy on more elaborate UIs, then I tried
+HaxeUI and immediately wanted to get rid of it as it's slightly too burdensome to use. So I opted
+to make my own instead, meant to be used either standalone or above other frameworks without any
+weird initialisation — no weird hitbox or hover logic, it's all handled by the UIComponents
+themselves.
 
-SmidrUI does come with an optional Flixel bridge (compiled only when the `flixel` haxelib is present).
+SmiðrUI also ships an optional Flixel bridge (compiled only when the `flixel` haxelib is present).
 
 ## Features
 
@@ -27,25 +34,36 @@ SmidrUI does come with an optional Flixel bridge (compiled only when the `flixel
 - **Themable at runtime** — swap `UITheme` palettes (4 presets built in) or a custom accent and
   the whole live tree re-skins.
 - **Density scaling** — one global `UITheme.scale` multiplier for HiDPI / accessibility.
+- **Built-in vector icons** — a 59-glyph set (`UIGlyphs`) drawn crisp at any size with no assets,
+  tinted by the theme; use them anywhere or drop svg/png assets into `UIIcon`.
+- **Named, type-safe ids** — `smidr.types` enum abstracts (`UIGlyph`, `UITone`, `UIEase`,
+  `UICursorMode`) let you write `CHEVRON_LEFT` / `SECONDARY` / `OUT_QUAD`; they compile to plain
+  ints, so there's zero runtime cost.
 - **Pluggable fonts & i18n** — point `UIFonts` at any embedded font asset; wire `UILocale` to
   your own translation lookup. The library ships dependency-free defaults.
-- **21 widgets** — buttons, icon rails, labels, panels, chips, checkboxes, sliders, steppers,
-  text inputs, dropdowns, context menus, menu bars, accordions, scroll panes, modals, tooltips,
-  toasts, separators.
+- **Optional Flixel bridge** — `smidr.flixel.FlxSmidr` handles viewport matching, cursor and
+  input arbitration when the `flixel` haxelib is present.
+
+### Widgets
+
+Buttons (with optional glyph/asset icons), labels, icons, panels and separators, icon rails and
+tabs, checkboxes, switches, chips, sliders, steppers, segmented controls, text inputs, keybind
+capture, dropdowns, context menus, menu bars, accordions, scroll panes, data-bound lists, loading
+bars, modals, tooltips and toasts.
 
 ## Install
 
 ```bash
-# from git (recommended until published)
-haxelib git smidr https://github.com/MeguminBOT/SmidrUI.git
-
-# or, once published to haxelib
 haxelib install smidr
+
+# or track the latest from git
+haxelib git smidr https://github.com/MeguminBOT/SmidrUI.git
 ```
 
 Then in your `project.xml`:
 
 ```xml
+<haxelib name="openfl" />
 <haxelib name="smidr" />
 ```
 
