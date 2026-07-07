@@ -68,4 +68,26 @@ final class UIColor {
 	public static inline function alphaOf(c:Int):Float {
 		return ((c >>> 24) & 0xFF) / 255.0;
 	}
+
+	/**
+		Perceived brightness of a color (ignores alpha).
+		@param c the ARGB color
+		@return luminance 0 (black) .. 1 (white)
+	**/
+	public static inline function luminance(c:Int):Float {
+		var r:Int = (c >>> 16) & 0xFF;
+		var g:Int = (c >>> 8) & 0xFF;
+		var b:Int = c & 0xFF;
+		return (0.299 * r + 0.587 * g + 0.114 * b) / 255.0;
+	}
+
+	/**
+		A readable, opaque text color for content sitting on `bg`: near-white on dark fills,
+		near-black on light ones (so accent/danger surfaces stay legible under any theme).
+		@param bg the background ARGB color
+		@return an opaque ARGB text color
+	**/
+	public static inline function contrastText(bg:Int):Int {
+		return luminance(bg) < 0.55 ? 0xFFF4F4F8 : 0xFF16161A;
+	}
 }

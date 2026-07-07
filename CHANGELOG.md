@@ -9,8 +9,13 @@ All notable changes to this project are documented here. The format is based on
 ### Added
 - `smidr.types.UISurface` -- a theme surface role (`BG`/`PANEL`/`PANEL2`/`PANEL3`/`CARD`/`INPUT`).
 - `UIPanel.solid(w, h, argb)` -- a fixed-colour panel for the rare static case (backdrops, brand).
+- `UIColor.luminance(c)` and `UIColor.contrastText(bg)` helpers.
 - A scrollable widget `Gallery` example (`-Dex_gallery`) with a responsive layout, a themed
   backdrop/status bar and a continuously animating progress bar.
+
+### Fixed
+- Accent/danger `UIButton` text (and its icon) now take their colour by contrast against the
+  fill, so the label stays legible on light themes instead of going dark-on-dark.
 
 ### Changed
 - `UIPanel` is now theme-following by default: the constructor takes a `UISurface` role

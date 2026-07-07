@@ -7,7 +7,6 @@ import smidr.UIComponent;
 import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
-import smidr.types.UITone;
 
 /**
 	A clickable button. Variants: default (panel surface), `accent` (primary action) and
@@ -16,8 +15,8 @@ import smidr.types.UITone;
 
 	A button may show a label, a `UIIcon`, or both: assign `icon` (or build an icon-only button
 	with `UIButton.icon(...)`). The icon may be a built-in glyph (`UIIcon.fromGlyph`) or an asset —
-	that is up to the caller. Unless the icon pins its own `colorOverride`, it follows the button's
-	foreground tone. A toolbar-style toggle is just `accent` flipped at runtime.
+	that is up to the caller. The button colours the icon to match its label (contrast against the
+	fill). A toolbar-style toggle is just `accent` flipped at runtime.
 **/
 final class UIButton extends UIComponent {
 	public var key(default, set):String = null;
@@ -94,7 +93,9 @@ final class UIButton extends UIComponent {
 		g.drawRoundRect(0.5, 0.5, w - 1, h - 1, r * 2, r * 2);
 		g.lineStyle();
 
-		var textColor:Int = (accent || danger) ? UITheme.text : UITheme.text2;
+		// accent/danger fills are dark in every theme, so pick contrast from the fill rather than
+		// UITheme.text (which flips to dark on light themes and would vanish on the button)
+		var textColor:Int = (accent || danger) ? UIColor.contrastText(base) : UITheme.text2;
 		UIFonts.restyle(tf, UITheme.fs(fontSize), textColor, TextFormatAlign.CENTER);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
 		if (resolved == null)
@@ -118,18 +119,15 @@ final class UIButton extends UIComponent {
 			var iw:Float = UITheme.px(iconObj.size);
 			iconObj.x = hasLabel ? UITheme.px(10) : (w - iw) / 2;
 			iconObj.y = (h - iw) / 2 + dip;
-			// follow the button's foreground tone unless the caller pinned an explicit colour
-			if (iconObj.colorOverride == 0) {
-				var t:UITone = (accent || danger) ? PRIMARY : SECONDARY;
-				if (iconObj.tone != t)
-					iconObj.tone = t;
-			}
+			// drive the icon to the button's foreground colour so it matches the label
+			if (iconObj.colorOverride != textColor)
+				iconObj.colorOverride = textColor;
 		}
 	}
 
 	/**
-		Sets (or clears) the hosted icon. The icon may be glyph- or asset-backed; it follows the
-		button's foreground tone unless it pins its own `colorOverride`.
+		Sets (or clears) the hosted icon. The icon may be glyph- or asset-backed; the button drives
+		its colour to match the label (contrast against the button fill).
 		@param v the icon to show, or `null` to remove it
 		@return this button (for chaining)
 	**/
