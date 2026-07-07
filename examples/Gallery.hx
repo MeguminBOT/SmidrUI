@@ -355,16 +355,20 @@ class Gallery extends Sprite {
 		overlayRow.addChild(toastBtn);
 		put(overlayRow, 30);
 
-		var rc = new UILabel("Right-click me for a context menu", 12, SECONDARY);
-		rc.onRightClick = () -> {
-			UIContextMenu.open(ui.mouseX, ui.mouseY, [
-				{label: "Cut", onSelect: () -> setStatus("Context: Cut")},
-				{label: "Copy", onSelect: () -> setStatus("Context: Copy")},
-				{separator: true},
-				{label: "Delete", onSelect: () -> setStatus("Context: Delete")}
-			]);
-		};
-		put(rc, 24);
+		// onRightClick only fires on interactive widgets (UILabel is pointer-transparent), so the
+		// context-menu target is a button; left-click opens it too, for discoverability.
+		var ctxBtn = new UIButton("Right-click (or click) me", 220, 30, () -> openContextMenu());
+		ctxBtn.onRightClick = openContextMenu;
+		put(ctxBtn, 30);
+	}
+
+	function openContextMenu():Void {
+		UIContextMenu.open(ui.mouseX, ui.mouseY, [
+			{label: "Cut", onSelect: () -> setStatus("Context: Cut")},
+			{label: "Copy", onSelect: () -> setStatus("Context: Copy")},
+			{separator: true},
+			{label: "Delete", onSelect: () -> setStatus("Context: Delete")}
+		]);
 	}
 
 	function openModal():Void {

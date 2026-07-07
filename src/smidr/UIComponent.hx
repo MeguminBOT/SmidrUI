@@ -31,13 +31,17 @@ class UIComponent extends Sprite {
 	/** Disabled widgets ignore the pointer and typically render dimmed. **/
 	public var enabled(default, set):Bool = true;
 
-	/** Fired on a completed click (press + release on this widget). **/
+	/** Fired on a completed click (press + release on this widget). Requires an interactive widget. **/
 	public var onClick:Void->Void = null;
 
-	/** Fired on a right mouse press over this widget (context menus). **/
+	/**
+		Fired on a right mouse press over this widget (context menus). Only interactive widgets
+		receive pointer events, so this never fires on passive widgets like `UILabel`/`UIPanel` —
+		attach it to a `UIButton` (or another interactive widget) instead.
+	**/
 	public var onRightClick:Void->Void = null;
 
-	/** Fired when the cursor first enters this widget (hover-driven descriptions/previews). **/
+	/** Fired when the cursor first enters this widget (hover-driven descriptions/previews). Interactive widgets only. **/
 	public var onHover:Void->Void = null;
 
 	/** Optional tooltip text (already-localized or a fixed string). **/
