@@ -21,11 +21,28 @@ final class UIFonts {
 	static final cache:Map<String, TextFormat> = new Map();
 
 	/**
+		Whether the asset library backing an id is loaded. A silent guard (no lime logging) so
+		callers can probe `openfl.utils.Assets` even when a project embeds no assets at all — an
+		unguarded `Assets.exists`/`getX` against a missing library spams
+		`ERROR: There is no asset library named "default"`.
+		@param id an asset path, optionally `library:path` prefixed (defaults to the `default` library)
+		@return `true` when the referenced library exists
+	**/
+	public static inline function libraryLoaded(id:String):Bool {
+		if (id == null)
+			return false;
+		var ci:Int = id.indexOf(":");
+		return Assets.hasLibrary(ci > -1 ? id.substring(0, ci) : "default");
+	}
+
+	/**
 		Loads an embedded font asset and makes it the library font.
 		@param assetPath the embedded font asset (e.g. `assets/fonts/main.ttf`)
 		@return `true` when the font was found and applied
 	**/
 	public static function register(assetPath:String):Bool {
+		if (!libraryLoaded(assetPath) || !Assets.exists(assetPath))
+			return false;
 		var font = Assets.getFont(assetPath);
 		if (font == null)
 			return false;
