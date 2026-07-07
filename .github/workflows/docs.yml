@@ -33,6 +33,8 @@ jobs:
           haxelib install hxcpp --quiet
           haxelib install lime --quiet
           haxelib install openfl --quiet
+          haxelib install flixel --quiet
+          haxelib install hscript --quiet
           haxelib install dox --quiet
 
       - name: Generate type XML

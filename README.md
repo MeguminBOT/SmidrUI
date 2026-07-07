@@ -16,6 +16,8 @@ I got frustrated with how Flixel UI was extremely draw heavy on more elaborate U
 So I opted to make my own instead which is meant to be used either standalone or above other frameworks without any weird initialisations, no weird hitbox or hover logic,
 it's all handled by the UIComponents themselves.
 
+SmidrUI does come with an optional Flixel bridge (compiled only when the `flixel` haxelib is present).
+
 ## Features
 
 - **Retained + invalidation-driven** — `render()` runs on a widget only after `invalidate()`
@@ -125,6 +127,7 @@ Build the site locally:
 
 ```bash
 haxelib install dox
+haxelib install flixel   # the smidr.flixel bridge is documented too, so flixel is required
 haxe doc.hxml                                                      # -> doc/xml/smidr.xml
 haxelib run dox -i doc/xml -o doc/site -in smidr --title "SmiðrUI API"
 # open doc/site/index.html

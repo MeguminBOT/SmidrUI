@@ -6,6 +6,13 @@
 -lib openfl
 -lib lime
 -lib hxcpp
+# flixel is required so the smidr.flixel bridge is documented. A raw hxml does not read
+# flixel's include.xml, so replicate the two things it contributes: the hscript dep and the
+# define-setup macro (which defines FLX_MOUSE etc. that FlxG fields are gated behind).
+-lib flixel
+-lib hscript
+-D flixel
+--macro flixel.system.macros.FlxDefines.run()
 # keep doc comments in the XML
 -D doc-gen
 # document the whole library
