@@ -8,5 +8,6 @@
 -lib hxcpp
 SmallExample
 FullExample
+Gallery
 -cpp examples/bin/check
 --no-output

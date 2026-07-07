@@ -8,12 +8,14 @@
 		  lime test examples/project.xml windows              → FullExample (default)
 		  lime test examples/project.xml windows -Dex_small    → SmallExample
 		  lime test examples/project.xml windows -Dex_flixel   → FlixelExample (needs the flixel haxelib)
+		  lime test examples/project.xml windows -Dex_gallery  → Gallery (scrollable widget showcase)
 
 		Swap `windows` for `mac`, `linux`, `html5`, `hl`, etc.
 	-->
+	<app main="Gallery"       if="ex_gallery" />
 	<app main="SmallExample"  if="ex_small" />
 	<app main="FlixelExample" if="ex_flixel" />
-	<app main="FullExample"   unless="ex_small || ex_flixel" />
+	<app main="FullExample"   unless="ex_small || ex_flixel || ex_gallery" />
 	<app file="SmidrExample" path="bin" />
 
 	<window width="960" height="600" fps="60" background="#121214" vsync="true" />
