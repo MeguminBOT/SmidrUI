@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `smidr.types.UISurface` and `UIPanel.themed(surface, w, h)` — bind a panel to a theme surface
+  role (`BG`/`PANEL`/`PANEL2`/`PANEL3`/`CARD`/`INPUT`) so its fill re-reads the palette every
+  render and follows theme swaps (an explicit `fill` still snapshots as before).
+- A scrollable widget `Gallery` example (`-Dex_gallery`) with a responsive layout, a themed
+  backdrop/status bar and a continuously animating progress bar.
+
 ## [0.2.1] — 2026-07-07
 
 ### Added
