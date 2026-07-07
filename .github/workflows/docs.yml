@@ -4,8 +4,6 @@ name: API docs
 # One-time setup: repo Settings > Pages > Source = "GitHub Actions".
 
 on:
-  push:
-    branches: [master]
   workflow_dispatch:
 
 permissions:
