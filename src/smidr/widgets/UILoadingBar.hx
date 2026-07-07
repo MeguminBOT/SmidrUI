@@ -13,6 +13,7 @@ import smidr.UITween;
 	A progress bar for any long-running operation (downloads, uploads, decompression, loading).
 
 	Two modes:
+
 	- **Determinate** — assign `progress` (0..1); the fill tweens smoothly to the new value
 	  (`smoothing = false` snaps instead).
 	- **Indeterminate** — set `indeterminate = true` for unknown-length work; an accent band

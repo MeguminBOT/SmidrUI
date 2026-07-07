@@ -13,6 +13,7 @@ import smidr.UITheme;
 
 /**
 	A themed icon that can be dropped into any widget or layout. Sources:
+
 	- **SVG** (preferred) when the optional `svg` haxelib is present (`-lib svg` sets the
 	  `svg` define automatically) — rasterized once per (asset, pixel size) into a shared
 	  static cache, so N icons of the same glyph cost one texture and batch as bitmaps.

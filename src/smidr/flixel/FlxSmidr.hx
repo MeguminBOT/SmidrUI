@@ -12,6 +12,7 @@ import smidr.input.UIPointer;
 	Optional Flixel bridge (compiled only when the `flixel` haxelib is present).
 
 	Solves the three points of friction between SmiðrUI and a Flixel host:
+
 	- **Viewport** — `init()` parents the `UIRoot` inside `FlxG.game` below the cursor
 	  container, so UI coordinates equal Flixel game coordinates under every scale mode with
 	  zero per-frame sync (Flixel's custom cursor also renders above the UI for free).

@@ -15,6 +15,7 @@ import smidr.input.UIPointer;
 	use `beginCapture()` to receive exclusive `onDragMove`/`onDragEnd` callbacks.
 
 	Construction flavors:
+
 	- `interactive = true` — hover/press/click handling (leaf widgets)
 	- `interactive = false, blocking = true` — a passive surface that still swallows pointer hits
 	  (panels, backdrops); children stay interactive
