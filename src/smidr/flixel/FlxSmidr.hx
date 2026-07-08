@@ -71,8 +71,22 @@ final class FlxSmidr {
 			hooked = true;
 			FlxG.signals.postUpdate.add(onPostUpdate);
 			FlxG.signals.gameResized.add(onResized);
+			FlxG.cameras.cameraAdded.add(onCameraAdded);
 		}
 		return root;
+	}
+
+	/**
+		Keeps an above-game root above the camera layers: Flixel inserts every new camera's
+		flash sprite at the input container's index, which lands ON TOP of a root added
+		earlier (state camera resets do this too, hiding the whole UI).
+	**/
+	static function onCameraAdded(_:flixel.FlxCamera):Void {
+		if (root == null || !attachedAboveGame || root.parent != FlxG.game)
+			return;
+		@:privateAccess var inputIdx:Int = FlxG.game.getChildIndex(FlxG.game._inputContainer);
+		if (FlxG.game.getChildIndex(root) < inputIdx - 1)
+			FlxG.game.setChildIndex(root, inputIdx - 1);
 	}
 
 	/** `true` while the game should ignore its own mouse input (pointer owned by the UI). **/
@@ -228,6 +242,7 @@ final class FlxSmidr {
 			hooked = false;
 			FlxG.signals.postUpdate.remove(onPostUpdate);
 			FlxG.signals.gameResized.remove(onResized);
+			FlxG.cameras.cameraAdded.remove(onCameraAdded);
 		}
 		if (wasOverUI && cursorMode == CURSOR_SYSTEM_OVER_UI)
 			FlxG.mouse.useSystemCursor = savedSystemCursor;
