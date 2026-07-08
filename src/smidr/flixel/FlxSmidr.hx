@@ -15,9 +15,10 @@ import smidr.types.UICursorMode;
 	Solves the three points of friction between SmiðrUI and a Flixel host:
 
 	- **Viewport** — `init()` parents the `UIRoot` inside `FlxG.game` below the cursor
-	  container, so UI coordinates equal Flixel game coordinates under every scale mode with
-	  zero per-frame sync (Flixel's custom cursor also renders above the UI for free).
-	  `init(false)` stage-attaches instead and keeps `setViewport` synced on resize.
+	  container (Flixel's custom cursor renders above the UI for free): the scale mode's offset
+	  comes from the parent and `syncViewport` applies its scale on resize, so UI coordinates
+	  equal Flixel game coordinates under every scale mode. `init(false)` stage-attaches
+	  instead and syncs both offset and scale on resize.
 	- **Cursor** — with a custom `FlxG.mouse` cursor the system cursor is hidden, so widget
 	  `hoverCursor`s never show; `cursorMode = CURSOR_SYSTEM_OVER_UI` restores the system
 	  cursor while the pointer is over UI, or assign `onOverUIChanged` to swap your own
@@ -63,10 +64,9 @@ final class FlxSmidr {
 		root = new UIRoot();
 		if (aboveGame)
 			FlxG.addChildBelowMouse(root);
-		else {
+		else
 			FlxG.stage.addChild(root);
-			syncViewport();
-		}
+		syncViewport();
 		if (!hooked) {
 			hooked = true;
 			FlxG.signals.postUpdate.add(onPostUpdate);
@@ -90,15 +90,24 @@ final class FlxSmidr {
 	}
 
 	/**
-		Re-syncs the stage-attached root over the Flixel game viewport (no-op when the root
-		is parented inside `FlxG.game`). Called automatically on `gameResized`.
+		Re-syncs the root over the Flixel game viewport from the active scale mode. Called
+		automatically on `gameResized` (window resize / fullscreen toggle).
+
+		Both attach modes need this: Flixel's scale modes only OFFSET `FlxG.game` (`game.x/y`)
+		and scale each camera's flash sprite internally — the game container itself is never
+		scaled, so an above-game root inherits the offset from its parent but must still apply
+		the scale itself; a stage-attached root applies both.
 	**/
 	public static function syncViewport():Void {
-		if (root == null || attachedAboveGame)
+		if (root == null)
 			return;
 		var s = FlxG.scaleMode.scale;
-		var o = FlxG.scaleMode.offset;
-		root.setViewport(o.x, o.y, s.x, s.y);
+		if (attachedAboveGame) {
+			root.setViewport(0, 0, s.x, s.y);
+		} else {
+			var o = FlxG.scaleMode.offset;
+			root.setViewport(o.x, o.y, s.x, s.y);
+		}
 	}
 
 	/**
