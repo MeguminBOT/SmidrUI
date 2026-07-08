@@ -34,12 +34,24 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 	/** Width of the `- value +` box on the right. **/
 	public var boxWidth:Float;
 
+	/** Hold-to-repeat: delay in ms before auto-repeat starts. **/
+	public var repeatDelayMs:Float = 400;
+
+	/** Hold-to-repeat: starting interval between steps, in ms. **/
+	public var repeatStartMs:Float = 180;
+
+	/** Hold-to-repeat: fastest interval between steps, in ms (caps the acceleration). **/
+	public var repeatMinMs:Float = 60;
+
+	/** Hold-to-repeat: per-step interval multiplier (`1` disables acceleration). **/
+	public var repeatAccel:Float = 0.95;
+
 	final tf:TextField;
 	final valueTf:TextField;
 
 	var holdDir:Int = 0;
 	var holdTime:Float = 0;
-	var repeatInterval:Float = 140;
+	var repeatInterval:Float = 180;
 
 	var editing:Bool = false;
 	var editBuffer:String = "";
@@ -110,8 +122,8 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 		}
 		bump(dir);
 		holdDir = dir;
-		holdTime = -500; // initial delay before auto-repeat kicks in
-		repeatInterval = 140;
+		holdTime = -repeatDelayMs; // initial delay before auto-repeat kicks in
+		repeatInterval = repeatStartMs;
 		UIRoot.addTicker(tick);
 		beginCapture();
 	}
@@ -130,10 +142,10 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 		while (holdTime >= repeatInterval) {
 			holdTime -= repeatInterval;
 			bump(holdDir);
-			// accelerate the longer the button is held
-			repeatInterval *= 0.92;
-			if (repeatInterval < 28)
-				repeatInterval = 28;
+			// accelerate the longer the button is held, capped at repeatMinMs
+			repeatInterval *= repeatAccel;
+			if (repeatInterval < repeatMinMs)
+				repeatInterval = repeatMinMs;
 		}
 	}
 

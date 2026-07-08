@@ -209,6 +209,12 @@ final class UIRoot extends Sprite {
 	}
 
 	function __onFrame(_:Event):Void {
+		// Only the current (most recently staged) root steps the SHARED systems below (dirty
+		// flush, tweens, tickers, tooltip timing): if two roots ever overlap during a state
+		// hand-off, or one leaks, each would step them per frame, making caret blinks and
+		// hold-to-repeat run at a multiple of real time.
+		if (current != this)
+			return;
 		var now:Int = Lib.getTimer();
 		var dt:Float = now - lastTimer;
 		lastTimer = now;
@@ -247,6 +253,8 @@ final class UIRoot extends Sprite {
 	}
 
 	function __onAddedToStage(_:Event):Void {
+		// the newest staged root becomes the driver of the shared frame systems
+		current = this;
 		attachedStage = stage;
 		lastTimer = Lib.getTimer();
 		attachedStage.addEventListener(Event.ENTER_FRAME, __onFrame);
