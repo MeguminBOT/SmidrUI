@@ -101,6 +101,30 @@ final class UITheme {
 		changed();
 	}
 
+	/** Density multiplier applied by `applyMobilePreset` -- finger-sized controls on touch screens. **/
+	public static var mobileScale:Float = 1.4;
+
+	static var savedScale:Float = -1;
+
+	/**
+		Enlarges controls for touch (a scale bump, remembering the current density). Call when a
+		touch-first screen opens; pair with `clearMobilePreset` on close. Idempotent.
+	**/
+	public static function applyMobilePreset():Void {
+		if (savedScale < 0)
+			savedScale = scale;
+		setScale(mobileScale);
+	}
+
+	/** Restores the density saved by `applyMobilePreset`. No-op if the preset isn't active. **/
+	public static function clearMobilePreset():Void {
+		if (savedScale < 0)
+			return;
+		var prev:Float = savedScale;
+		savedScale = -1;
+		setScale(prev);
+	}
+
 	/** Notifies live widgets that theme values changed. **/
 	public static function changed():Void {
 		if (onChanged != null)
