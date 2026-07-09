@@ -1,5 +1,6 @@
 package smidr.widgets;
 
+import openfl.Lib;
 import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.events.MouseEvent;
@@ -8,11 +9,14 @@ import smidr.UIColor;
 import smidr.UIComponent;
 import smidr.UIRoot;
 import smidr.UITheme;
+import smidr.input.UIPointer;
 
 /**
 	A fixed-size, vertically scrollable container. Add children to `content`; call
 	`refreshContent()` after (re)filling it. Scrolls by mouse wheel and by dragging the slim
-	scrollbar thumb. Clipping uses `scrollRect` (GPU clip — scrolling never repaints children).
+	scrollbar thumb; on mobile (`touchScroll`) dragging anywhere scrolls with fling momentum —
+	a drag past the threshold steals the press so no child widget clicks. Clipping uses
+	`scrollRect` (GPU clip — scrolling never repaints children).
 **/
 final class UIScrollPane extends UIComponent {
 	/** Put pane content here (coordinates relative to the pane's top-left). **/
@@ -24,10 +28,24 @@ final class UIScrollPane extends UIComponent {
 	/** Pixels per wheel notch. **/
 	public var wheelStep:Float = 40;
 
+	/** Drag-anywhere scrolling with fling momentum (default on for mobile). **/
+	public var touchScroll:Bool = #if mobile true #else false #end;
+
+	static inline var MODE_NONE:Int = 0;
+	static inline var MODE_THUMB:Int = 1;
+	static inline var MODE_TOUCH:Int = 2;
+
 	var contentH:Float = 0;
 	var thumb:Shape;
-	var dragging:Bool = false;
+
+	var mode:Int = MODE_NONE;
+	var dragPending:Bool = false;
 	var dragGrabY:Float = 0;
+	var dragStartScroll:Float = 0;
+	var lastY:Float = 0;
+	var lastT:Int = 0;
+	var vel:Float = 0;
+	var flinging:Bool = false;
 
 	/**
 		@param width layout width (the scrollbar lives inside it)
@@ -40,7 +58,8 @@ final class UIScrollPane extends UIComponent {
 		thumb = new Shape();
 		addChild(thumb);
 		addEventListener(MouseEvent.MOUSE_WHEEL, __onWheel);
-		addEventListener(MouseEvent.MOUSE_DOWN, __onBarPress);
+		addEventListener(MouseEvent.MOUSE_DOWN, __onDown);
+		addEventListener(MouseEvent.MOUSE_MOVE, __onMove);
 		resize(width, height);
 		render();
 	}
@@ -122,40 +141,103 @@ final class UIScrollPane extends UIComponent {
 	function __onWheel(e:MouseEvent):Void {
 		if (maxScroll <= 0)
 			return;
+		stopFling();
 		setScroll(scrollY - e.delta * wheelStep);
 		e.stopPropagation();
 	}
 
-	function __onBarPress(e:MouseEvent):Void {
+	function __onDown(e:MouseEvent):Void {
+		stopFling();
 		if (maxScroll <= 0)
 			return;
-		if (e.localX < w - UITheme.px(4) - 4)
+		if (mouseX >= w - UITheme.px(4) - 4) {
+			mode = MODE_THUMB;
+			dragGrabY = e.stageY;
+			dragStartScroll = scrollY;
+			beginCapture();
+			e.stopPropagation();
 			return;
-		dragging = true;
-		dragGrabY = e.stageY;
-		dragStartScroll = scrollY;
-		beginCapture();
-		e.stopPropagation();
+		}
+		if (touchScroll) {
+			dragPending = true;
+			dragGrabY = e.stageY;
+			dragStartScroll = scrollY;
+			lastY = e.stageY;
+			lastT = Lib.getTimer();
+			vel = 0;
+		}
 	}
 
-	var dragStartScroll:Float = 0;
+	function __onMove(e:MouseEvent):Void {
+		if (!dragPending || mode != MODE_NONE)
+			return;
+		if (!e.buttonDown) {
+			dragPending = false;
+			return;
+		}
+		if (Math.abs(e.stageY - dragGrabY) < UITheme.px(8) * scaleFactorY())
+			return;
+		// a deeper widget (e.g. a UIList inside the pane) may already own the drag
+		if (UIPointer.captureTarget != null) {
+			dragPending = false;
+			return;
+		}
+		// steal the press: the child widget must neither stay pressed nor click on release
+		var pt:UIComponent = UIPointer.pressTarget;
+		if (pt != null)
+			@:privateAccess pt.releasePress(false);
+		@:privateAccess UIPointer.clearPress();
+		mode = MODE_TOUCH;
+		beginCapture();
+	}
 
 	override function onDragMove(stageX:Float, stageY:Float):Void {
-		if (!dragging)
-			return;
-		var trackH:Float = h - 4;
-		var thumbH:Float = trackH * (h / contentH);
-		if (thumbH < 24)
-			thumbH = 24;
-		var usable:Float = trackH - thumbH;
-		if (usable <= 0)
-			return;
-		var deltaStage:Float = (stageY - dragGrabY) / (scaleFactorY());
-		setScroll(dragStartScroll + deltaStage * (maxScroll / usable));
+		var sf:Float = scaleFactorY();
+		if (mode == MODE_THUMB) {
+			var trackH:Float = h - 4;
+			var thumbH:Float = trackH * (h / contentH);
+			if (thumbH < 24)
+				thumbH = 24;
+			var usable:Float = trackH - thumbH;
+			if (usable <= 0)
+				return;
+			setScroll(dragStartScroll + ((stageY - dragGrabY) / sf) * (maxScroll / usable));
+		} else if (mode == MODE_TOUCH) {
+			var now:Int = Lib.getTimer();
+			var dt:Float = now - lastT;
+			if (dt > 0) {
+				vel = ((stageY - lastY) / sf) / dt;
+				lastY = stageY;
+				lastT = now;
+			}
+			setScroll(dragStartScroll - (stageY - dragGrabY) / sf);
+		}
 	}
 
 	override function onDragEnd():Void {
-		dragging = false;
+		var wasTouch:Bool = (mode == MODE_TOUCH);
+		mode = MODE_NONE;
+		dragPending = false;
+		if (wasTouch && Math.abs(vel) > 0.1 && maxScroll > 0) {
+			flinging = true;
+			UIRoot.addTicker(flingTick);
+		}
+	}
+
+	function flingTick(dtMs:Float):Void {
+		var next:Float = scrollY - vel * dtMs;
+		setScroll(next);
+		vel *= Math.exp(-dtMs * 0.004);
+		if (Math.abs(vel) < 0.02 || scrollY != next)
+			stopFling();
+	}
+
+	function stopFling():Void {
+		if (!flinging)
+			return;
+		flinging = false;
+		vel = 0;
+		UIRoot.removeTicker(flingTick);
 	}
 
 	inline function scaleFactorY():Float {
@@ -165,7 +247,9 @@ final class UIScrollPane extends UIComponent {
 
 	override public function dispose():Void {
 		removeEventListener(MouseEvent.MOUSE_WHEEL, __onWheel);
-		removeEventListener(MouseEvent.MOUSE_DOWN, __onBarPress);
+		removeEventListener(MouseEvent.MOUSE_DOWN, __onDown);
+		removeEventListener(MouseEvent.MOUSE_MOVE, __onMove);
+		stopFling();
 		var i:Int = content.numChildren;
 		while (--i >= 0) {
 			var child = content.getChildAt(i);
