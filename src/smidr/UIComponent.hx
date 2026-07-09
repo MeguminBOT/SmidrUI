@@ -37,9 +37,17 @@ class UIComponent extends Sprite {
 	/**
 		Fired on a right mouse press over this widget (context menus). Only interactive widgets
 		receive pointer events, so this never fires on passive widgets like `UILabel`/`UIPanel` —
-		attach it to a `UIButton` (or another interactive widget) instead.
+		attach it to a `UIButton` (or another interactive widget) instead. On touch, a long-press
+		fires the same path (see `UIRoot.longPressMs`).
 	**/
 	public var onRightClick:Void->Void = null;
+
+	/**
+		Opts a subclass that overrides `onRightPress` (without setting `onRightClick`) into
+		long-press-as-right-click on touch. Widgets with `onRightClick` set are included
+		automatically.
+	**/
+	public var longPressable:Bool = false;
 
 	/** Fired when the cursor first enters this widget (hover-driven descriptions/previews). Interactive widgets only. **/
 	public var onHover:Void->Void = null;

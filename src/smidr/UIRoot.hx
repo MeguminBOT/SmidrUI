@@ -192,6 +192,25 @@ final class UIRoot extends Sprite {
 	/** Hover-delay before a tooltip appears, in ms. **/
 	public static var tooltipDelayMs:Float = 500;
 
+	/**
+		Long-press-as-right-click for touch (default on for mobile): a press held `longPressMs`
+		without moving past the slop and without any drag capture fires the pressed widget's
+		right-click path (`onRightPress`/`onRightClick`), or peeks its tooltip when it has no
+		right-click consumer. The press is stolen either way, so releasing never also clicks.
+	**/
+	public static var longPressEnabled:Bool = #if mobile true #else false #end;
+
+	/** Hold time before a long-press fires, in ms. **/
+	public static var longPressMs:Float = 500;
+
+	/** Fired when a long-press triggers; assign for haptic/audio feedback. **/
+	public static var onLongPress:UIComponent->Void = null;
+
+	static var pressStageX:Float = 0;
+	static var pressStageY:Float = 0;
+	static var pressTime:Float = 0;
+	static var longPressArmed:Bool = false;
+
 	@:allow(smidr.UIComponent)
 	static function tooltipEnter(c:UIComponent):Void {
 		hoverComp = c;
@@ -250,6 +269,36 @@ final class UIRoot extends Sprite {
 					onTooltipShow(hoverComp);
 			}
 		}
+
+		if (longPressArmed) {
+			if (UIPointer.pressTarget == null || UIPointer.captureTarget != null) {
+				longPressArmed = false;
+			} else {
+				pressTime += dt;
+				if (pressTime >= longPressMs) {
+					longPressArmed = false;
+					fireLongPress(UIPointer.pressTarget);
+				}
+			}
+		}
+	}
+
+	function fireLongPress(target:UIComponent):Void {
+		// steal the press first: the release after a long-press must never also click
+		@:privateAccess target.releasePress(false);
+		@:privateAccess UIPointer.clearPress();
+		if (onLongPress != null)
+			onLongPress(target);
+		if (target.onRightClick != null || target.longPressable) {
+			var local = target.globalToLocal(new openfl.geom.Point(pressStageX, pressStageY));
+			@:privateAccess target.onRightPress(local.x, local.y);
+			if (target.onRightClick != null)
+				target.onRightClick();
+		} else if (onTooltipShow != null && (target.tooltip != null || target.tooltipShortcut != null)) {
+			hoverComp = target;
+			hoverTime = -1;
+			onTooltipShow(target);
+		}
 	}
 
 	function __onAddedToStage(_:Event):Void {
@@ -284,6 +333,13 @@ final class UIRoot extends Sprite {
 			@:privateAccess UIPointer.clearPress();
 		@:privateAccess UIPointer.downOnUI = inside;
 
+		if (longPressEnabled && inside) {
+			longPressArmed = true;
+			pressStageX = e.stageX;
+			pressStageY = e.stageY;
+			pressTime = 0;
+		}
+
 		var focused:IUIFocusable = UIFocus.focused;
 		if (focused != null && focused is UIComponent && !chainContains(target, cast focused))
 			UIFocus.clear();
@@ -295,6 +351,7 @@ final class UIRoot extends Sprite {
 	}
 
 	function __onStageMouseUp(_:MouseEvent):Void {
+		longPressArmed = false;
 		var capture:UIComponent = UIPointer.captureTarget;
 		if (capture != null) {
 			UIPointer.releaseCapture(capture);
@@ -308,6 +365,11 @@ final class UIRoot extends Sprite {
 
 	function __onStageMouseMove(e:MouseEvent):Void {
 		@:privateAccess UIPointer.setOverUI(containsTarget(cast(e.target, DisplayObject)));
+		if (longPressArmed) {
+			var slop:Float = UITheme.px(10) * ((scaleX > 0) ? scaleX : 1.0);
+			if (Math.abs(e.stageX - pressStageX) > slop || Math.abs(e.stageY - pressStageY) > slop)
+				longPressArmed = false;
+		}
 		var capture:UIComponent = UIPointer.captureTarget;
 		if (capture != null)
 			capture.onDragMove(e.stageX, e.stageY);
@@ -357,6 +419,7 @@ final class UIRoot extends Sprite {
 		dirtySwap.resize(0);
 		tickers.resize(0);
 		overlayClosers.resize(0);
+		longPressArmed = false;
 		hoverComp = null;
 		onTooltipShow = null;
 		onTooltipHide = null;
