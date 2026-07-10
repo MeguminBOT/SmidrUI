@@ -34,12 +34,15 @@ import smidr.widgets.UISegmentedControl;
 import smidr.widgets.UIStatusBar;
 import smidr.widgets.UISeparator;
 import smidr.widgets.UISlider;
+import smidr.widgets.UISplitter;
+import smidr.widgets.UIStack;
 import smidr.widgets.UIStepper;
 import smidr.widgets.UISwitch;
 import smidr.widgets.UITabs;
 import smidr.widgets.UITextInput;
 import smidr.widgets.UIToast;
 import smidr.widgets.UITooltip;
+import smidr.widgets.UIWindow;
 
 /**
 	A scrollable gallery of every widget, each wired to a status line. Meant to be compiled to a
@@ -426,6 +429,49 @@ class Gallery extends Sprite {
 		popRow.addChild(balloonBtn);
 		popRow.addChild(pieBtn);
 		put(popRow, 30);
+
+		rule();
+
+		head("UIStack — flow layout");
+		var stack = new UIStack(false, 40, 8);
+		stack.add(new UIButton("One", 70, 30));
+		stack.add(new UIButton("Two", 70, 30));
+		stack.add(new UIButton("Three", 84, 30));
+		put(stack, 40);
+
+		head("UISplitter — draggable divider");
+		var split = new UISplitter(false, COL, 90);
+		var leftLabel = new UILabel("Left pane", 12, SECONDARY);
+		leftLabel.x = 12;
+		leftLabel.y = 12;
+		split.first.addChild(leftLabel);
+		var rightLabel = new UILabel("Right pane", 12, SECONDARY);
+		rightLabel.x = 12;
+		rightLabel.y = 12;
+		split.second.addChild(rightLabel);
+		put(split, 90);
+
+		head("UIWindow — draggable / resizable / collapsible (content stays clickable)");
+		var spawnBtn = new UIButton("Open window", 150, 30, () -> spawnWindow());
+		put(spawnBtn, 30);
+	}
+
+	function spawnWindow():Void {
+		var win = new UIWindow("Tool window", 250, 150);
+		win.closable = true;
+		win.collapsible = true;
+		win.resizable = true;
+		var inBtn = new UIButton("Inside button", 170, 30, () -> setStatus("Window button clicked"));
+		inBtn.x = 16;
+		inBtn.y = 16;
+		win.content.addChild(inBtn);
+		var inChk = new UICheckbox("A checkbox", 210, false, (on) -> setStatus('Window checkbox: $on'));
+		inChk.x = 16;
+		inChk.y = 56;
+		win.content.addChild(inChk);
+		win.x = 200;
+		win.y = 130;
+		ui.content.addChild(win);
 	}
 
 	function openBalloon(anchor:UIButton):Void {

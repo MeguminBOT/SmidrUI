@@ -7,6 +7,8 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
+- `UIStack` -- a flow-layout container (row/column, `gap`/`padding`, `stretch` or `align`).
+- `UISplitter` -- two resizable panes with a draggable divider (side-by-side or stacked).
 - `UIRadioGroup` -- an exclusive vertical radio list (the counterpart to `UISegmentedControl`).
 - `UIStatusBar` -- a themed bottom bar of left/right-aligned text cells with separators.
 - `UIBalloon` -- a callout/popover with a directional tail that points at an anchor, shown on the
@@ -29,7 +31,10 @@ All notable changes to this project are documented here. The format is based on
   (2D scale fake), `REVOLVE`, `SHAKE`, `PULSE`. Plus `UIEdge` (`LEFT`/`TOP`/`RIGHT`/`BOTTOM`).
 - `UIWindow` -- a draggable, titled window panel: widgets parented into its `content` move
   with the window automatically (display-list children), the title bar drags with viewport
-  clamping, and the body follows the theme via a `UIFill`.
+  clamping, and the body follows the theme via a `UIFill`. The title bar is an interactive child
+  (so widgets inside `content` stay clickable -- the window no longer disables `mouseChildren`),
+  and it supports `closable` / `collapsible` / `resizable` chrome plus raise-to-front with
+  active-window styling.
 - `UIStepper` hold-to-repeat tuning: `repeatDelayMs` / `repeatStartMs` / `repeatMinMs` /
   `repeatAccel` (defaults softened from 500/140/28/0.92 to 400/180/60/0.95).
 - `UIScrollPane` touch scrolling (`touchScroll`, default on for mobile): drag anywhere with
