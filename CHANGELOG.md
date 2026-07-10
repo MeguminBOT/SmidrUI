@@ -7,6 +7,10 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
+- `UIDateTimePicker` -- a labelled date/time field: clicking opens a calendar popup with month
+  navigation and a 6x7 day grid (adjacent-month days dimmed, today ringed, selection filled). With
+  `showTime` the popup adds hour/minute `UIStepper`s and a Set button; without it a day click
+  commits. Values are plain Haxe `Date`s, shown as `YYYY-MM-DD` (plus ` HH:MM` with time).
 - `UIDropdown.searchable` -- combo-box type-ahead: while the popup is open, a search header shows
   the query and typing filters the entries (case-insensitive substring on the shown labels),
   Backspace edits, Escape clears then closes, and Enter picks the first match. Off by default, so

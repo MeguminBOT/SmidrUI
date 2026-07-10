@@ -19,6 +19,7 @@ import smidr.widgets.UIChip;
 import smidr.overlays.UIContextMenu;
 import smidr.widgets.UIDataGrid;
 import smidr.widgets.UIDataGrid.UIDataColumn;
+import smidr.widgets.UIDateTimePicker;
 import smidr.widgets.UIDockHost;
 import smidr.widgets.UIDockPanel;
 import smidr.widgets.UIDropdown;
@@ -313,6 +314,15 @@ class Gallery extends Sprite {
 			"Denver", "Chicago", "New York", "Sao Paulo"
 		]);
 		put(timezone, 34);
+
+		head("UIDateTimePicker — calendar popup");
+		var datePick = new UIDateTimePicker("Release date", COL, null, (d) -> setStatus('Date: ${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}'));
+		put(datePick, 34);
+
+		head("UIDateTimePicker — with time");
+		var dtPick = new UIDateTimePicker("Meeting", COL, null, (d) -> setStatus('When: ${d.toString()}'));
+		dtPick.showTime = true;
+		put(dtPick, 34);
 
 		head("UITextInput");
 		var input = new UITextInput("Name", COL, "Player", (t) -> setStatus('Input: $t'));
