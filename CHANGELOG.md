@@ -7,8 +7,46 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
-- `smidr.types.UISurface` -- a theme surface role (`BG`/`PANEL`/`PANEL2`/`PANEL3`/`CARD`/`INPUT`).
-- `UIPanel.solid(w, h, argb)` -- a fixed-colour panel for the rare static case (backdrops, brand).
+- `UIWindow` -- a draggable, titled window panel: widgets parented into its `content` move
+  with the window automatically (display-list children), the title bar drags with viewport
+  clamping, and the body follows the theme via a `UIFill`.
+- `UIStepper` hold-to-repeat tuning: `repeatDelayMs` / `repeatStartMs` / `repeatMinMs` /
+  `repeatAccel` (defaults softened from 500/140/28/0.92 to 400/180/60/0.95).
+- `UIScrollPane` touch scrolling (`touchScroll`, default on for mobile): drag anywhere with
+  fling momentum, mirroring `UIList` — a drag past the threshold steals the press so child
+  widgets don't click, and yields to a deeper capture (e.g. a `UIList` inside the pane).
+- Long-press-as-right-click on touch (`UIRoot.longPressMs` / `longPressEnabled`, default on
+  for mobile): a held, unmoved press fires the pressed widget's `onRightPress`/`onRightClick`
+  path — or peeks its tooltip when it has no right-click consumer — and steals the press so
+  releasing never also clicks. `UIComponent.longPressable` opts in `onRightPress`-only
+  subclasses; `UIRoot.onLongPress` is a feedback hook (haptics).
+- `UIDrawer` — a persistent edge-docked slide-out for mobile layouts: swipe in from the
+  viewport edge (`attachEdge()`), horizontally-dominant drags slide it while vertical drags
+  pass through to inner scroll panes, and velocity/position settle it open or closed; scrim
+  tap, Escape and `pushOverlayCloser` hosts close it.
+- Mobile IME support in `UIFocus`: focusing a typing component raises the platform soft
+  keyboard; committed text feeds the normal `onKeyDown(0, charCode)` path and
+  Backspace/Enter/Escape are bridged from lime's window (deduplicated against the stage
+  keyboard chain).
+
+### Fixed
+- Above-game roots stay above the camera layers: Flixel inserts every new camera's flash
+  sprite at the input container's index, which landed on top of a root added earlier, so any
+  state that reset or added cameras after `init()` rendered its whole UI invisible. The root
+  now re-raises itself on `FlxG.cameras.cameraAdded`.
+- Shared frame systems (dirty flush, tweens, tickers, tooltips) are now stepped only by the
+  CURRENT root: overlapping or leaked roots each stepped them per frame, so caret blinks and
+  stepper hold-repeats ran at a multiple of real time.
+- `FlxSmidr` above-game roots were never scaled: Flixel's scale modes only offset `FlxG.game`
+  and scale each camera internally, so `init()` UI rendered at 1:1 pixels and ignored window
+  resizes/fullscreen. `syncViewport` now applies the scale mode's scale in both attach modes
+  (offset too when stage-attached) and runs on `init` and every `gameResized`.
+
+### Added
+- `smidr.types.UIFill` -- what fills a themed rectangle: a theme slot
+  (`BG`/`PANEL`/`PANEL2`/`PANEL3`/`CARD`/`INPUT`, re-read from the live palette every render)
+  or a fixed ARGB colour, one `Int` at runtime. Slot names resolve unqualified and colour
+  literals are accepted directly (`from Int`); `resolve()` returns the colour to paint.
 - `UIColor.luminance(c)` and `UIColor.contrastText(bg)` helpers.
 - A scrollable widget `Gallery` example (`-Dex_gallery`) with a responsive layout, a themed
   backdrop/status bar and a continuously animating progress bar.
@@ -18,12 +56,11 @@ All notable changes to this project are documented here. The format is based on
   fill, so the label stays legible on light themes instead of going dark-on-dark.
 
 ### Changed
-- `UIPanel` is now theme-following by default: the constructor takes a `UISurface` role
-  (`new UIPanel(w, h, PANEL)`) and re-reads the palette every render, so panels follow theme
-  swaps like every other widget. **Breaking:** the old `new UIPanel(w, h, fill:Int)` and the
-  `UIPanel.themed(...)` factory are removed -- use the role constructor, or `UIPanel.solid` for a
-  fixed colour.
-- `UISurface` is `to Int` only (no `from Int`), so a theme colour int can't be mistaken for a role.
+- `UIPanel` is now theme-following by default: `fill` is a `UIFill`, and the constructor's
+  colour argument became optional -- `new UIPanel(w, h)` paints the live `PANEL` slot and
+  follows theme swaps like every other widget, `new UIPanel(w, h, CARD)` picks another slot,
+  and existing `new UIPanel(w, h, 0xAARRGGBB)` calls keep compiling with the same fixed-colour
+  behaviour as 0.2.x.
 
 ## [0.2.1] — 2026-07-07
 

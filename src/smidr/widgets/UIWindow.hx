@@ -8,7 +8,7 @@ import smidr.UIComponent;
 import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
-import smidr.types.UISurface;
+import smidr.types.UIFill;
 
 /**
 	A draggable, titled window and the supported way to build movable tool panels. Parent the
@@ -17,8 +17,8 @@ import smidr.types.UISurface;
 	in window-local coordinates and never touched again on drag.
 
 	The title bar is the drag handle (`draggable = false` pins the window); dragging clamps so
-	part of the bar always stays reachable inside the stage viewport. The body is a themed
-	`UISurface` fill (`PANEL` by default) with a 1px outline and a `PANEL3` title band, so it
+	part of the bar always stays reachable inside the stage viewport. The body is a `UIFill`
+	(the `PANEL` theme slot by default) with a 1px outline and a `PANEL3` title band, so it
 	follows theme swaps like `UIPanel`.
 **/
 final class UIWindow extends UIComponent {
@@ -26,8 +26,8 @@ final class UIWindow extends UIComponent {
 	public var fallback:String = "";
 	public var title(default, set):String;
 
-	/** The theme surface role driving the body fill; follows theme swaps. **/
-	public var surface(default, set):UISurface = PANEL;
+	/** What the body paints: a theme slot (follows theme swaps) or a fixed ARGB colour. **/
+	public var fill(default, set):UIFill = PANEL;
 
 	/** `false` pins the window in place (the title bar stops dragging). **/
 	public var draggable:Bool = true;
@@ -53,12 +53,12 @@ final class UIWindow extends UIComponent {
 		@param title the title-bar text (raw; use `localize` for translated titles)
 		@param width layout width
 		@param height TOTAL layout height, title bar included
-		@param surface the body's theme surface role
+		@param fill the body fill: a theme slot or a fixed ARGB colour
 	**/
-	public function new(title:String, width:Float, height:Float, surface:UISurface = PANEL) {
+	public function new(title:String, width:Float, height:Float, fill:UIFill = PANEL) {
 		super(true, true);
 		@:bypassAccessor this.title = title;
-		@:bypassAccessor this.surface = surface;
+		@:bypassAccessor this.fill = fill;
 		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
 		addChild(tf);
 		content = new Sprite();
@@ -80,23 +80,11 @@ final class UIWindow extends UIComponent {
 	inline function barPx():Float
 		return UITheme.px(barHeight);
 
-	inline function resolveFill():Int {
-		return switch (surface) {
-			case BG: UITheme.bg;
-			case PANEL: UITheme.panel;
-			case PANEL2: UITheme.panel2;
-			case PANEL3: UITheme.panel3;
-			case CARD: UITheme.card;
-			case INPUT: UITheme.inputBg;
-			default: UITheme.panel;
-		}
-	}
-
 	override public function render():Void {
 		var g = graphics;
 		g.clear();
 		var barH:Float = barPx();
-		var f:Int = resolveFill();
+		var f:Int = fill.resolve();
 
 		g.beginFill(UIColor.rgb(f), UIColor.alphaOf(f));
 		g.drawRect(0, 0, w, h);
@@ -191,8 +179,8 @@ final class UIWindow extends UIComponent {
 		return v;
 	}
 
-	function set_surface(v:UISurface):UISurface {
-		surface = v;
+	function set_fill(v:UIFill):UIFill {
+		fill = v;
 		invalidate();
 		return v;
 	}

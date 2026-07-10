@@ -94,8 +94,9 @@ class Main extends Sprite {
 		// match your content viewport if you letterbox/scale (offsetX, offsetY, scaleX, scaleY)
 		ui.setViewport(0, 0, 1, 1);
 
-		// a background panel
-		var panel = new UIPanel(240, 120, 0xFF1E1E21);
+		// a background panel (themed by default — follows UITheme swaps;
+		// pass a slot like CARD, or an ARGB colour like 0xFF1E1E21 for a fixed fill)
+		var panel = new UIPanel(240, 120);
 		panel.x = 40;
 		panel.y = 40;
 		ui.content.addChild(panel);

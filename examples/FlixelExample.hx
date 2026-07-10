@@ -63,7 +63,7 @@ class FlixelExample extends FlxState {
 	function buildHud():Void {
 		var root = FlxSmidr.root;
 
-		var panel = UIPanel.solid(220, 96, 0xE61E1E21); // fixed translucent HUD backing
+		var panel = new UIPanel(220, 96, 0xE61E1E21); // fixed translucent HUD backing
 		panel.x = 12;
 		panel.y = 12;
 		panel.corner = 8;
