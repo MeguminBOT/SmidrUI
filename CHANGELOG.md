@@ -7,6 +7,10 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
+- `UIDropdown.searchable` -- combo-box type-ahead: while the popup is open, a search header shows
+  the query and typing filters the entries (case-insensitive substring on the shown labels),
+  Backspace edits, Escape clears then closes, and Enter picks the first match. Off by default, so
+  existing dropdowns are unchanged.
 - `UITreeView` -- a hierarchical, expandable tree built on `UIList` virtualization: a mutable
   `UITreeNode` model is flattened to its visible nodes and fed to the list, so a huge tree still
   only instantiates on-screen rows. Rows indent by depth and draw an expand/collapse chevron

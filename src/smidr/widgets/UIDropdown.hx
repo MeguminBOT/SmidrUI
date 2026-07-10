@@ -9,6 +9,8 @@ import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UIRoot;
 import smidr.UITheme;
+import smidr.input.IUIFocusable;
+import smidr.input.UIFocus;
 import smidr.types.UIEase;
 
 /**
@@ -16,8 +18,12 @@ import smidr.types.UIEase;
 	popup list on `UIRoot.popupLayer` behind a click-blocking backdrop, so nothing underneath can
 	be interacted with while it is open (Escape or an outside click closes it). `display` entries
 	override row labels while `items` holds the raw values delivered to `onSelect`.
+
+	Set `searchable` for combo-box type-ahead: while the popup is open, typing filters the list
+	(case-insensitive substring on the shown labels), Backspace edits the query, and Enter picks
+	the first match. A search header at the top of the popup shows the query.
 **/
-final class UIDropdown extends UIComponent {
+final class UIDropdown extends UIComponent implements IUIFocusable {
 	public var key(default, set):String = null;
 	public var fallback:String = "";
 	public var label(default, set):String;
@@ -32,6 +38,9 @@ final class UIDropdown extends UIComponent {
 	/** Max visible rows before the popup scrolls. **/
 	public var maxRows:Int = 10;
 
+	/** Combo-box type-ahead: while open, typing filters the popup and Enter picks the first match. **/
+	public var searchable:Bool = false;
+
 	var items:Array<String> = [];
 	var display:Array<String> = [];
 
@@ -40,6 +49,10 @@ final class UIDropdown extends UIComponent {
 
 	var popup:Sprite = null;
 	var popupPane:UIScrollPane = null;
+	var searchField:TextField = null;
+	var query:String = "";
+	var filtered:Array<Int> = [];
+	var popupRowH:Float = 0;
 
 	/**
 		@param label the row text on the left
@@ -174,8 +187,11 @@ final class UIDropdown extends UIComponent {
 		popup.addChild(blocker);
 
 		var rowH:Float = UITheme.px(22);
+		popupRowH = rowH;
 		var rows:Int = (items.length < maxRows) ? items.length : maxRows;
 		var listH:Float = rows * rowH + UITheme.px(8);
+		var headerH:Float = searchable ? UITheme.px(26) : 0;
+		var panelH:Float = headerH + listH;
 
 		var origin:Point = localToGlobal(new Point(w - controlWidth, h));
 		var local:Point = root.popupLayer.globalToLocal(origin);
@@ -184,17 +200,22 @@ final class UIDropdown extends UIComponent {
 		var g = panel.graphics;
 		var r:Float = UITheme.px(6);
 		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRoundRect(0, 0, controlWidth, listH, r, r);
+		g.drawRoundRect(0, 0, controlWidth, panelH, r, r);
 		g.endFill();
 		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0.5, 0.5, controlWidth - 1, listH - 1, r, r);
+		g.drawRoundRect(0.5, 0.5, controlWidth - 1, panelH - 1, r, r);
 		g.lineStyle();
+		if (searchable) {
+			g.beginFill(UIColor.rgb(UITheme.border), 0.6);
+			g.drawRect(UITheme.px(8), headerH - 1, controlWidth - UITheme.px(16), 1);
+			g.endFill();
+		}
 		panel.x = local.x;
 		// open upward when the list would clip past the window bottom
 		var vh:Float = (root.stage != null && root.scaleY > 0) ? root.stage.stageHeight / root.scaleY : 720;
 		var py:Float = local.y + 2;
-		if (py + listH > vh - 4)
-			py = local.y - h - listH - 2;
+		if (py + panelH > vh - 4)
+			py = local.y - h - panelH - 2;
 		if (py < 4)
 			py = 4;
 		panel.y = py;
@@ -206,26 +227,86 @@ final class UIDropdown extends UIComponent {
 			panel.scaleY = 0.96 + 0.04 * p;
 		}, 0, 1, 145, OUT_QUAD);
 
-		popupPane = new UIScrollPane(controlWidth, listH - UITheme.px(8));
-		popupPane.y = UITheme.px(4);
-		var i:Int = 0;
-		var n:Int = items.length;
-		while (i < n) {
-			var row:UIDropdownRow = new UIDropdownRow(this, i, displayAt(i), controlWidth, rowH, i == selectedIndex);
-			row.y = i * rowH;
-			popupPane.content.addChild(row);
-			i++;
+		if (searchable) {
+			query = "";
+			searchField = UIFonts.make(UITheme.fs(11), UITheme.text3);
+			searchField.x = UITheme.px(9);
+			searchField.y = (headerH - UITheme.px(15)) / 2;
+			panel.addChild(searchField);
+			updateSearchField();
 		}
-		popupPane.refreshContent(n * rowH);
-		if (selectedIndex * rowH > popupPane.maxScroll)
-			popupPane.setScroll(popupPane.maxScroll);
-		else if (selectedIndex >= rows)
-			popupPane.setScroll(selectedIndex * rowH - listH / 2);
+
+		popupPane = new UIScrollPane(controlWidth, listH - UITheme.px(8));
+		popupPane.y = headerH + UITheme.px(4);
 		panel.addChild(popupPane);
+		recomputeFilter();
+		rebuildRows();
+		var pos:Int = filtered.indexOf(selectedIndex);
+		if (pos >= 0) {
+			if (pos * rowH > popupPane.maxScroll)
+				popupPane.setScroll(popupPane.maxScroll);
+			else if (pos >= rows)
+				popupPane.setScroll(pos * rowH - listH / 2);
+		}
 
 		root.popupLayer.addChild(popup);
 		UIRoot.pushOverlayCloser(closePopup);
+		if (searchable)
+			UIFocus.set(this);
 		invalidate();
+	}
+
+	function recomputeFilter():Void {
+		filtered.resize(0);
+		if (query == "") {
+			for (i in 0...items.length)
+				filtered.push(i);
+			return;
+		}
+		var needle:String = query.toLowerCase();
+		for (i in 0...items.length) {
+			if (displayAt(i).toLowerCase().indexOf(needle) >= 0)
+				filtered.push(i);
+		}
+	}
+
+	function rebuildRows():Void {
+		if (popupPane == null)
+			return;
+		var content = popupPane.content;
+		var i:Int = content.numChildren;
+		while (--i >= 0) {
+			var child = content.getChildAt(i);
+			if (child is UIComponent)
+				(cast child : UIComponent).dispose();
+		}
+		content.removeChildren();
+		var pos:Int = 0;
+		for (index in filtered) {
+			var row:UIDropdownRow = new UIDropdownRow(this, index, displayAt(index), controlWidth, popupRowH, index == selectedIndex);
+			row.y = pos * popupRowH;
+			content.addChild(row);
+			pos++;
+		}
+		popupPane.refreshContent(filtered.length * popupRowH);
+	}
+
+	function updateSearchField():Void {
+		if (searchField == null)
+			return;
+		var empty:Bool = (query == "");
+		UIFonts.restyle(searchField, UITheme.fs(11), empty ? UITheme.text3 : UITheme.text);
+		var shown:String = empty ? "Type to filter..." : query;
+		if (searchField.text != shown)
+			searchField.text = shown;
+	}
+
+	function afterQueryChange():Void {
+		recomputeFilter();
+		rebuildRows();
+		updateSearchField();
+		if (popupPane != null)
+			popupPane.setScroll(0);
 	}
 
 	/** Closes the popup list (no selection change). **/
@@ -233,6 +314,9 @@ final class UIDropdown extends UIComponent {
 		if (popup == null)
 			return;
 		UIRoot.removeOverlayCloser(closePopup);
+		UIFocus.clear(this);
+		searchField = null;
+		query = "";
 		if (popupPane != null) {
 			popupPane.dispose();
 			popupPane = null;
@@ -262,6 +346,46 @@ final class UIDropdown extends UIComponent {
 	override public function dispose():Void {
 		closePopup();
 		super.dispose();
+	}
+
+	public function capturesKeyboard():Bool {
+		return popup != null && searchable;
+	}
+
+	public function onFocusGained():Void {}
+
+	public function onFocusLost():Void {}
+
+	public function onKeyDown(keyCode:Int, charCode:Int, ctrl:Bool, shift:Bool, alt:Bool):Bool {
+		if (popup == null || !searchable)
+			return false;
+		switch (keyCode) {
+			case 8: // Backspace
+				if (query.length > 0) {
+					query = query.substr(0, query.length - 1);
+					afterQueryChange();
+				}
+				return true;
+			case 13: // Enter picks the first match
+				if (filtered.length > 0)
+					pick(filtered[0]);
+				else
+					closePopup();
+				return true;
+			case 27: // Escape clears the query, then closes
+				if (query != "") {
+					query = "";
+					afterQueryChange();
+				} else
+					closePopup();
+				return true;
+		}
+		if (charCode >= 32 && charCode != 127) {
+			query += String.fromCharCode(charCode);
+			afterQueryChange();
+			return true;
+		}
+		return false;
 	}
 
 	function set_key(v:String):String {

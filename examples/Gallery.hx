@@ -304,6 +304,16 @@ class Gallery extends Sprite {
 		dd.select(1);
 		put(dd, 34);
 
+		head("UIDropdown — searchable (type to filter)");
+		var timezone = new UIDropdown("Timezone", COL, (i, value) -> setStatus('Timezone: $value'));
+		timezone.searchable = true;
+		timezone.setItems([
+			"UTC", "London", "Paris", "Berlin", "Cairo", "Moscow", "Dubai", "Karachi", "Mumbai",
+			"Bangkok", "Shanghai", "Tokyo", "Sydney", "Auckland", "Honolulu", "Los Angeles",
+			"Denver", "Chicago", "New York", "Sao Paulo"
+		]);
+		put(timezone, 34);
+
 		head("UITextInput");
 		var input = new UITextInput("Name", COL, "Player", (t) -> setStatus('Input: $t'));
 		input.onEnter = (t) -> setStatus('Entered: $t');
