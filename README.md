@@ -55,7 +55,8 @@ tabs, checkboxes, switches, chips, sliders, steppers, segmented controls, text i
 capture, dropdowns (with optional type-ahead), date/time pickers, context menus, menu bars,
 accordions, scroll panes, stacks, split views,
 movable windows, dockable panels, data-bound lists, tree views, data grids, tile grids, radio
-groups, progress bars, status bars, modals, balloons, pie menus, tooltips and toasts.
+groups, colour pickers, progress bars, status bars, modals, balloons, pie menus, tooltips and
+toasts.
 
 ## Install
 

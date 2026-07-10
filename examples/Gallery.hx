@@ -16,6 +16,7 @@ import smidr.widgets.UIBalloon;
 import smidr.widgets.UIButton;
 import smidr.widgets.UICheckbox;
 import smidr.widgets.UIChip;
+import smidr.widgets.UIColorPicker;
 import smidr.overlays.UIContextMenu;
 import smidr.widgets.UIDataGrid;
 import smidr.widgets.UIDataGrid.UIDataColumn;
@@ -542,6 +543,10 @@ class Gallery extends Sprite {
 		grid.setData(files.length, (row, col) -> files[row][col]);
 		grid.onSelect = (row) -> setStatus('Grid: ${files[row][0]}');
 		put(grid, 168);
+
+		head("UIColorPicker — drag the square / hue strip, or click a preset");
+		var picker = new UIColorPicker(COL, UIColor.opaque(0x3DB7E2), (c) -> setStatus('Color: #${StringTools.hex(UIColor.rgb(c), 6)}'));
+		put(picker, 198);
 
 		head("UITileGrid — reflowing icon tiles");
 		var tileNames:Array<String> = ["Docs", "Readme", "Photo", "Star", "Heart", "Bell", "Home", "User", "Lock", "Clock", "Config", "Search"];
