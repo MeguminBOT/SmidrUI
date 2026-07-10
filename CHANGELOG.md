@@ -7,6 +7,11 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
+- `UISpinner` -- an indeterminate busy spinner (faint ring + sweeping arc) that steps a `UIRoot`
+  ticker only while `spinning`, so an idle one is free. `UIBadge` -- a count/status pill sized to
+  its text (hidden at 0 unless `showZero`, `N+` past `maxCount`, or a custom `text`) to overlay a
+  button or icon. `UIRating` -- a star rating with a live hover preview and `onChange` (built on the
+  `STAR` glyph).
 - `UIColorPicker` -- an inline HSV picker: a saturation/value square, a vertical hue strip, a live
   swatch + hex readout, and a row of preset swatches. Dragging the square or strip and clicking a
   preset all fire `onChange` with the opaque colour; the square and strip are gradient fills (no

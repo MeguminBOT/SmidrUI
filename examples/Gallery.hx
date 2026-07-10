@@ -12,6 +12,7 @@ import smidr.UITheme;
 import smidr.types.UIAnimationPreset;
 import smidr.types.UIGlyph;
 import smidr.widgets.UIAccordion;
+import smidr.widgets.UIBadge;
 import smidr.widgets.UIBalloon;
 import smidr.widgets.UIButton;
 import smidr.widgets.UICheckbox;
@@ -35,7 +36,9 @@ import smidr.widgets.UIModal;
 import smidr.widgets.UIPanel;
 import smidr.widgets.UIPieMenu;
 import smidr.widgets.UIRadioGroup;
+import smidr.widgets.UIRating;
 import smidr.widgets.UIScrollPane;
+import smidr.widgets.UISpinner;
 import smidr.widgets.UISegmentedControl;
 import smidr.widgets.UIStatusBar;
 import smidr.widgets.UISeparator;
@@ -361,6 +364,23 @@ class Gallery extends Sprite {
 		bar = new UIProgressBar("Downloading", COL, 0.0);
 		bar.showPercent = true;
 		put(bar, 30);
+
+		head("UISpinner / UIRating / UIBadge");
+		var indicators = new Sprite();
+		var spin = new UISpinner(28);
+		indicators.addChild(spin);
+		var rating = new UIRating(5, 3, (n) -> setStatus('Rating: $n'));
+		rating.x = 48;
+		rating.y = 4;
+		indicators.addChild(rating);
+		var badgeBtn = new UIButton("Inbox", 90, 30, () -> setStatus("Inbox"));
+		badgeBtn.x = 220;
+		indicators.addChild(badgeBtn);
+		var badge = new UIBadge(7);
+		badge.x = 220 + 90 - 12;
+		badge.y = -6;
+		indicators.addChild(badge);
+		put(indicators, 34);
 
 		rule();
 
