@@ -9,5 +9,6 @@
 SmallExample
 FullExample
 Gallery
+Calculator
 -cpp examples/bin/check
 --no-output
