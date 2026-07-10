@@ -38,7 +38,7 @@ final class UILabel extends UIComponent {
 	/** When `> 0`, the label word-wraps to this width (multi-line); `0` keeps the single-line auto-size. **/
 	public var wrapWidth(default, set):Float = 0;
 
-	final tf:TextField;
+	final textField:TextField;
 
 	/**
 		@param text the initial raw text
@@ -51,8 +51,8 @@ final class UILabel extends UIComponent {
 		this.size = size;
 		this.tone = tone;
 		this.align = (align != null) ? align : TextFormatAlign.LEFT;
-		tf = UIFonts.make(UITheme.fs(size), resolveColor());
-		addChild(tf);
+		textField = UIFonts.make(UITheme.fs(size), resolveColor());
+		addChild(textField);
 		this.text = text;
 		render();
 	}
@@ -77,25 +77,25 @@ final class UILabel extends UIComponent {
 
 	override public function render():Void {
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : text;
-		UIFonts.restyle(tf, UITheme.fs(size), resolveColor(), align);
+		UIFonts.restyle(textField, UITheme.fs(size), resolveColor(), align);
 		if (wrapWidth > 0) {
-			tf.multiline = true;
-			tf.wordWrap = true;
-			tf.autoSize = TextFieldAutoSize.NONE;
-			tf.width = wrapWidth;
-			if (tf.text != resolved)
-				tf.text = resolved;
+			textField.multiline = true;
+			textField.wordWrap = true;
+			textField.autoSize = TextFieldAutoSize.NONE;
+			textField.width = wrapWidth;
+			if (textField.text != resolved)
+				textField.text = resolved;
 			w = wrapWidth;
-			h = tf.textHeight + 4;
-			tf.height = h;
+			h = textField.textHeight + 4;
+			textField.height = h;
 		} else {
-			tf.multiline = false;
-			tf.wordWrap = false;
-			tf.autoSize = TextFieldAutoSize.LEFT;
-			if (tf.text != resolved)
-				tf.text = resolved;
-			w = tf.width;
-			h = tf.height;
+			textField.multiline = false;
+			textField.wordWrap = false;
+			textField.autoSize = TextFieldAutoSize.LEFT;
+			if (textField.text != resolved)
+				textField.text = resolved;
+			w = textField.width;
+			h = textField.height;
 		}
 	}
 

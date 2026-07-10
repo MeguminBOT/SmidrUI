@@ -20,8 +20,8 @@ final class UIAccordion extends UIComponent {
 	public var expanded(default, set):Bool = true;
 	public var onToggle:Bool->Void = null;
 
-	final tf:TextField;
-	var hintTf:TextField = null;
+	final labelField:TextField;
+	var hintField:TextField = null;
 
 	/**
 		@param title the header text (rendered upper-case)
@@ -34,8 +34,8 @@ final class UIAccordion extends UIComponent {
 		this.title = title;
 		@:bypassAccessor this.expanded = expanded;
 		this.onToggle = onToggle;
-		tf = UIFonts.make(UITheme.fs(10), UITheme.text3);
-		addChild(tf);
+		labelField = UIFonts.make(UITheme.fs(10), UITheme.text3);
+		addChild(labelField);
 		resize(width, UITheme.px(22));
 		render();
 	}
@@ -80,27 +80,27 @@ final class UIAccordion extends UIComponent {
 		}
 		g.endFill();
 
-		UIFonts.restyle(tf, UITheme.fs(10), UITheme.text3);
+		UIFonts.restyle(labelField, UITheme.fs(10), UITheme.text3);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : title;
 		resolved = resolved.toUpperCase();
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.x = UITheme.px(14);
-		tf.y = (h - tf.height) / 2 - 1;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.x = UITheme.px(14);
+		labelField.y = (h - labelField.height) / 2 - 1;
 
 		if (hint != null && hint != "") {
-			if (hintTf == null) {
-				hintTf = UIFonts.make(UITheme.fs(9), UITheme.text3);
-				addChild(hintTf);
+			if (hintField == null) {
+				hintField = UIFonts.make(UITheme.fs(9), UITheme.text3);
+				addChild(hintField);
 			}
-			UIFonts.restyle(hintTf, UITheme.fs(9), UITheme.text3);
-			if (hintTf.text != hint)
-				hintTf.text = hint;
-			hintTf.visible = true;
-			hintTf.x = w - hintTf.width;
-			hintTf.y = (h - hintTf.height) / 2;
-		} else if (hintTf != null)
-			hintTf.visible = false;
+			UIFonts.restyle(hintField, UITheme.fs(9), UITheme.text3);
+			if (hintField.text != hint)
+				hintField.text = hint;
+			hintField.visible = true;
+			hintField.x = w - hintField.width;
+			hintField.y = (h - hintField.height) / 2;
+		} else if (hintField != null)
+			hintField.visible = false;
 
 		g.beginFill(UIColor.rgb(UITheme.border));
 		g.drawRect(0, h - 1, w, 1);

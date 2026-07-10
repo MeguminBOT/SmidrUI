@@ -61,6 +61,18 @@ All notable changes to this project are documented here. The format is based on
   follows theme swaps like every other widget, `new UIPanel(w, h, CARD)` picks another slot,
   and existing `new UIPanel(w, h, 0xAARRGGBB)` calls keep compiling with the same fixed-colour
   behaviour as 0.2.x.
+- A naming pass across the library for consistency and readability. **Breaking:**
+  - `UILoadingBar` is renamed `UIProgressBar` and `UISegmented` is renamed `UISegmentedControl`
+    (the docs already described them that way).
+  - `UIIconRail`'s tab typedef `UIRailTab` is renamed `UIRailTabDef` (matching `UITabDef`/
+    `UIMenuDef`), and its `caption` field is renamed `label`.
+  - Callback names are normalized by payload: boolean toggles fire `onToggle(Bool)`
+    (`UICheckbox`/`UISwitch` moved off `onChange`), index selectors fire `onSelect(Int)`
+    (`UISegmentedControl` moved off `onChange`), and value editors keep `onChange(value)`.
+  - The labelled-row widgets' right-hand column width is unified to `controlWidth`
+    (was `boxWidth` on `UIStepper`/`UIDropdown`/`UITextInput`/`UIKeybind`/`UISegmentedControl`,
+    `trackWidth` on `UISlider`, `barWidth` on `UIProgressBar`).
+  - `UITheme.changed()` is renamed `UITheme.refresh()` to mirror `UILocale.refresh()`.
 
 ## [0.2.1] — 2026-07-07
 

@@ -18,12 +18,12 @@ import smidr.widgets.UIIconRail;
 import smidr.widgets.UIKeybind;
 import smidr.widgets.UILabel;
 import smidr.widgets.UIList;
-import smidr.widgets.UILoadingBar;
+import smidr.widgets.UIProgressBar;
 import smidr.widgets.UIMenuBar;
 import smidr.widgets.UIModal;
 import smidr.widgets.UIPanel;
 import smidr.widgets.UIScrollPane;
-import smidr.widgets.UISegmented;
+import smidr.widgets.UISegmentedControl;
 import smidr.widgets.UISeparator;
 import smidr.widgets.UISlider;
 import smidr.widgets.UIStepper;
@@ -125,9 +125,9 @@ class FullExample extends Sprite {
 	// UIIconRail (left activity bar, switches sections)
 	function buildRail():Void {
 		var rail = new UIIconRail(RAIL_W, 600 - MENU_H, [
-			{caption: "SET", tooltipFallback: "Controls"},
-			{caption: "DATA", tooltipFallback: "Data"},
-			{caption: "INFO", tooltipFallback: "About"}
+			{label: "SET", tooltipFallback: "Controls"},
+			{label: "DATA", tooltipFallback: "Data"},
+			{label: "INFO", tooltipFallback: "About"}
 		], (i) -> showSection(i));
 		rail.y = MENU_H;
 		ui.content.addChild(rail);
@@ -179,7 +179,7 @@ class FullExample extends Sprite {
 		buildDisplayTab(display);
 	}
 
-	// UISlider, UIStepper, UISwitch, UICheckbox, UISegmented, UIIconButton, UILoadingBar
+	// UISlider, UIStepper, UISwitch, UICheckbox, UISegmentedControl, UIIconButton, UIProgressBar
 	function buildAudioTab(page:Sprite):Void {
 		var vol = new UISlider("Master volume", 512, 0, 1, volume, (v) -> volume = v);
 		vol.decimals = 2;
@@ -201,7 +201,7 @@ class FullExample extends Sprite {
 		subtitles.y = 120;
 		page.addChild(subtitles);
 
-		var q = new UISegmented("Quality", 512, ["Low", "Medium", "High"], (i) -> quality = i);
+		var q = new UISegmentedControl("Quality", 512, ["Low", "Medium", "High"], (i) -> quality = i);
 		q.select(quality);
 		q.y = 160;
 		page.addChild(q);
@@ -221,7 +221,7 @@ class FullExample extends Sprite {
 			page.addChild(b);
 		}
 
-		var bar = new UILoadingBar("Streaming assets", 512, 0.35);
+		var bar = new UIProgressBar("Streaming assets", 512, 0.35);
 		bar.showPercent = true;
 		bar.y = 256;
 		page.addChild(bar);

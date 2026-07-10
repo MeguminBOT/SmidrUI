@@ -29,7 +29,7 @@ final class UIChip extends UIComponent {
 
 	public final hasDot:Bool;
 
-	final tf:TextField;
+	final labelField:TextField;
 
 	/**
 		@param label the chip text
@@ -42,8 +42,8 @@ final class UIChip extends UIComponent {
 		this.hasDot = hasDot;
 		@:bypassAccessor this.on = on;
 		this.onToggle = onToggle;
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
-		addChild(tf);
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
+		addChild(labelField);
 		this.label = label;
 		render();
 	}
@@ -77,14 +77,14 @@ final class UIChip extends UIComponent {
 
 	override public function render():Void {
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		UIFonts.restyle(tf, UITheme.fs(fontSize), (hasDot && !on) ? UITheme.text2 : UITheme.text);
-		if (tf.text != resolved)
-			tf.text = resolved;
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), (hasDot && !on) ? UITheme.text2 : UITheme.text);
+		if (labelField.text != resolved)
+			labelField.text = resolved;
 
 		var padX:Float = UITheme.px(10);
 		var dotSpace:Float = hasDot ? UITheme.px(16) : 0;
 		var height:Float = UITheme.px(24);
-		var width:Float = padX * 2 + dotSpace + tf.width;
+		var width:Float = padX * 2 + dotSpace + labelField.width;
 		w = width;
 		h = height;
 
@@ -109,8 +109,8 @@ final class UIChip extends UIComponent {
 			g.drawCircle(padX + UITheme.px(4), height / 2, UITheme.px(4.5) * dotPop);
 			g.endFill();
 		}
-		tf.x = padX + dotSpace;
-		tf.y = (height - tf.height) / 2;
+		labelField.x = padX + dotSpace;
+		labelField.y = (height - labelField.height) / 2;
 	}
 
 	function set_key(v:String):String {

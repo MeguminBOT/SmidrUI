@@ -35,16 +35,16 @@ final class UIScrollPane extends UIComponent {
 	static inline var MODE_THUMB:Int = 1;
 	static inline var MODE_TOUCH:Int = 2;
 
-	var contentH:Float = 0;
+	var contentHeight:Float = 0;
 	var thumb:Shape;
 
 	var mode:Int = MODE_NONE;
 	var dragPending:Bool = false;
 	var dragGrabY:Float = 0;
 	var dragStartScroll:Float = 0;
-	var lastY:Float = 0;
-	var lastT:Int = 0;
-	var vel:Float = 0;
+	var lastPointerY:Float = 0;
+	var lastPointerTime:Int = 0;
+	var velocity:Float = 0;
 	var flinging:Bool = false;
 
 	/**
@@ -70,7 +70,7 @@ final class UIScrollPane extends UIComponent {
 		@param explicitHeight overrides the measured `content.height` when provided
 	**/
 	public function refreshContent(?explicitHeight:Float):Void {
-		contentH = (explicitHeight != null) ? explicitHeight : content.height;
+		contentHeight = (explicitHeight != null) ? explicitHeight : content.height;
 		setScroll(scrollY);
 		invalidate();
 	}
@@ -79,7 +79,7 @@ final class UIScrollPane extends UIComponent {
 	public var maxScroll(get, never):Float;
 
 	inline function get_maxScroll():Float {
-		var m:Float = contentH - h;
+		var m:Float = contentHeight - h;
 		return (m > 0) ? m : 0;
 	}
 
@@ -117,7 +117,7 @@ final class UIScrollPane extends UIComponent {
 			return;
 		var barW:Float = UITheme.px(4);
 		var trackH:Float = h - 4;
-		var thumbH:Float = trackH * (h / contentH);
+		var thumbH:Float = trackH * (h / contentHeight);
 		if (thumbH < 24)
 			thumbH = 24;
 		g.beginFill(UIColor.rgb(UITheme.border2));
@@ -131,7 +131,7 @@ final class UIScrollPane extends UIComponent {
 		if (m <= 0)
 			return;
 		var trackH:Float = h - 4;
-		var thumbH:Float = trackH * (h / contentH);
+		var thumbH:Float = trackH * (h / contentHeight);
 		if (thumbH < 24)
 			thumbH = 24;
 		thumb.x = w - UITheme.px(4) - 2;
@@ -162,9 +162,9 @@ final class UIScrollPane extends UIComponent {
 			dragPending = true;
 			dragGrabY = e.stageY;
 			dragStartScroll = scrollY;
-			lastY = e.stageY;
-			lastT = Lib.getTimer();
-			vel = 0;
+			lastPointerY = e.stageY;
+			lastPointerTime = Lib.getTimer();
+			velocity = 0;
 		}
 	}
 
@@ -195,7 +195,7 @@ final class UIScrollPane extends UIComponent {
 		var sf:Float = scaleFactorY();
 		if (mode == MODE_THUMB) {
 			var trackH:Float = h - 4;
-			var thumbH:Float = trackH * (h / contentH);
+			var thumbH:Float = trackH * (h / contentHeight);
 			if (thumbH < 24)
 				thumbH = 24;
 			var usable:Float = trackH - thumbH;
@@ -204,11 +204,11 @@ final class UIScrollPane extends UIComponent {
 			setScroll(dragStartScroll + ((stageY - dragGrabY) / sf) * (maxScroll / usable));
 		} else if (mode == MODE_TOUCH) {
 			var now:Int = Lib.getTimer();
-			var dt:Float = now - lastT;
+			var dt:Float = now - lastPointerTime;
 			if (dt > 0) {
-				vel = ((stageY - lastY) / sf) / dt;
-				lastY = stageY;
-				lastT = now;
+				velocity = ((stageY - lastPointerY) / sf) / dt;
+				lastPointerY = stageY;
+				lastPointerTime = now;
 			}
 			setScroll(dragStartScroll - (stageY - dragGrabY) / sf);
 		}
@@ -218,17 +218,17 @@ final class UIScrollPane extends UIComponent {
 		var wasTouch:Bool = (mode == MODE_TOUCH);
 		mode = MODE_NONE;
 		dragPending = false;
-		if (wasTouch && Math.abs(vel) > 0.1 && maxScroll > 0) {
+		if (wasTouch && Math.abs(velocity) > 0.1 && maxScroll > 0) {
 			flinging = true;
 			UIRoot.addTicker(flingTick);
 		}
 	}
 
 	function flingTick(dtMs:Float):Void {
-		var next:Float = scrollY - vel * dtMs;
+		var next:Float = scrollY - velocity * dtMs;
 		setScroll(next);
-		vel *= Math.exp(-dtMs * 0.004);
-		if (Math.abs(vel) < 0.02 || scrollY != next)
+		velocity *= Math.exp(-dtMs * 0.004);
+		if (Math.abs(velocity) < 0.02 || scrollY != next)
 			stopFling();
 	}
 
@@ -236,7 +236,7 @@ final class UIScrollPane extends UIComponent {
 		if (!flinging)
 			return;
 		flinging = false;
-		vel = 0;
+		velocity = 0;
 		UIRoot.removeTicker(flingTick);
 	}
 

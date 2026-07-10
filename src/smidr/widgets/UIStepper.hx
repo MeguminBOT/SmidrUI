@@ -32,7 +32,7 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 	public var fontSize(default, set):Int = 12;
 
 	/** Width of the `- value +` box on the right. **/
-	public var boxWidth:Float;
+	public var controlWidth:Float;
 
 	/** Hold-to-repeat: delay in ms before auto-repeat starts. **/
 	public var repeatDelayMs:Float = 400;
@@ -46,8 +46,8 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 	/** Hold-to-repeat: per-step interval multiplier (`1` disables acceleration). **/
 	public var repeatAccel:Float = 0.95;
 
-	final tf:TextField;
-	final valueTf:TextField;
+	final labelField:TextField;
+	final valueField:TextField;
 
 	var holdDir:Int = 0;
 	var holdTime:Float = 0;
@@ -70,12 +70,12 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 		@:bypassAccessor this.value = value;
 		this.step = step;
 		this.onChange = onChange;
-		boxWidth = UITheme.px(88);
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
-		addChild(tf);
-		valueTf = UIFonts.make(UITheme.fs(fontSize), UITheme.text, TextFormatAlign.CENTER);
-		valueTf.autoSize = openfl.text.TextFieldAutoSize.NONE;
-		addChild(valueTf);
+		controlWidth = UITheme.px(88);
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
+		addChild(labelField);
+		valueField = UIFonts.make(UITheme.fs(fontSize), UITheme.text, TextFormatAlign.CENTER);
+		valueField.autoSize = openfl.text.TextFieldAutoSize.NONE;
+		addChild(valueField);
 		resize(width, UITheme.px(24));
 		render();
 	}
@@ -116,7 +116,7 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 	override function onPress(localX:Float, localY:Float):Void {
 		var dir:Int = zoneAt(localX);
 		if (dir == 0) {
-			if (localX >= w - boxWidth)
+			if (localX >= w - controlWidth)
 				smidr.input.UIFocus.set(this);
 			return;
 		}
@@ -218,10 +218,10 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 	}
 
 	function zoneAt(localX:Float):Int {
-		var bx:Float = w - boxWidth;
+		var bx:Float = w - controlWidth;
 		if (localX < bx)
 			return 0;
-		var third:Float = boxWidth / 3;
+		var third:Float = controlWidth / 3;
 		if (localX < bx + third)
 			return -1;
 		if (localX >= w - third)
@@ -236,16 +236,16 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 		g.drawRect(0, 0, w, h);
 		g.endFill();
 
-		var bx:Float = w - boxWidth;
+		var bx:Float = w - controlWidth;
 		var r:Float = UITheme.px(6);
 		var fill:Int = editing ? UITheme.inputBg : UITheme.panel2;
 		if (hovered && !editing)
 			fill = UIColor.lighten(fill, 0.06);
 		g.beginFill(UIColor.rgb(fill));
-		g.drawRoundRect(bx, 1, boxWidth, h - 2, r, r);
+		g.drawRoundRect(bx, 1, controlWidth, h - 2, r, r);
 		g.endFill();
 		g.lineStyle(1, UIColor.rgb(editing ? UITheme.accent : UITheme.border));
-		g.drawRoundRect(bx + 0.5, 1.5, boxWidth - 1, h - 3, r, r);
+		g.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, r, r);
 		g.lineStyle();
 
 		var mc:Int = UIColor.rgb(UITheme.text2);
@@ -259,21 +259,21 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 		g.lineTo(w - UITheme.px(11.5), cy + UITheme.px(3.5));
 		g.lineStyle();
 
-		UIFonts.restyle(tf, UITheme.fs(fontSize), UITheme.text2);
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.x = 0;
-		tf.y = (h - tf.height) / 2;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.x = 0;
+		labelField.y = (h - labelField.height) / 2;
 
-		UIFonts.restyle(valueTf, UITheme.fs(fontSize), editing ? UITheme.highlight : UITheme.text, TextFormatAlign.CENTER);
+		UIFonts.restyle(valueField, UITheme.fs(fontSize), editing ? UITheme.highlight : UITheme.text, TextFormatAlign.CENTER);
 		var text:String = editing ? (editBuffer.length > 0 ? editBuffer : "_") : formatValue();
-		if (valueTf.text != text)
-			valueTf.text = text;
-		valueTf.width = boxWidth - UITheme.px(36);
-		valueTf.height = valueTf.textHeight + 4;
-		valueTf.x = bx + UITheme.px(18);
-		valueTf.y = (h - valueTf.height) / 2;
+		if (valueField.text != text)
+			valueField.text = text;
+		valueField.width = controlWidth - UITheme.px(36);
+		valueField.height = valueField.textHeight + 4;
+		valueField.x = bx + UITheme.px(18);
+		valueField.y = (h - valueField.height) / 2;
 	}
 
 	function formatValue():String {

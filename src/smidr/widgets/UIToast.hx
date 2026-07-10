@@ -13,7 +13,7 @@ import smidr.types.UIEase;
 	One shared instance; a new message replaces the current one immediately.
 **/
 final class UIToast {
-	static var tf:TextField = null;
+	static var messageField:TextField = null;
 	static var panel:openfl.display.Sprite = null;
 	static var hideTween:UITween = null;
 
@@ -32,19 +32,19 @@ final class UIToast {
 			panel = new openfl.display.Sprite();
 			panel.mouseEnabled = false;
 			panel.mouseChildren = false;
-			tf = UIFonts.make(UITheme.fs(12), UITheme.text);
-			panel.addChild(tf);
+			messageField = UIFonts.make(UITheme.fs(12), UITheme.text);
+			panel.addChild(messageField);
 		}
 		if (panel.parent != root.tooltipLayer)
 			root.tooltipLayer.addChild(panel);
 
-		UIFonts.restyle(tf, UITheme.fs(12), UITheme.text);
-		tf.text = message;
+		UIFonts.restyle(messageField, UITheme.fs(12), UITheme.text);
+		messageField.text = message;
 
 		var padX:Float = UITheme.px(14);
 		var padY:Float = UITheme.px(7);
-		var pw:Float = tf.width + padX * 2;
-		var ph:Float = tf.height + padY * 2;
+		var pw:Float = messageField.width + padX * 2;
+		var ph:Float = messageField.height + padY * 2;
 		var g = panel.graphics;
 		g.clear();
 		g.beginFill(UIColor.rgb(UITheme.panel2), 0.96);
@@ -53,8 +53,8 @@ final class UIToast {
 		g.lineStyle(1, UIColor.rgb(UITheme.border2));
 		g.drawRoundRect(0.5, 0.5, pw - 1, ph - 1, ph, ph);
 		g.lineStyle();
-		tf.x = padX;
-		tf.y = padY;
+		messageField.x = padX;
+		messageField.y = padY;
 
 		var vw:Float = viewportW(root);
 		var vh:Float = viewportH(root);
@@ -94,6 +94,6 @@ final class UIToast {
 		if (panel != null && panel.parent != null)
 			panel.parent.removeChild(panel);
 		panel = null;
-		tf = null;
+		messageField = null;
 	}
 }

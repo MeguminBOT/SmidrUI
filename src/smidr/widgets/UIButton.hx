@@ -31,7 +31,7 @@ final class UIButton extends UIComponent {
 	/** The hosted icon, or `null`; set through `setIcon` (the static `icon` factory uses it). **/
 	var iconObj:UIIcon = null;
 
-	final tf:TextField;
+	final labelField:TextField;
 
 	/**
 		@param label the button text (raw; use `localize` for translated labels)
@@ -45,9 +45,9 @@ final class UIButton extends UIComponent {
 		this.label = label;
 		this.accent = accent;
 		this.onClick = onClick;
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text, TextFormatAlign.CENTER);
-		tf.autoSize = openfl.text.TextFieldAutoSize.NONE;
-		addChild(tf);
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text, TextFormatAlign.CENTER);
+		labelField.autoSize = openfl.text.TextFieldAutoSize.NONE;
+		addChild(labelField);
 		resize(width, height);
 		render();
 	}
@@ -96,22 +96,22 @@ final class UIButton extends UIComponent {
 		// accent/danger fills are dark in every theme, so pick contrast from the fill rather than
 		// UITheme.text (which flips to dark on light themes and would vanish on the button)
 		var textColor:Int = (accent || danger) ? UIColor.contrastText(base) : UITheme.text2;
-		UIFonts.restyle(tf, UITheme.fs(fontSize), textColor, TextFormatAlign.CENTER);
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), textColor, TextFormatAlign.CENTER);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
 		if (resolved == null)
 			resolved = "";
 		var hasLabel:Bool = resolved != "";
 		var dip:Float = pressed ? 1 : 0;
 
-		tf.visible = hasLabel;
+		labelField.visible = hasLabel;
 		if (hasLabel) {
-			if (tf.text != resolved)
-				tf.text = resolved;
-			tf.width = w;
-			tf.height = tf.textHeight + 4;
+			if (labelField.text != resolved)
+				labelField.text = resolved;
+			labelField.width = w;
+			labelField.height = labelField.textHeight + 4;
 			// with an icon the icon sits in the left inset; the label stays centred
-			tf.x = 0;
-			tf.y = (h - tf.height) / 2 + dip;
+			labelField.x = 0;
+			labelField.y = (h - labelField.height) / 2 + dip;
 		}
 
 		if (iconObj != null) {

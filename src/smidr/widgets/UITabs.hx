@@ -28,14 +28,14 @@ final class UITabs extends UIComponent {
 	public var fontSize(default, set):Int = 12;
 
 	var tabs:Array<UITabDef> = [];
-	var tfs:Array<TextField> = [];
+	var tabFields:Array<TextField> = [];
 	var cellX:Array<Float> = [];
 	var cellW:Array<Float> = [];
 
-	var indX:Float = 0;
-	var indW:Float = 0;
-	var indAnim:Bool = false;
-	var indTween:UITween = null;
+	var indicatorX:Float = 0;
+	var indicatorWidth:Float = 0;
+	var indicatorAnimating:Bool = false;
+	var indicatorTween:UITween = null;
 
 	/**
 		@param width layout width
@@ -55,21 +55,21 @@ final class UITabs extends UIComponent {
 	**/
 	public function setTabs(tabs:Array<UITabDef>):Void {
 		this.tabs = tabs;
-		var i:Int = tfs.length;
+		var i:Int = tabFields.length;
 		while (--i >= 0)
-			removeChild(tfs[i]);
-		tfs.resize(0);
+			removeChild(tabFields[i]);
+		tabFields.resize(0);
 		i = 0;
 		while (i < tabs.length) {
 			var t:TextField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
 			addChild(t);
-			tfs.push(t);
+			tabFields.push(t);
 			i++;
 		}
 		if (selectedIndex >= tabs.length)
 			selectedIndex = 0;
 		killTween();
-		indAnim = false;
+		indicatorAnimating = false;
 		invalidate();
 	}
 
@@ -82,15 +82,15 @@ final class UITabs extends UIComponent {
 			return;
 		selectedIndex = index;
 		if (index < cellX.length) {
-			var fx:Float = indX;
-			var fw:Float = indW;
+			var fx:Float = indicatorX;
+			var fw:Float = indicatorWidth;
 			var toX:Float = cellX[index];
 			var toW:Float = cellW[index];
 			killTween();
-			indAnim = true;
-			indTween = UITween.to(function(p:Float):Void {
-				indX = fx + (toX - fx) * p;
-				indW = fw + (toW - fw) * p;
+			indicatorAnimating = true;
+			indicatorTween = UITween.to(function(p:Float):Void {
+				indicatorX = fx + (toX - fx) * p;
+				indicatorWidth = fw + (toW - fw) * p;
 				invalidate();
 			}, 0, 1, 170, OUT_QUAD, endInd);
 		}
@@ -100,14 +100,14 @@ final class UITabs extends UIComponent {
 	}
 
 	function endInd():Void {
-		indAnim = false;
-		indTween = null;
+		indicatorAnimating = false;
+		indicatorTween = null;
 	}
 
 	function killTween():Void {
-		if (indTween != null) {
-			indTween.cancel();
-			indTween = null;
+		if (indicatorTween != null) {
+			indicatorTween.cancel();
+			indicatorTween = null;
 		}
 	}
 
@@ -140,7 +140,7 @@ final class UITabs extends UIComponent {
 		var i:Int = 0;
 		var n:Int = tabs.length;
 		while (i < n) {
-			var t:TextField = tfs[i];
+			var t:TextField = tabFields[i];
 			var d:UITabDef = tabs[i];
 			var active:Bool = (i == selectedIndex);
 			UIFonts.restyle(t, UITheme.fs(fontSize), active ? UITheme.text : UITheme.text2);
@@ -162,12 +162,12 @@ final class UITabs extends UIComponent {
 		}
 
 		if (n > 0) {
-			if (!indAnim) {
-				indX = cellX[selectedIndex];
-				indW = cellW[selectedIndex];
+			if (!indicatorAnimating) {
+				indicatorX = cellX[selectedIndex];
+				indicatorWidth = cellW[selectedIndex];
 			}
 			g.beginFill(UIColor.rgb(UITheme.accent));
-			g.drawRoundRect(indX + UITheme.px(4), h - UITheme.px(3), indW - UITheme.px(8), UITheme.px(2.5), 3, 3);
+			g.drawRoundRect(indicatorX + UITheme.px(4), h - UITheme.px(3), indicatorWidth - UITheme.px(8), UITheme.px(2.5), 3, 3);
 			g.endFill();
 		}
 	}

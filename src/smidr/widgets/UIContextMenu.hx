@@ -156,19 +156,19 @@ final class UIContextMenu {
 private final class UIMenuRow extends UIComponent {
 	final owner:UIContextMenu;
 	final item:UIMenuItem;
-	final tf:TextField;
-	var shortcutTf:TextField = null;
+	final labelField:TextField;
+	var shortcutField:TextField = null;
 
 	public function new(owner:UIContextMenu, item:UIMenuItem, width:Float, height:Float) {
 		super(true, true);
 		this.owner = owner;
 		this.item = item;
 		enabled = (item.disabled != true);
-		tf = UIFonts.make(UITheme.fs(11), UITheme.text);
-		addChild(tf);
+		labelField = UIFonts.make(UITheme.fs(11), UITheme.text);
+		addChild(labelField);
 		if (item.shortcut != null) {
-			shortcutTf = UIFonts.make(UITheme.fs(10), UITheme.text3);
-			addChild(shortcutTf);
+			shortcutField = UIFonts.make(UITheme.fs(10), UITheme.text3);
+			addChild(shortcutField);
 		}
 		resize(width, height);
 		render();
@@ -204,19 +204,19 @@ private final class UIMenuRow extends UIComponent {
 			textX = UITheme.px(26);
 		}
 
-		UIFonts.restyle(tf, UITheme.fs(11), enabled ? UITheme.text : UITheme.text3);
+		UIFonts.restyle(labelField, UITheme.fs(11), enabled ? UITheme.text : UITheme.text3);
 		var resolved:String = (item.key != null) ? UILocale.t(item.key, item.fallback != null ? item.fallback : item.label) : item.label;
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.x = textX;
-		tf.y = (h - tf.height) / 2;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.x = textX;
+		labelField.y = (h - labelField.height) / 2;
 
-		if (shortcutTf != null) {
-			UIFonts.restyle(shortcutTf, UITheme.fs(10), UITheme.text3);
-			if (shortcutTf.text != item.shortcut)
-				shortcutTf.text = item.shortcut;
-			shortcutTf.x = w - shortcutTf.width - UITheme.px(10);
-			shortcutTf.y = (h - shortcutTf.height) / 2;
+		if (shortcutField != null) {
+			UIFonts.restyle(shortcutField, UITheme.fs(10), UITheme.text3);
+			if (shortcutField.text != item.shortcut)
+				shortcutField.text = item.shortcut;
+			shortcutField.x = w - shortcutField.width - UITheme.px(10);
+			shortcutField.y = (h - shortcutField.height) / 2;
 		}
 	}
 }

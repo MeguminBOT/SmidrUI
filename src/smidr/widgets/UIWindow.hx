@@ -44,7 +44,7 @@ final class UIWindow extends UIComponent {
 	/** Parent the window's widgets here; local `(0, 0)` is the body's top-left below the bar. **/
 	public final content:Sprite;
 
-	final tf:TextField;
+	final titleField:TextField;
 	var dragging:Bool = false;
 	var grabX:Float = 0;
 	var grabY:Float = 0;
@@ -59,8 +59,8 @@ final class UIWindow extends UIComponent {
 		super(true, true);
 		@:bypassAccessor this.title = title;
 		@:bypassAccessor this.fill = fill;
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
-		addChild(tf);
+		titleField = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
+		addChild(titleField);
 		content = new Sprite();
 		addChild(content);
 		resize(width, height);
@@ -100,14 +100,14 @@ final class UIWindow extends UIComponent {
 		g.lineTo(w, barH - 0.5);
 		g.lineStyle();
 
-		UIFonts.restyle(tf, UITheme.fs(fontSize), UITheme.text);
+		UIFonts.restyle(titleField, UITheme.fs(fontSize), UITheme.text);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : title;
 		if (resolved == null)
 			resolved = "";
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.x = UITheme.px(10);
-		tf.y = (barH - tf.textHeight) / 2 - 1;
+		if (titleField.text != resolved)
+			titleField.text = resolved;
+		titleField.x = UITheme.px(10);
+		titleField.y = (barH - titleField.textHeight) / 2 - 1;
 
 		content.x = 0;
 		content.y = barH;

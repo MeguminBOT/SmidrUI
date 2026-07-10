@@ -17,8 +17,8 @@ import smidr.types.UIEase;
 **/
 final class UITooltip {
 	static var panel:Sprite = null;
-	static var textTf:TextField = null;
-	static var shortcutTf:TextField = null;
+	static var textField:TextField = null;
+	static var shortcutField:TextField = null;
 	static var installed:Bool = false;
 
 	/** Hooks the tooltip into the root's hover timing. Call once after creating the `UIRoot`. **/
@@ -36,10 +36,10 @@ final class UITooltip {
 			panel = new Sprite();
 			panel.mouseEnabled = false;
 			panel.mouseChildren = false;
-			textTf = UIFonts.make(UITheme.fs(11), UITheme.text);
-			panel.addChild(textTf);
-			shortcutTf = UIFonts.make(UITheme.fs(11), UITheme.text3);
-			panel.addChild(shortcutTf);
+			textField = UIFonts.make(UITheme.fs(11), UITheme.text);
+			panel.addChild(textField);
+			shortcutField = UIFonts.make(UITheme.fs(11), UITheme.text3);
+			panel.addChild(shortcutField);
 		}
 		if (panel.parent != root.tooltipLayer)
 			root.tooltipLayer.addChild(panel);
@@ -49,18 +49,18 @@ final class UITooltip {
 		if (!hasText && !hasShortcut)
 			return;
 
-		UIFonts.restyle(textTf, UITheme.fs(11), UITheme.text);
-		textTf.text = hasText ? target.tooltip : "";
-		textTf.visible = hasText;
-		UIFonts.restyle(shortcutTf, UITheme.fs(11), UITheme.text3);
-		shortcutTf.text = hasShortcut ? target.tooltipShortcut : "";
-		shortcutTf.visible = hasShortcut;
+		UIFonts.restyle(textField, UITheme.fs(11), UITheme.text);
+		textField.text = hasText ? target.tooltip : "";
+		textField.visible = hasText;
+		UIFonts.restyle(shortcutField, UITheme.fs(11), UITheme.text3);
+		shortcutField.text = hasShortcut ? target.tooltipShortcut : "";
+		shortcutField.visible = hasShortcut;
 
 		var padX:Float = UITheme.px(9);
 		var padY:Float = UITheme.px(5);
 		var gap:Float = (hasText && hasShortcut) ? UITheme.px(14) : 0;
-		var pw:Float = padX * 2 + (hasText ? textTf.width : 0) + gap + (hasShortcut ? shortcutTf.width : 0);
-		var ph:Float = padY * 2 + Math.max(hasText ? textTf.height : 0, hasShortcut ? shortcutTf.height : 0);
+		var pw:Float = padX * 2 + (hasText ? textField.width : 0) + gap + (hasShortcut ? shortcutField.width : 0);
+		var ph:Float = padY * 2 + Math.max(hasText ? textField.height : 0, hasShortcut ? shortcutField.height : 0);
 
 		var g = panel.graphics;
 		g.clear();
@@ -70,10 +70,10 @@ final class UITooltip {
 		g.lineStyle(1, UIColor.rgb(UITheme.border2));
 		g.drawRoundRect(0.5, 0.5, pw - 1, ph - 1, UITheme.px(6), UITheme.px(6));
 		g.lineStyle();
-		textTf.x = padX;
-		textTf.y = padY;
-		shortcutTf.x = pw - padX - shortcutTf.width;
-		shortcutTf.y = padY;
+		textField.x = padX;
+		textField.y = padY;
+		shortcutField.x = pw - padX - shortcutField.width;
+		shortcutField.y = padY;
 
 		var local = root.tooltipLayer.globalToLocal(new openfl.geom.Point(root.stage.mouseX, root.stage.mouseY));
 		var vw:Float = (root.scaleX > 0) ? root.stage.stageWidth / root.scaleX : 1280;
@@ -101,8 +101,8 @@ final class UITooltip {
 		if (panel != null && panel.parent != null)
 			panel.parent.removeChild(panel);
 		panel = null;
-		textTf = null;
-		shortcutTf = null;
+		textField = null;
+		shortcutField = null;
 		if (installed) {
 			UIRoot.onTooltipShow = null;
 			UIRoot.onTooltipHide = null;

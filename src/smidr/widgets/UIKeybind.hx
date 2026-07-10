@@ -38,10 +38,10 @@ final class UIKeybind extends UIComponent implements IUIFocusable {
 	public var fontSize(default, set):Int = 12;
 
 	/** Width of the binding box on the right. **/
-	public var boxWidth:Float;
+	public var controlWidth:Float;
 
-	final tf:TextField;
-	final valueTf:TextField;
+	final labelField:TextField;
+	final valueField:TextField;
 
 	var listening:Bool = false;
 
@@ -56,12 +56,12 @@ final class UIKeybind extends UIComponent implements IUIFocusable {
 		this.label = label;
 		this.keyCode = keyCode;
 		this.onChange = onChange;
-		boxWidth = UITheme.px(110);
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
-		addChild(tf);
-		valueTf = UIFonts.make(UITheme.fs(fontSize), UITheme.text, TextFormatAlign.CENTER);
-		valueTf.autoSize = openfl.text.TextFieldAutoSize.NONE;
-		addChild(valueTf);
+		controlWidth = UITheme.px(110);
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
+		addChild(labelField);
+		valueField = UIFonts.make(UITheme.fs(fontSize), UITheme.text, TextFormatAlign.CENTER);
+		valueField.autoSize = openfl.text.TextFieldAutoSize.NONE;
+		addChild(valueField);
 		resize(width, UITheme.px(#if mobile 30 #else 24 #end));
 		render();
 	}
@@ -88,7 +88,7 @@ final class UIKeybind extends UIComponent implements IUIFocusable {
 	}
 
 	override function onPress(localX:Float, localY:Float):Void {
-		if (localX < w - boxWidth)
+		if (localX < w - controlWidth)
 			return;
 		if (listening)
 			UIFocus.clear(this);
@@ -187,33 +187,33 @@ final class UIKeybind extends UIComponent implements IUIFocusable {
 		g.drawRect(0, 0, w, h);
 		g.endFill();
 
-		var bx:Float = w - boxWidth;
+		var bx:Float = w - controlWidth;
 		var r:Float = UITheme.px(6);
 		var fill:Int = listening ? UITheme.inputBg : UITheme.panel2;
 		if (hovered && !listening)
 			fill = UIColor.lighten(fill, 0.08);
 		g.beginFill(UIColor.rgb(fill));
-		g.drawRoundRect(bx, 1, boxWidth, h - 2, r, r);
+		g.drawRoundRect(bx, 1, controlWidth, h - 2, r, r);
 		g.endFill();
 		g.lineStyle(1, UIColor.rgb(listening ? UITheme.accent : UITheme.border));
-		g.drawRoundRect(bx + 0.5, 1.5, boxWidth - 1, h - 3, r, r);
+		g.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, r, r);
 		g.lineStyle();
 
-		UIFonts.restyle(tf, UITheme.fs(fontSize), UITheme.text2);
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.x = 0;
-		tf.y = (h - tf.height) / 2;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.x = 0;
+		labelField.y = (h - labelField.height) / 2;
 
-		UIFonts.restyle(valueTf, UITheme.fs(fontSize), listening ? UITheme.highlight : UITheme.text, TextFormatAlign.CENTER);
+		UIFonts.restyle(valueField, UITheme.fs(fontSize), listening ? UITheme.highlight : UITheme.text, TextFormatAlign.CENTER);
 		var v:String = listening ? UILocale.t("smidr.keybind.press", "Press a key") : (keyCode < 0 ? "-" : keyName(keyCode));
-		if (valueTf.text != v)
-			valueTf.text = v;
-		valueTf.width = boxWidth - UITheme.px(12);
-		valueTf.height = valueTf.textHeight + 4;
-		valueTf.x = bx + UITheme.px(6);
-		valueTf.y = (h - valueTf.height) / 2;
+		if (valueField.text != v)
+			valueField.text = v;
+		valueField.width = controlWidth - UITheme.px(12);
+		valueField.height = valueField.textHeight + 4;
+		valueField.x = bx + UITheme.px(6);
+		valueField.y = (h - valueField.height) / 2;
 	}
 
 	override public function dispose():Void {

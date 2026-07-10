@@ -19,8 +19,8 @@ final class UIIconRail extends UIComponent {
 	/** Per-tab cell height. **/
 	public var cellH:Float;
 
-	var tabs:Array<UIRailTab> = [];
-	var labels:Array<TextField> = [];
+	var tabs:Array<UIRailTabDef> = [];
+	var labelFields:Array<TextField> = [];
 
 	/**
 		@param width the rail width
@@ -28,7 +28,7 @@ final class UIIconRail extends UIComponent {
 		@param tabs the initial tab set
 		@param onSelect fired with the new index when the active tab changes
 	**/
-	public function new(width:Float, height:Float, tabs:Array<UIRailTab>, ?onSelect:Int->Void) {
+	public function new(width:Float, height:Float, tabs:Array<UIRailTabDef>, ?onSelect:Int->Void) {
 		super(true, true);
 		this.onSelect = onSelect;
 		cellH = UITheme.px(44);
@@ -40,18 +40,18 @@ final class UIIconRail extends UIComponent {
 		Replaces the tab set (the selection clamps to 0 when out of range).
 		@param tabs the new tabs
 	**/
-	public function setTabs(tabs:Array<UIRailTab>):Void {
+	public function setTabs(tabs:Array<UIRailTabDef>):Void {
 		this.tabs = tabs;
-		var i:Int = labels.length;
+		var i:Int = labelFields.length;
 		while (--i >= 0)
-			removeChild(labels[i]);
-		labels.resize(0);
+			removeChild(labelFields[i]);
+		labelFields.resize(0);
 		i = 0;
 		while (i < tabs.length) {
 			var tf:TextField = UIFonts.make(UITheme.fs(9), UITheme.text3);
-			tf.text = tabs[i].caption;
+			tf.text = tabs[i].label;
 			addChild(tf);
-			labels.push(tf);
+			labelFields.push(tf);
 			i++;
 		}
 		if (selectedIndex >= tabs.length)
@@ -121,7 +121,7 @@ final class UIIconRail extends UIComponent {
 			g.drawCircle(w / 2, cy + cellH * 0.34, UITheme.px(7));
 			g.lineStyle();
 
-			var tf:TextField = labels[i];
+			var tf:TextField = labelFields[i];
 			UIFonts.restyle(tf, UITheme.fs(9), active ? UITheme.text : UITheme.text3);
 			tf.x = (w - tf.width) / 2;
 			tf.y = cy + cellH - tf.height - UITheme.px(3);

@@ -25,7 +25,7 @@ import smidr.types.UIEase;
 	ticker runs only while the sweep animation or a smoothing tween is active, so a settled
 	bar performs zero work.
 **/
-final class UILoadingBar extends UIComponent {
+final class UIProgressBar extends UIComponent {
 	public var key(default, set):String = null;
 	public var fallback:String = "";
 	public var label(default, set):String;
@@ -49,7 +49,7 @@ final class UILoadingBar extends UIComponent {
 	public var fontSize(default, set):Int = 12;
 
 	/** Width of the bar area on the right when a label is present. **/
-	public var barWidth:Float;
+	public var controlWidth:Float;
 
 	/** Base (unscaled) bar thickness. **/
 	public var thickness:Float = #if mobile 9 #else 6 #end;
@@ -57,10 +57,10 @@ final class UILoadingBar extends UIComponent {
 	/** Full sweep period of the indeterminate band, in ms. **/
 	public var sweepMs:Float = 1100;
 
-	final tf:TextField;
-	var pctTf:TextField = null;
+	final labelField:TextField;
+	var percentField:TextField = null;
 
-	var shown:Float = 0;
+	var shownProgress:Float = 0;
 	var phase:Float = 0;
 	var fillTween:UITween = null;
 	var ticking:Bool = false;
@@ -73,11 +73,11 @@ final class UILoadingBar extends UIComponent {
 	public function new(label:String, width:Float, progress:Float = 0) {
 		super(false, false);
 		this.label = label;
-		barWidth = UITheme.px(160);
+		controlWidth = UITheme.px(160);
 		@:bypassAccessor this.progress = clamp(progress);
-		shown = this.progress;
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
-		addChild(tf);
+		shownProgress = this.progress;
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
+		addChild(labelField);
 		resize(width, UITheme.px(24));
 		render();
 	}
@@ -102,11 +102,11 @@ final class UILoadingBar extends UIComponent {
 		@:bypassAccessor progress = value;
 		killTween();
 		if (!animate || indeterminate) {
-			shown = value;
+			shownProgress = value;
 			invalidate();
 			return;
 		}
-		fillTween = UITween.to(applyShown, shown, value, 160, OUT_QUAD, clearTween);
+		fillTween = UITween.to(applyShown, shownProgress, value, 160, OUT_QUAD, clearTween);
 	}
 
 	/**
@@ -130,7 +130,7 @@ final class UILoadingBar extends UIComponent {
 	}
 
 	function applyShown(v:Float):Void {
-		shown = v;
+		shownProgress = v;
 		invalidate();
 	}
 
@@ -157,7 +157,7 @@ final class UILoadingBar extends UIComponent {
 	}
 
 	inline function barX():Float {
-		return (label != "" || key != null) ? w - barWidth : (showPercent && !indeterminate ? UITheme.px(40) : 0);
+		return (label != "" || key != null) ? w - controlWidth : (showPercent && !indeterminate ? UITheme.px(40) : 0);
 	}
 
 	override public function render():Void {
@@ -192,8 +192,8 @@ final class UILoadingBar extends UIComponent {
 				g.drawRoundRect(x0, by, x1 - x0, t, r, r);
 				g.endFill();
 			}
-		} else if (shown > 0) {
-			var fw:Float = bw * shown;
+		} else if (shownProgress > 0) {
+			var fw:Float = bw * shownProgress;
 			if (fw < t)
 				fw = t;
 			g.beginFill(UIColor.rgb(fill));
@@ -201,29 +201,29 @@ final class UILoadingBar extends UIComponent {
 			g.endFill();
 		}
 
-		UIFonts.restyle(tf, UITheme.fs(fontSize), UITheme.text2);
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.visible = resolved != "";
-		tf.x = 0;
-		tf.y = (h - tf.height) / 2;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.visible = resolved != "";
+		labelField.x = 0;
+		labelField.y = (h - labelField.height) / 2;
 
 		var pctOn:Bool = showPercent && !indeterminate;
 		if (pctOn) {
-			if (pctTf == null) {
-				pctTf = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
-				addChild(pctTf);
+			if (percentField == null) {
+				percentField = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
+				addChild(percentField);
 			}
-			UIFonts.restyle(pctTf, UITheme.fs(fontSize), UITheme.text);
-			var ps:String = Std.int(shown * 100 + 0.5) + "%";
-			if (pctTf.text != ps)
-				pctTf.text = ps;
-			pctTf.visible = true;
-			pctTf.x = bx - pctTf.width - UITheme.px(8);
-			pctTf.y = (h - pctTf.height) / 2;
-		} else if (pctTf != null)
-			pctTf.visible = false;
+			UIFonts.restyle(percentField, UITheme.fs(fontSize), UITheme.text);
+			var ps:String = Std.int(shownProgress * 100 + 0.5) + "%";
+			if (percentField.text != ps)
+				percentField.text = ps;
+			percentField.visible = true;
+			percentField.x = bx - percentField.width - UITheme.px(8);
+			percentField.y = (h - percentField.height) / 2;
+		} else if (percentField != null)
+			percentField.visible = false;
 	}
 
 	function startTicker():Void {
@@ -261,7 +261,7 @@ final class UILoadingBar extends UIComponent {
 			startTicker();
 		} else {
 			stopTicker();
-			shown = progress;
+			shownProgress = progress;
 		}
 		invalidate();
 		return v;

@@ -18,12 +18,12 @@ import smidr.widgets.UIIconRail;
 import smidr.widgets.UIKeybind;
 import smidr.widgets.UILabel;
 import smidr.widgets.UIList;
-import smidr.widgets.UILoadingBar;
+import smidr.widgets.UIProgressBar;
 import smidr.widgets.UIMenuBar;
 import smidr.widgets.UIModal;
 import smidr.widgets.UIPanel;
 import smidr.widgets.UIScrollPane;
-import smidr.widgets.UISegmented;
+import smidr.widgets.UISegmentedControl;
 import smidr.widgets.UISeparator;
 import smidr.widgets.UISlider;
 import smidr.widgets.UIStepper;
@@ -60,7 +60,7 @@ class Gallery extends Sprite {
 	var scroll:UIScrollPane;
 	var statusBg:UIPanel;
 	var statusTf:UILabel;
-	var bar:UILoadingBar;
+	var bar:UIProgressBar;
 
 	var cy:Float = 0;        // build cursor inside the scroll content
 	var contentH:Float = 0;  // total content height (for refreshContent on resize)
@@ -77,7 +77,7 @@ class Gallery extends Sprite {
 		ui.setViewport(0, 0, 1, 1);
 		UITooltip.install();
 
-		// themed, full-window backdrop (follows theme swaps because it's bound to a surface role)
+		// themed, full-window backdrop (follows theme swaps because it's bound to a theme slot)
 		backdrop = new UIPanel(100, 100, BG, false);
 		ui.content.addChild(backdrop);
 
@@ -272,8 +272,8 @@ class Gallery extends Sprite {
 		stepper.max = 10;
 		put(stepper, 34);
 
-		head("UISegmented");
-		var seg = new UISegmented("Quality", COL, ["Low", "Med", "High"], (i) -> setStatus('Segmented: $i'));
+		head("UISegmentedControl");
+		var seg = new UISegmentedControl("Quality", COL, ["Low", "Med", "High"], (i) -> setStatus('Segmented: $i'));
 		seg.select(1);
 		put(seg, 30);
 
@@ -299,7 +299,7 @@ class Gallery extends Sprite {
 		put(new UITabs(COL, [{label: "One"}, {label: "Two"}, {label: "Three"}], (i) -> setStatus('Tab: $i')), 34);
 
 		head("UIIconRail");
-		put(new UIIconRail(56, 132, [{caption: "A"}, {caption: "B"}, {caption: "C"}], (i) -> setStatus('Rail: $i')), 132);
+		put(new UIIconRail(56, 132, [{label: "A"}, {label: "B"}, {label: "C"}], (i) -> setStatus('Rail: $i')), 132);
 
 		rule();
 
@@ -317,8 +317,8 @@ class Gallery extends Sprite {
 		bodyA.addChild(l2);
 		put(bodyA, 40);
 
-		head("UILoadingBar — auto-animating");
-		bar = new UILoadingBar("Downloading", COL, 0.0);
+		head("UIProgressBar — auto-animating");
+		bar = new UIProgressBar("Downloading", COL, 0.0);
 		bar.showPercent = true;
 		put(bar, 30);
 

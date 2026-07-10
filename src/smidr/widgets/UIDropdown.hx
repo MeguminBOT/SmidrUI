@@ -27,7 +27,7 @@ final class UIDropdown extends UIComponent {
 	public var fontSize(default, set):Int = 12;
 
 	/** Width of the value box on the right; the label uses the remaining row width. **/
-	public var boxWidth:Float;
+	public var controlWidth:Float;
 
 	/** Max visible rows before the popup scrolls. **/
 	public var maxRows:Int = 10;
@@ -35,8 +35,8 @@ final class UIDropdown extends UIComponent {
 	var items:Array<String> = [];
 	var display:Array<String> = [];
 
-	final tf:TextField;
-	final valueTf:TextField;
+	final labelField:TextField;
+	final valueField:TextField;
 
 	var popup:Sprite = null;
 	var popupPane:UIScrollPane = null;
@@ -50,12 +50,12 @@ final class UIDropdown extends UIComponent {
 		super(true, true);
 		this.label = label;
 		this.onSelect = onSelect;
-		boxWidth = UITheme.px(140);
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
-		addChild(tf);
-		valueTf = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
-		valueTf.autoSize = openfl.text.TextFieldAutoSize.NONE;
-		addChild(valueTf);
+		controlWidth = UITheme.px(140);
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
+		addChild(labelField);
+		valueField = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
+		valueField.autoSize = openfl.text.TextFieldAutoSize.NONE;
+		addChild(valueField);
 		resize(width, UITheme.px(24));
 		render();
 	}
@@ -102,7 +102,7 @@ final class UIDropdown extends UIComponent {
 	}
 
 	override function onPress(localX:Float, localY:Float):Void {
-		if (localX < w - boxWidth)
+		if (localX < w - controlWidth)
 			return;
 		if (popup == null)
 			openPopup();
@@ -122,16 +122,16 @@ final class UIDropdown extends UIComponent {
 		g.drawRect(0, 0, w, h);
 		g.endFill();
 
-		var bx:Float = w - boxWidth;
+		var bx:Float = w - controlWidth;
 		var r:Float = UITheme.px(6);
 		var fill:Int = UITheme.panel2;
 		if (hovered)
 			fill = UIColor.lighten(fill, 0.08);
 		g.beginFill(UIColor.rgb(fill));
-		g.drawRoundRect(bx, 1, boxWidth, h - 2, r, r);
+		g.drawRoundRect(bx, 1, controlWidth, h - 2, r, r);
 		g.endFill();
 		g.lineStyle(1, UIColor.rgb(popup != null ? UITheme.accent : UITheme.border));
-		g.drawRoundRect(bx + 0.5, 1.5, boxWidth - 1, h - 3, r, r);
+		g.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, r, r);
 		g.lineStyle();
 		// arrow
 		var ax:Float = w - UITheme.px(13);
@@ -142,21 +142,21 @@ final class UIDropdown extends UIComponent {
 		g.lineTo(ax, ay + UITheme.px(4.5));
 		g.endFill();
 
-		UIFonts.restyle(tf, UITheme.fs(fontSize), UITheme.text2);
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.x = 0;
-		tf.y = (h - tf.height) / 2;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.x = 0;
+		labelField.y = (h - labelField.height) / 2;
 
-		UIFonts.restyle(valueTf, UITheme.fs(fontSize), UITheme.text);
+		UIFonts.restyle(valueField, UITheme.fs(fontSize), UITheme.text);
 		var v:String = displayAt(selectedIndex);
-		if (valueTf.text != v)
-			valueTf.text = v;
-		valueTf.width = boxWidth - UITheme.px(26);
-		valueTf.height = valueTf.textHeight + 4;
-		valueTf.x = bx + UITheme.px(8);
-		valueTf.y = (h - valueTf.height) / 2;
+		if (valueField.text != v)
+			valueField.text = v;
+		valueField.width = controlWidth - UITheme.px(26);
+		valueField.height = valueField.textHeight + 4;
+		valueField.x = bx + UITheme.px(8);
+		valueField.y = (h - valueField.height) / 2;
 	}
 
 	function openPopup():Void {
@@ -177,17 +177,17 @@ final class UIDropdown extends UIComponent {
 		var rows:Int = (items.length < maxRows) ? items.length : maxRows;
 		var listH:Float = rows * rowH + UITheme.px(8);
 
-		var origin:Point = localToGlobal(new Point(w - boxWidth, h));
+		var origin:Point = localToGlobal(new Point(w - controlWidth, h));
 		var local:Point = root.popupLayer.globalToLocal(origin);
 
 		var panel:Sprite = new Sprite();
 		var g = panel.graphics;
 		var r:Float = UITheme.px(6);
 		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRoundRect(0, 0, boxWidth, listH, r, r);
+		g.drawRoundRect(0, 0, controlWidth, listH, r, r);
 		g.endFill();
 		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0.5, 0.5, boxWidth - 1, listH - 1, r, r);
+		g.drawRoundRect(0.5, 0.5, controlWidth - 1, listH - 1, r, r);
 		g.lineStyle();
 		panel.x = local.x;
 		// open upward when the list would clip past the window bottom
@@ -206,12 +206,12 @@ final class UIDropdown extends UIComponent {
 			panel.scaleY = 0.96 + 0.04 * p;
 		}, 0, 1, 145, OUT_QUAD);
 
-		popupPane = new UIScrollPane(boxWidth, listH - UITheme.px(8));
+		popupPane = new UIScrollPane(controlWidth, listH - UITheme.px(8));
 		popupPane.y = UITheme.px(4);
 		var i:Int = 0;
 		var n:Int = items.length;
 		while (i < n) {
-			var row:UIDropdownRow = new UIDropdownRow(this, i, displayAt(i), boxWidth, rowH, i == selectedIndex);
+			var row:UIDropdownRow = new UIDropdownRow(this, i, displayAt(i), controlWidth, rowH, i == selectedIndex);
 			row.y = i * rowH;
 			popupPane.content.addChild(row);
 			i++;
@@ -288,16 +288,16 @@ private final class UIDropdownRow extends UIComponent {
 	final owner:UIDropdown;
 	final index:Int;
 	final selected:Bool;
-	final tf:TextField;
+	final labelField:TextField;
 
 	public function new(owner:UIDropdown, index:Int, text:String, width:Float, height:Float, selected:Bool) {
 		super(true, true);
 		this.owner = owner;
 		this.index = index;
 		this.selected = selected;
-		tf = UIFonts.make(UITheme.fs(11), selected ? UITheme.highlight : UITheme.text);
-		tf.text = text;
-		addChild(tf);
+		labelField = UIFonts.make(UITheme.fs(11), selected ? UITheme.highlight : UITheme.text);
+		labelField.text = text;
+		addChild(labelField);
 		resize(width, height);
 		render();
 	}
@@ -319,7 +319,7 @@ private final class UIDropdownRow extends UIComponent {
 			g.drawRect(0, 0, w, h);
 			g.endFill();
 		}
-		tf.x = UITheme.px(8);
-		tf.y = (h - tf.height) / 2;
+		labelField.x = UITheme.px(8);
+		labelField.y = (h - labelField.height) / 2;
 	}
 }

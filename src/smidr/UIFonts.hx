@@ -78,26 +78,26 @@ final class UIFonts {
 		@return the configured field (mouse-transparent, not selectable)
 	**/
 	public static function make(size:Int, color:Int, ?align:TextFormatAlign):TextField {
-		var tf:TextField = new TextField();
-		tf.embedFonts = embedded;
-		tf.defaultTextFormat = format(size, color, align);
-		tf.selectable = false;
-		tf.mouseEnabled = false;
-		tf.multiline = false;
-		tf.autoSize = TextFieldAutoSize.LEFT;
-		return tf;
+		var field:TextField = new TextField();
+		field.embedFonts = embedded;
+		field.defaultTextFormat = format(size, color, align);
+		field.selectable = false;
+		field.mouseEnabled = false;
+		field.multiline = false;
+		field.autoSize = TextFieldAutoSize.LEFT;
+		return field;
 	}
 
 	/**
 		Restyles an existing field with a cached format (applies to current and future text).
-		@param tf the field to restyle
+		@param field the field to restyle
 		@param size font size in px
 		@param color text color
 		@param align paragraph alignment (default LEFT)
 	**/
-	public static inline function restyle(tf:TextField, size:Int, color:Int, ?align:TextFormatAlign):Void {
-		tf.embedFonts = embedded;
-		tf.defaultTextFormat = format(size, color, align);
-		tf.setTextFormat(format(size, color, align));
+	public static inline function restyle(field:TextField, size:Int, color:Int, ?align:TextFormatAlign):Void {
+		field.embedFonts = embedded;
+		field.defaultTextFormat = format(size, color, align);
+		field.setTextFormat(format(size, color, align));
 	}
 }

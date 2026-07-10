@@ -54,17 +54,17 @@ final class UIDrawer extends UIComponent {
 	var edgeStrip:UIComponent;
 	var tween:UITween = null;
 
-	var vw:Float = 0;
-	var vh:Float = 0;
+	var viewportWidth:Float = 0;
+	var viewportHeight:Float = 0;
 
-	var hPending:Bool = false;
+	var horizontalDragPending:Bool = false;
 	var dragging:Bool = false;
 	var dragStartX:Float = 0;
 	var dragStartY:Float = 0;
 	var dragStartProgress:Float = 0;
-	var lastX:Float = 0;
-	var lastT:Int = 0;
-	var vel:Float = 0;
+	var lastPointerX:Float = 0;
+	var lastPointerTime:Int = 0;
+	var velocity:Float = 0;
 	var closerPushed:Bool = false;
 
 	/**
@@ -109,18 +109,18 @@ final class UIDrawer extends UIComponent {
 		var stripW:Float = UITheme.px(18);
 		edgeStrip.graphics.clear();
 		edgeStrip.graphics.beginFill(0, 0);
-		edgeStrip.graphics.drawRect(0, 0, stripW, vh);
+		edgeStrip.graphics.drawRect(0, 0, stripW, viewportHeight);
 		edgeStrip.graphics.endFill();
-		edgeStrip.x = (side == LEFT) ? 0 : vw - stripW;
+		edgeStrip.x = (side == LEFT) ? 0 : viewportWidth - stripW;
 		edgeStrip.y = 0;
 		root.popupLayer.addChild(edgeStrip);
 	}
 
 	function layoutViewport():Void {
 		var root:UIRoot = UIRoot.current;
-		vw = (root != null && root.stage != null) ? root.stage.stageWidth / (root.scaleX > 0 ? root.scaleX : 1) : 1280;
-		vh = (root != null && root.stage != null) ? root.stage.stageHeight / (root.scaleY > 0 ? root.scaleY : 1) : 720;
-		resize(w, vh);
+		viewportWidth = (root != null && root.stage != null) ? root.stage.stageWidth / (root.scaleX > 0 ? root.scaleX : 1) : 1280;
+		viewportHeight = (root != null && root.stage != null) ? root.stage.stageHeight / (root.scaleY > 0 ? root.scaleY : 1) : 720;
+		resize(w, viewportHeight);
 	}
 
 	/** Slides the drawer open. **/
@@ -162,7 +162,7 @@ final class UIDrawer extends UIComponent {
 
 	function applyProgress(p:Float):Void {
 		progress = p;
-		x = (side == LEFT) ? (p - 1) * w : vw - p * w;
+		x = (side == LEFT) ? (p - 1) * w : viewportWidth - p * w;
 		y = 0;
 		scrim.alpha = p;
 	}
@@ -197,16 +197,16 @@ final class UIDrawer extends UIComponent {
 	}
 
 	function __onPanelDown(e:MouseEvent):Void {
-		hPending = true;
+		horizontalDragPending = true;
 		dragStartX = e.stageX;
 		dragStartY = e.stageY;
 	}
 
 	function __onPanelMove(e:MouseEvent):Void {
-		if (!hPending || dragging)
+		if (!horizontalDragPending || dragging)
 			return;
 		if (!e.buttonDown) {
-			hPending = false;
+			horizontalDragPending = false;
 			return;
 		}
 		var sf:Float = scaleFactorX();
@@ -215,7 +215,7 @@ final class UIDrawer extends UIComponent {
 		var slop:Float = UITheme.px(10) * sf;
 		if (dx < slop && dy < slop)
 			return;
-		hPending = false;
+		horizontalDragPending = false;
 		// only horizontally-dominant drags grab the drawer; vertical ones belong to the content
 		if (dx <= dy * 1.2 || UIPointer.captureTarget != null)
 			return;
@@ -235,9 +235,9 @@ final class UIDrawer extends UIComponent {
 		dragging = true;
 		dragStartX = stageX;
 		dragStartProgress = progress;
-		lastX = stageX;
-		lastT = Lib.getTimer();
-		vel = 0;
+		lastPointerX = stageX;
+		lastPointerTime = Lib.getTimer();
+		velocity = 0;
 		beginCapture();
 	}
 
@@ -246,11 +246,11 @@ final class UIDrawer extends UIComponent {
 			return;
 		var sf:Float = scaleFactorX();
 		var now:Int = Lib.getTimer();
-		var dt:Float = now - lastT;
+		var dt:Float = now - lastPointerTime;
 		if (dt > 0) {
-			vel = ((stageX - lastX) / sf) / dt;
-			lastX = stageX;
-			lastT = now;
+			velocity = ((stageX - lastPointerX) / sf) / dt;
+			lastPointerX = stageX;
+			lastPointerTime = now;
 		}
 		var delta:Float = (stageX - dragStartX) / sf / w;
 		var p:Float = dragStartProgress + ((side == LEFT) ? delta : -delta);
@@ -266,8 +266,8 @@ final class UIDrawer extends UIComponent {
 			return;
 		dragging = false;
 		// velocity picks the direction when the finger was still moving; position otherwise
-		var toward:Float = (side == LEFT) ? vel : -vel;
-		if (Math.abs(vel) > 0.15)
+		var toward:Float = (side == LEFT) ? velocity : -velocity;
+		if (Math.abs(velocity) > 0.15)
 			animateTo(toward > 0 ? 1 : 0);
 		else
 			animateTo(progress >= 0.5 ? 1 : 0);

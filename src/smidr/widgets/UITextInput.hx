@@ -34,10 +34,10 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 	public var maxLength:Int = 0;
 
 	/** Width of the input box on the right; 0 = whole row. **/
-	public var boxWidth:Float = 0;
+	public var controlWidth:Float = 0;
 
-	final tf:TextField;
-	final labelTf:TextField;
+	final valueField:TextField;
+	final labelField:TextField;
 
 	var focusedNow:Bool = false;
 	var caret:Int = 0;
@@ -56,11 +56,11 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 		hoverCursor = openfl.ui.MouseCursor.IBEAM;
 		this.label = label;
 		this.onChange = onChange;
-		labelTf = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
-		addChild(labelTf);
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
-		tf.autoSize = openfl.text.TextFieldAutoSize.NONE;
-		addChild(tf);
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
+		addChild(labelField);
+		valueField = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
+		valueField.autoSize = openfl.text.TextFieldAutoSize.NONE;
+		addChild(valueField);
 		@:bypassAccessor this.text = text;
 		caret = text.length;
 		anchor = caret;
@@ -79,7 +79,7 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 	}
 
 	inline function inputX():Float {
-		return (boxWidth > 0) ? (w - boxWidth) : ((label != "" || key != null) ? w * 0.42 : 0);
+		return (controlWidth > 0) ? (w - controlWidth) : ((label != "" || key != null) ? w * 0.42 : 0);
 	}
 
 	public function capturesKeyboard():Bool {
@@ -115,7 +115,7 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 			return;
 		}
 		UIFocus.set(this);
-		caret = indexAt(localX - ix - UITheme.px(6) + tf.scrollH);
+		caret = indexAt(localX - ix - UITheme.px(6) + valueField.scrollH);
 		anchor = caret;
 		caretVisible = true;
 		blink = 0;
@@ -128,7 +128,7 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 			return 0;
 		var i:Int = 0;
 		while (i < n) {
-			var b = tf.getCharBoundaries(i);
+			var b = valueField.getCharBoundaries(i);
 			if (b != null && px < b.x + b.width * 0.5 - 2)
 				return i;
 			i++;
@@ -283,32 +283,32 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 		g.drawRoundRect(ix + 0.5, 1.5, bw - 1, h - 3, r, r);
 		g.lineStyle();
 
-		UIFonts.restyle(labelTf, UITheme.fs(fontSize), UITheme.text2);
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		if (labelTf.text != resolved)
-			labelTf.text = resolved;
-		labelTf.visible = resolved != "";
-		labelTf.x = 0;
-		labelTf.y = (h - labelTf.height) / 2;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.visible = resolved != "";
+		labelField.x = 0;
+		labelField.y = (h - labelField.height) / 2;
 
-		UIFonts.restyle(tf, UITheme.fs(fontSize), UITheme.text);
-		if (tf.text != text)
-			tf.text = text;
-		tf.width = bw - UITheme.px(12);
-		tf.height = tf.textHeight + 4;
-		tf.x = ix + UITheme.px(6);
-		tf.y = (h - tf.height) / 2;
+		UIFonts.restyle(valueField, UITheme.fs(fontSize), UITheme.text);
+		if (valueField.text != text)
+			valueField.text = text;
+		valueField.width = bw - UITheme.px(12);
+		valueField.height = valueField.textHeight + 4;
+		valueField.x = ix + UITheme.px(6);
+		valueField.y = (h - valueField.height) / 2;
 
 		// keep the caret inside the box (the field scrolls horizontally with it)
 		if (focusedNow) {
 			var rawCaret:Float = rawCaretX(caret);
-			var innerW:Float = tf.width - 4;
-			if (rawCaret - tf.scrollH > innerW)
-				tf.scrollH = Std.int(rawCaret - innerW + 8);
-			else if (rawCaret - tf.scrollH < 0)
-				tf.scrollH = Std.int(Math.max(0, rawCaret - 8));
-		} else if (tf.scrollH != 0)
-			tf.scrollH = 0;
+			var innerW:Float = valueField.width - 4;
+			if (rawCaret - valueField.scrollH > innerW)
+				valueField.scrollH = Std.int(rawCaret - innerW + 8);
+			else if (rawCaret - valueField.scrollH < 0)
+				valueField.scrollH = Std.int(Math.max(0, rawCaret - 8));
+		} else if (valueField.scrollH != 0)
+			valueField.scrollH = 0;
 
 		if (focusedNow) {
 			if (hasSelection()) {
@@ -317,20 +317,20 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 				var x0:Float = caretX(a);
 				var x1:Float = caretX(b);
 				g.beginFill(UIColor.rgb(UITheme.accentDark), 0.45);
-				g.drawRect(tf.x + x0, tf.y + 1, x1 - x0, tf.height - 2);
+				g.drawRect(valueField.x + x0, valueField.y + 1, x1 - x0, valueField.height - 2);
 				g.endFill();
 			}
 			if (caretVisible) {
-				var cx:Float = tf.x + caretX(caret);
+				var cx:Float = valueField.x + caretX(caret);
 				g.beginFill(UIColor.rgb(UITheme.text));
-				g.drawRect(cx, tf.y + 1, 1.5, tf.height - 2);
+				g.drawRect(cx, valueField.y + 1, 1.5, valueField.height - 2);
 				g.endFill();
 			}
 		}
 	}
 
 	function caretX(index:Int):Float {
-		return rawCaretX(index) - tf.scrollH;
+		return rawCaretX(index) - valueField.scrollH;
 	}
 
 	function rawCaretX(index:Int):Float {
@@ -338,7 +338,7 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 			return 0;
 		if (index > text.length)
 			index = text.length;
-		var b = tf.getCharBoundaries(index - 1);
+		var b = valueField.getCharBoundaries(index - 1);
 		return (b != null) ? (b.x + b.width) : 0;
 	}
 

@@ -13,25 +13,25 @@ import smidr.types.UIEase;
 /**
 	An exclusive-choice segmented control (radio group): label left, equal-width segments in a
 	box on the right. Exactly one segment is selected; picking another slides the accent pill
-	over and fires `onChange(index)`. Taller by default on mobile for touch.
+	over and fires `onSelect(index)`. Taller by default on mobile for touch.
 **/
-final class UISegmented extends UIComponent {
+final class UISegmentedControl extends UIComponent {
 	public var key(default, set):String = null;
 	public var fallback:String = "";
 	public var label(default, set):String;
 
 	public var selectedIndex(default, null):Int = 0;
-	public var onChange:Int->Void = null;
+	public var onSelect:Int->Void = null;
 	public var fontSize(default, set):Int = 11;
 
 	/** Width of the segment box on the right. **/
-	public var boxWidth:Float;
+	public var controlWidth:Float;
 
 	var items:Array<String> = [];
 	var itemKeys:Array<String> = null;
-	var tfs:Array<TextField> = [];
+	var segmentFields:Array<TextField> = [];
 
-	final tf:TextField;
+	final labelField:TextField;
 	var pillX:Float = -1;
 	var pillAnim:Bool = false;
 	var pillTween:UITween = null;
@@ -40,15 +40,15 @@ final class UISegmented extends UIComponent {
 		@param label the row text on the left (empty = the box spans the whole row)
 		@param width layout width (the segment box sits at the right edge)
 		@param items the segment labels
-		@param onChange fired with the new index when the user picks a segment
+		@param onSelect fired with the new index when the user picks a segment
 	**/
-	public function new(label:String, width:Float, items:Array<String>, ?onChange:Int->Void) {
+	public function new(label:String, width:Float, items:Array<String>, ?onSelect:Int->Void) {
 		super(true, true);
 		this.label = label;
-		this.onChange = onChange;
-		boxWidth = UITheme.px(160);
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
-		addChild(tf);
+		this.onSelect = onSelect;
+		controlWidth = UITheme.px(160);
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
+		addChild(labelField);
 		setItems(items);
 		resize(width, UITheme.px(#if mobile 30 #else 24 #end));
 		render();
@@ -72,16 +72,16 @@ final class UISegmented extends UIComponent {
 	public function setItems(items:Array<String>, ?keys:Array<String>):Void {
 		this.items = items;
 		this.itemKeys = keys;
-		var i:Int = tfs.length;
+		var i:Int = segmentFields.length;
 		while (--i >= 0)
-			removeChild(tfs[i]);
-		tfs.resize(0);
+			removeChild(segmentFields[i]);
+		segmentFields.resize(0);
 		i = 0;
 		while (i < items.length) {
 			var t:TextField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2, TextFormatAlign.CENTER);
 			t.autoSize = openfl.text.TextFieldAutoSize.NONE;
 			addChild(t);
-			tfs.push(t);
+			segmentFields.push(t);
 			i++;
 		}
 		if (selectedIndex >= items.length)
@@ -91,7 +91,7 @@ final class UISegmented extends UIComponent {
 	}
 
 	/**
-		Programmatically selects a segment without firing `onChange` (the pill snaps).
+		Programmatically selects a segment without firing `onSelect` (the pill snaps).
 		@param index the segment to select (ignored when out of range)
 	**/
 	public function select(index:Int):Void {
@@ -110,7 +110,7 @@ final class UISegmented extends UIComponent {
 		if (n == 0 || localX < bx)
 			return;
 		var pad:Float = UITheme.px(2);
-		var idx:Int = Std.int((localX - bx - pad) / ((boxWidth - pad * 2) / n));
+		var idx:Int = Std.int((localX - bx - pad) / ((controlWidth - pad * 2) / n));
 		if (idx < 0)
 			idx = 0;
 		if (idx >= n)
@@ -122,15 +122,15 @@ final class UISegmented extends UIComponent {
 		if (idx == selectedIndex)
 			return;
 		var pad:Float = UITheme.px(2);
-		var segW:Float = (boxWidth - pad * 2) / items.length;
+		var segW:Float = (controlWidth - pad * 2) / items.length;
 		var from:Float = (pillX < 0) ? boxX() + pad + selectedIndex * segW : pillX;
 		selectedIndex = idx;
 		killTween();
 		pillAnim = true;
 		pillTween = UITween.to(applyPill, from, boxX() + pad + idx * segW, 150, OUT_QUAD, endPill);
 		invalidate();
-		if (onChange != null)
-			onChange(idx);
+		if (onSelect != null)
+			onSelect(idx);
 	}
 
 	function applyPill(v:Float):Void {
@@ -151,7 +151,7 @@ final class UISegmented extends UIComponent {
 	}
 
 	inline function boxX():Float {
-		return (label != "" || key != null) ? w - boxWidth : 0;
+		return (label != "" || key != null) ? w - controlWidth : 0;
 	}
 
 	override public function render():Void {
@@ -163,7 +163,7 @@ final class UISegmented extends UIComponent {
 
 		var n:Int = items.length;
 		var bx:Float = boxX();
-		var bw:Float = (label != "" || key != null) ? boxWidth : w;
+		var bw:Float = (label != "" || key != null) ? controlWidth : w;
 		var r:Float = UITheme.px(6);
 		var pad:Float = UITheme.px(2);
 
@@ -184,7 +184,7 @@ final class UISegmented extends UIComponent {
 
 			var i:Int = 0;
 			while (i < n) {
-				var t:TextField = tfs[i];
+				var t:TextField = segmentFields[i];
 				var active:Bool = (i == selectedIndex);
 				UIFonts.restyle(t, UITheme.fs(fontSize), active ? UITheme.text : UITheme.text2, TextFormatAlign.CENTER);
 				var resolved:String = (itemKeys != null && itemKeys[i] != null) ? UILocale.t(itemKeys[i], items[i]) : items[i];
@@ -198,13 +198,13 @@ final class UISegmented extends UIComponent {
 			}
 		}
 
-		UIFonts.restyle(tf, UITheme.fs(fontSize), UITheme.text2);
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.visible = resolved != "";
-		tf.x = 0;
-		tf.y = (h - tf.height) / 2;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.visible = resolved != "";
+		labelField.x = 0;
+		labelField.y = (h - labelField.height) / 2;
 	}
 
 	override public function dispose():Void {

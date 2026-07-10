@@ -9,7 +9,7 @@ import smidr.UITheme;
 
 /**
 	A labelled checkbox row: label on the left, accent check square on the right (or standalone
-	square when the label is empty). Clicking anywhere on the row toggles; `onChange(checked)`
+	square when the label is empty). Clicking anywhere on the row toggles; `onToggle(checked)`
 	fires after the flip.
 **/
 final class UICheckbox extends UIComponent {
@@ -17,24 +17,24 @@ final class UICheckbox extends UIComponent {
 	public var fallback:String = "";
 	public var label(default, set):String;
 	public var checked(default, set):Bool;
-	public var onChange:Bool->Void = null;
+	public var onToggle:Bool->Void = null;
 	public var fontSize(default, set):Int = 12;
 
-	final tf:TextField;
+	final labelField:TextField;
 
 	/**
 		@param label the row text (empty string = standalone check square)
 		@param width layout width (the check square sits at the right edge)
 		@param checked the initial state
-		@param onChange fired after the state flips
+		@param onToggle fired after the state flips
 	**/
-	public function new(label:String, width:Float, checked:Bool = false, ?onChange:Bool->Void) {
+	public function new(label:String, width:Float, checked:Bool = false, ?onToggle:Bool->Void) {
 		super(true, true);
 		this.label = label;
 		@:bypassAccessor this.checked = checked;
-		this.onChange = onChange;
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
-		addChild(tf);
+		this.onToggle = onToggle;
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
+		addChild(labelField);
 		resize(width, UITheme.px(24));
 		render();
 	}
@@ -52,8 +52,8 @@ final class UICheckbox extends UIComponent {
 	override function click():Void {
 		@:bypassAccessor checked = !checked;
 		invalidate();
-		if (onChange != null)
-			onChange(checked);
+		if (onToggle != null)
+			onToggle(checked);
 		super.click();
 	}
 
@@ -85,12 +85,12 @@ final class UICheckbox extends UIComponent {
 			g.lineStyle();
 		}
 
-		UIFonts.restyle(tf, UITheme.fs(fontSize), UITheme.text2);
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.x = 0;
-		tf.y = (h - tf.height) / 2;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.x = 0;
+		labelField.y = (h - labelField.height) / 2;
 	}
 
 	function set_key(v:String):String {

@@ -66,16 +66,16 @@ class UIList extends UIComponent implements IUIFocusable {
 	var viewport:Sprite;
 	var rows:Array<UIListRow> = [];
 	var thumb:Shape;
-	var rowH:Float = 1;
+	var rowHeight:Float = 1;
 	var clipRect:Rectangle;
 
 	var mode:Int = MODE_NONE;
 	var dragPending:Bool = false;
 	var dragStartStageY:Float = 0;
 	var dragStartScroll:Float = 0;
-	var lastY:Float = 0;
-	var lastT:Int = 0;
-	var vel:Float = 0;
+	var lastPointerY:Float = 0;
+	var lastPointerTime:Int = 0;
+	var velocity:Float = 0;
 	var flinging:Bool = false;
 
 	var lastPickIndex:Int = -1;
@@ -174,18 +174,18 @@ class UIList extends UIComponent implements IUIFocusable {
 	public function scrollTo(index:Int):Void {
 		if (index < 0 || index >= itemCount)
 			return;
-		var top:Float = index * rowH;
+		var top:Float = index * rowHeight;
 		if (top < scrollY)
 			setScroll(top);
-		else if (top + rowH > scrollY + h)
-			setScroll(top + rowH - h);
+		else if (top + rowHeight > scrollY + h)
+			setScroll(top + rowHeight - h);
 	}
 
 	/** The furthest `scrollY` can go. **/
 	public var maxScroll(get, never):Float;
 
 	inline function get_maxScroll():Float {
-		var m:Float = itemCount * rowH - h;
+		var m:Float = itemCount * rowHeight - h;
 		return (m > 0) ? m : 0;
 	}
 
@@ -210,7 +210,7 @@ class UIList extends UIComponent implements IUIFocusable {
 		var n:Int = rows.length;
 		if (n == 0)
 			return;
-		var first:Int = Std.int(scrollY / rowH);
+		var first:Int = Std.int(scrollY / rowHeight);
 		if (first < 0)
 			first = 0;
 		var i:Int = first;
@@ -220,8 +220,8 @@ class UIList extends UIComponent implements IUIFocusable {
 			if (i < itemCount) {
 				if (r.__index != i) {
 					r.__index = i;
-					r.y = i * rowH;
-					r.resize(w, rowH);
+					r.y = i * rowHeight;
+					r.resize(w, rowHeight);
 					r.bind(i);
 					r.invalidate();
 				}
@@ -258,8 +258,8 @@ class UIList extends UIComponent implements IUIFocusable {
 	}
 
 	override public function render():Void {
-		rowH = UITheme.px(rowHeightBase);
-		var need:Int = Math.ceil(h / rowH) + 2;
+		rowHeight = UITheme.px(rowHeightBase);
+		var need:Int = Math.ceil(h / rowHeight) + 2;
 		if (need != rows.length)
 			buildPool(need);
 		else {
@@ -267,8 +267,8 @@ class UIList extends UIComponent implements IUIFocusable {
 			while (--i >= 0) {
 				var r:UIListRow = rows[i];
 				if (r.__index >= 0) {
-					r.y = r.__index * rowH;
-					r.resize(w, rowH);
+					r.y = r.__index * rowHeight;
+					r.resize(w, rowHeight);
 				}
 			}
 		}
@@ -291,7 +291,7 @@ class UIList extends UIComponent implements IUIFocusable {
 			return;
 		var barW:Float = UITheme.px(4);
 		var trackH:Float = h - 4;
-		var thumbH:Float = trackH * (h / (itemCount * rowH));
+		var thumbH:Float = trackH * (h / (itemCount * rowHeight));
 		if (thumbH < 24)
 			thumbH = 24;
 		g.beginFill(UIColor.rgb(UITheme.border2));
@@ -305,7 +305,7 @@ class UIList extends UIComponent implements IUIFocusable {
 		if (m <= 0)
 			return;
 		var trackH:Float = h - 4;
-		var thumbH:Float = trackH * (h / (itemCount * rowH));
+		var thumbH:Float = trackH * (h / (itemCount * rowHeight));
 		if (thumbH < 24)
 			thumbH = 24;
 		thumb.x = w - UITheme.px(4) - 2;
@@ -395,9 +395,9 @@ class UIList extends UIComponent implements IUIFocusable {
 			dragPending = true;
 			dragStartStageY = e.stageY;
 			dragStartScroll = scrollY;
-			lastY = e.stageY;
-			lastT = Lib.getTimer();
-			vel = 0;
+			lastPointerY = e.stageY;
+			lastPointerTime = Lib.getTimer();
+			velocity = 0;
 		}
 	}
 
@@ -419,7 +419,7 @@ class UIList extends UIComponent implements IUIFocusable {
 		var sf:Float = scaleFactorY();
 		if (mode == MODE_THUMB) {
 			var trackH:Float = h - 4;
-			var thumbH:Float = trackH * (h / (itemCount * rowH));
+			var thumbH:Float = trackH * (h / (itemCount * rowHeight));
 			if (thumbH < 24)
 				thumbH = 24;
 			var usable:Float = trackH - thumbH;
@@ -428,11 +428,11 @@ class UIList extends UIComponent implements IUIFocusable {
 			setScroll(dragStartScroll + ((stageY - dragStartStageY) / sf) * (maxScroll / usable));
 		} else if (mode == MODE_TOUCH) {
 			var now:Int = Lib.getTimer();
-			var dt:Float = now - lastT;
+			var dt:Float = now - lastPointerTime;
 			if (dt > 0) {
-				vel = ((stageY - lastY) / sf) / dt;
-				lastY = stageY;
-				lastT = now;
+				velocity = ((stageY - lastPointerY) / sf) / dt;
+				lastPointerY = stageY;
+				lastPointerTime = now;
 			}
 			setScroll(dragStartScroll - (stageY - dragStartStageY) / sf);
 		}
@@ -442,17 +442,17 @@ class UIList extends UIComponent implements IUIFocusable {
 		var wasTouch:Bool = (mode == MODE_TOUCH);
 		mode = MODE_NONE;
 		dragPending = false;
-		if (wasTouch && Math.abs(vel) > 0.1 && maxScroll > 0) {
+		if (wasTouch && Math.abs(velocity) > 0.1 && maxScroll > 0) {
 			flinging = true;
 			UIRoot.addTicker(flingTick);
 		}
 	}
 
 	function flingTick(dtMs:Float):Void {
-		var next:Float = scrollY - vel * dtMs;
+		var next:Float = scrollY - velocity * dtMs;
 		setScroll(next);
-		vel *= Math.exp(-dtMs * 0.004);
-		if (Math.abs(vel) < 0.02 || scrollY != next)
+		velocity *= Math.exp(-dtMs * 0.004);
+		if (Math.abs(velocity) < 0.02 || scrollY != next)
 			stopFling();
 	}
 
@@ -460,7 +460,7 @@ class UIList extends UIComponent implements IUIFocusable {
 		if (!flinging)
 			return;
 		flinging = false;
-		vel = 0;
+		velocity = 0;
 		UIRoot.removeTicker(flingTick);
 	}
 
@@ -497,7 +497,7 @@ class UIListRow extends UIComponent {
 	var __index:Int = -1;
 
 	final owner:UIList;
-	var tf:TextField = null;
+	var labelField:TextField = null;
 
 	inline function get_index():Int {
 		return __index;
@@ -517,13 +517,13 @@ class UIListRow extends UIComponent {
 		@param index the data index to display
 	**/
 	public function bind(index:Int):Void {
-		if (tf == null) {
-			tf = UIFonts.make(UITheme.fs(12), UITheme.text);
-			addChild(tf);
+		if (labelField == null) {
+			labelField = UIFonts.make(UITheme.fs(12), UITheme.text);
+			addChild(labelField);
 		}
 		var s:String = owner.labelOf(index);
-		if (tf.text != s)
-			tf.text = s;
+		if (labelField.text != s)
+			labelField.text = s;
 	}
 
 	override function click():Void {
@@ -552,10 +552,10 @@ class UIListRow extends UIComponent {
 			g.drawRect(0, 0, w, h);
 			g.endFill();
 		}
-		if (tf != null) {
-			UIFonts.restyle(tf, UITheme.fs(12), selected ? UITheme.text : UITheme.text2);
-			tf.x = UITheme.px(10);
-			tf.y = (h - tf.height) / 2;
+		if (labelField != null) {
+			UIFonts.restyle(labelField, UITheme.fs(12), selected ? UITheme.text : UITheme.text2);
+			labelField.x = UITheme.px(10);
+			labelField.y = (h - labelField.height) / 2;
 		}
 	}
 }

@@ -29,10 +29,10 @@ final class UIMenuBar extends UIComponent {
 	public var fontSize(default, set):Int = 12;
 
 	var menus:Array<UIMenuDef> = [];
-	var titleTfs:Array<TextField> = [];
+	var titleFields:Array<TextField> = [];
 	var titleX:Array<Float> = [];
 	var titleW:Array<Float> = [];
-	var brandTf:TextField = null;
+	var brandField:TextField = null;
 	var openIndex:Int = -1;
 	var openMenu:UIContextMenu = null;
 
@@ -52,15 +52,15 @@ final class UIMenuBar extends UIComponent {
 	**/
 	public function setMenus(menus:Array<UIMenuDef>):Void {
 		this.menus = menus;
-		var i:Int = titleTfs.length;
+		var i:Int = titleFields.length;
 		while (--i >= 0)
-			removeChild(titleTfs[i]);
-		titleTfs.resize(0);
+			removeChild(titleFields[i]);
+		titleFields.resize(0);
 		i = 0;
 		while (i < menus.length) {
 			var tf:TextField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
 			addChild(tf);
-			titleTfs.push(tf);
+			titleFields.push(tf);
 			i++;
 		}
 		invalidate();
@@ -154,16 +154,16 @@ final class UIMenuBar extends UIComponent {
 
 		var x:Float = UITheme.px(12);
 		if (brand != "") {
-			if (brandTf == null) {
-				brandTf = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
-				addChild(brandTf);
+			if (brandField == null) {
+				brandField = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
+				addChild(brandField);
 			}
-			UIFonts.restyle(brandTf, UITheme.fs(fontSize), UITheme.text);
-			if (brandTf.text != brand)
-				brandTf.text = brand;
-			brandTf.x = x;
-			brandTf.y = (h - brandTf.height) / 2;
-			x += brandTf.width + UITheme.px(20);
+			UIFonts.restyle(brandField, UITheme.fs(fontSize), UITheme.text);
+			if (brandField.text != brand)
+				brandField.text = brand;
+			brandField.x = x;
+			brandField.y = (h - brandField.height) / 2;
+			x += brandField.width + UITheme.px(20);
 		}
 
 		titleX.resize(0);
@@ -172,7 +172,7 @@ final class UIMenuBar extends UIComponent {
 		var i:Int = 0;
 		var n:Int = menus.length;
 		while (i < n) {
-			var tf:TextField = titleTfs[i];
+			var tf:TextField = titleFields[i];
 			var m:UIMenuDef = menus[i];
 			var resolved:String = (m.key != null) ? UILocale.t(m.key, m.fallback != null ? m.fallback : m.title) : m.title;
 			var active:Bool = (i == openIndex);

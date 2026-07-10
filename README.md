@@ -119,7 +119,7 @@ Runnable sources live in [`examples/`](examples/):
 | File | What it shows |
 | --- | --- |
 | [`SmallExample.hx`](examples/SmallExample.hx) | The minimum: attach a root, a panel, a label and a button. |
-| [`FullExample.hx`](examples/FullExample.hx) | Instantiates **every widget** — an icon rail switching three sections over a menu bar, with tabs, sliders, steppers, switches, checkboxes, segmented controls, icon buttons, a loading bar, a dropdown, text input, chip, keybind, icon, a data-bound list, collapsible accordions in a scroll pane, a modal, a context menu and toasts — plus font/theme/locale/tooltip setup. |
+| [`FullExample.hx`](examples/FullExample.hx) | Instantiates **every widget** — an icon rail switching three sections over a menu bar, with tabs, sliders, steppers, switches, checkboxes, segmented controls, icon buttons, a progress bar, a dropdown, text input, chip, keybind, icon, a data-bound list, collapsible accordions in a scroll pane, a modal, a context menu and toasts — plus font/theme/locale/tooltip setup. |
 | [`FlixelExample.hx`](examples/FlixelExample.hx) | The `smidr.flixel.FlxSmidr` bridge on an `FlxState`: viewport matching, cursor handling, input arbitration, and a HUD label anchored to a world object. |
 
 **Run** them as an OpenFL app (from the repo root):
@@ -164,7 +164,7 @@ bash doc/apply-theme.sh                                            # recolor to 
 - **`UIComponent`** — base widget: a retained `Sprite` with hover/press/click, drag capture,
   tooltips, and `dispose()`. Subclasses override `render()`.
 - **`UITheme`** — the active palette + metric scale, all plain `0xAARRGGBB` ints. Mutate values
-  or `apply()` a preset, then `changed()` to re-skin.
+  or `apply()` a preset, then `refresh()` to re-skin.
 - **`UIFonts`** — `TextFormat`/`TextField` cache; `register()` swaps the library font.
 - **`UILocale`** — assign `translate` to your lookup; call `refresh()` after a locale switch.
 - **`UITween`** — tiny tween driver stepped by `UIRoot`.

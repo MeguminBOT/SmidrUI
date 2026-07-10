@@ -24,10 +24,10 @@ final class UISlider extends UIComponent {
 	public var fontSize(default, set):Int = 12;
 
 	/** Width of the track area on the right. **/
-	public var trackWidth:Float;
+	public var controlWidth:Float;
 
-	final tf:TextField;
-	final valueTf:TextField;
+	final labelField:TextField;
+	final valueField:TextField;
 
 	var dragging:Bool = false;
 
@@ -46,11 +46,11 @@ final class UISlider extends UIComponent {
 		this.max = max;
 		@:bypassAccessor this.value = value;
 		this.onChange = onChange;
-		trackWidth = UITheme.px(120);
-		tf = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
-		addChild(tf);
-		valueTf = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
-		addChild(valueTf);
+		controlWidth = UITheme.px(120);
+		labelField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
+		addChild(labelField);
+		valueField = UIFonts.make(UITheme.fs(fontSize), UITheme.text);
+		addChild(valueField);
 		resize(width, UITheme.px(24));
 		render();
 	}
@@ -66,7 +66,7 @@ final class UISlider extends UIComponent {
 	}
 
 	override function onPress(localX:Float, localY:Float):Void {
-		var tx:Float = w - trackWidth;
+		var tx:Float = w - controlWidth;
 		if (localX < tx - UITheme.px(6))
 			return;
 		dragging = true;
@@ -86,8 +86,8 @@ final class UISlider extends UIComponent {
 	}
 
 	function seekTo(localX:Float):Void {
-		var tx:Float = w - trackWidth;
-		var p:Float = (localX - tx) / trackWidth;
+		var tx:Float = w - controlWidth;
+		var p:Float = (localX - tx) / controlWidth;
 		if (p < 0)
 			p = 0;
 		if (p > 1)
@@ -110,7 +110,7 @@ final class UISlider extends UIComponent {
 		g.drawRect(0, 0, w, h);
 		g.endFill();
 
-		var tx:Float = w - trackWidth;
+		var tx:Float = w - controlWidth;
 		var cy:Float = h / 2;
 		var p:Float = (max > min) ? (value - min) / (max - min) : 0;
 		if (p < 0)
@@ -119,29 +119,29 @@ final class UISlider extends UIComponent {
 			p = 1;
 
 		g.beginFill(UIColor.rgb(UITheme.panel3));
-		g.drawRoundRect(tx, cy - UITheme.px(2), trackWidth, UITheme.px(4), UITheme.px(4), UITheme.px(4));
+		g.drawRoundRect(tx, cy - UITheme.px(2), controlWidth, UITheme.px(4), UITheme.px(4), UITheme.px(4));
 		g.endFill();
 		g.beginFill(UIColor.rgb(UITheme.accentDark));
-		g.drawRoundRect(tx, cy - UITheme.px(2), trackWidth * p, UITheme.px(4), UITheme.px(4), UITheme.px(4));
+		g.drawRoundRect(tx, cy - UITheme.px(2), controlWidth * p, UITheme.px(4), UITheme.px(4), UITheme.px(4));
 		g.endFill();
 		var knob:Int = hovered || dragging ? UIColor.lighten(UITheme.accent, 0.15) : UITheme.accent;
 		g.beginFill(UIColor.rgb(knob));
-		g.drawCircle(tx + trackWidth * p, cy, UITheme.px(6));
+		g.drawCircle(tx + controlWidth * p, cy, UITheme.px(6));
 		g.endFill();
 
-		UIFonts.restyle(tf, UITheme.fs(fontSize), UITheme.text2);
+		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
-		if (tf.text != resolved)
-			tf.text = resolved;
-		tf.x = 0;
-		tf.y = (h - tf.height) / 2;
+		if (labelField.text != resolved)
+			labelField.text = resolved;
+		labelField.x = 0;
+		labelField.y = (h - labelField.height) / 2;
 
-		UIFonts.restyle(valueTf, UITheme.fs(fontSize), UITheme.text);
+		UIFonts.restyle(valueField, UITheme.fs(fontSize), UITheme.text);
 		var vs:String = formatValue();
-		if (valueTf.text != vs)
-			valueTf.text = vs;
-		valueTf.x = tx - valueTf.width - UITheme.px(8);
-		valueTf.y = (h - valueTf.height) / 2;
+		if (valueField.text != vs)
+			valueField.text = vs;
+		valueField.x = tx - valueField.width - UITheme.px(8);
+		valueField.y = (h - valueField.height) / 2;
 	}
 
 	function formatValue():String {
