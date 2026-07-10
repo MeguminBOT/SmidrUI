@@ -133,27 +133,27 @@ final class UITheme {
 
 	/**
 		Replaces every palette colour at once and re-skins live widgets.
-		@param p the palette to adopt
+		@param palette the palette to adopt
 	**/
-	public static function apply(p:UIPalette):Void {
-		bg = p.bg;
-		panel = p.panel;
-		panel2 = p.panel2;
-		panel3 = p.panel3;
-		card = p.card;
-		inputBg = p.inputBg;
-		border = p.border;
-		border2 = p.border2;
-		text = p.text;
-		text2 = p.text2;
-		text3 = p.text3;
-		accent = p.accent;
-		accentDark = p.accentDark;
-		accentAlt = p.accentAlt;
-		highlight = p.highlight;
-		success = p.success;
-		danger = p.danger;
-		warning = p.warning;
+	public static function apply(palette:UIPalette):Void {
+		bg = palette.bg;
+		panel = palette.panel;
+		panel2 = palette.panel2;
+		panel3 = palette.panel3;
+		card = palette.card;
+		inputBg = palette.inputBg;
+		border = palette.border;
+		border2 = palette.border2;
+		text = palette.text;
+		text2 = palette.text2;
+		text3 = palette.text3;
+		accent = palette.accent;
+		accentDark = palette.accentDark;
+		accentAlt = palette.accentAlt;
+		highlight = palette.highlight;
+		success = palette.success;
+		danger = palette.danger;
+		warning = palette.warning;
 		refresh();
 	}
 

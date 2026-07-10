@@ -89,43 +89,43 @@ final class UIGradient {
 	}
 
 	/**
-		Opens the gradient fill on `g` (the caller then draws the shape and `endFill`s). Use for
-		non-rectangular shapes; `fillRect` covers the common rectangle case.
-		@param g the target graphics
+		Opens the gradient fill on `graphics` (the caller then draws the shape and `endFill`s). Use
+		for non-rectangular shapes; `fillRect` covers the common rectangle case.
+		@param graphics the target graphics
 		@param x the fill box left
 		@param y the fill box top
 		@param width the fill box width
 		@param height the fill box height
 	**/
-	public function beginFill(g:Graphics, x:Float, y:Float, width:Float, height:Float):Void {
-		var n:Int = colors.length;
-		rgbBuf.resize(n);
-		alphaBuf.resize(n);
-		for (i in 0...n) {
-			var c:Int = colors[i];
-			rgbBuf[i] = c & 0xFFFFFF;
-			alphaBuf[i] = ((c >>> 24) & 0xFF) / 255.0;
+	public function beginFill(graphics:Graphics, x:Float, y:Float, width:Float, height:Float):Void {
+		var count:Int = colors.length;
+		rgbBuf.resize(count);
+		alphaBuf.resize(count);
+		for (i in 0...count) {
+			var stop:Int = colors[i];
+			rgbBuf[i] = stop & 0xFFFFFF;
+			alphaBuf[i] = ((stop >>> 24) & 0xFF) / 255.0;
 		}
 		var rotation:Float = (type == GradientType.LINEAR) ? angle * Math.PI / 180 : 0;
 		mtx.createGradientBox(width, height, rotation, x, y);
-		g.beginGradientFill(type, rgbBuf, alphaBuf, ratios, mtx);
+		graphics.beginGradientFill(type, rgbBuf, alphaBuf, ratios, mtx);
 	}
 
 	/**
 		Fills a rectangle (optionally rounded) with the gradient.
-		@param g the target graphics
+		@param graphics the target graphics
 		@param x the rect left
 		@param y the rect top
 		@param width the rect width
 		@param height the rect height
 		@param corner corner radius in pixels (0 = square)
 	**/
-	public function fillRect(g:Graphics, x:Float, y:Float, width:Float, height:Float, corner:Float = 0):Void {
-		beginFill(g, x, y, width, height);
+	public function fillRect(graphics:Graphics, x:Float, y:Float, width:Float, height:Float, corner:Float = 0):Void {
+		beginFill(graphics, x, y, width, height);
 		if (corner > 0)
-			g.drawRoundRect(x, y, width, height, corner, corner);
+			graphics.drawRoundRect(x, y, width, height, corner, corner);
 		else
-			g.drawRect(x, y, width, height);
-		g.endFill();
+			graphics.drawRect(x, y, width, height);
+		graphics.endFill();
 	}
 }
