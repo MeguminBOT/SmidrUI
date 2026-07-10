@@ -7,6 +7,11 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
+- `UIRadioGroup` -- an exclusive vertical radio list (the counterpart to `UISegmentedControl`).
+- `UIStatusBar` -- a themed bottom bar of left/right-aligned text cells with separators.
+- `UIBalloon` -- a callout/popover with a directional tail that points at an anchor, shown on the
+  popup layer with outside-click dismissal.
+- `UIPieMenu` -- a radial menu of `UIMenuItem` sectors opened at a point.
 - Color helpers on `UIColor`: `opaque(rgb)` (force a plain 6-digit `0xRRGGBB` opaque — bare hex
   literals are alpha 0, i.e. transparent), `fromRGB(r, g, b, ?a)`, `withAlpha(c, a)`, and HSV/HSL
   round-trips (`hsv`/`toHSV`, `hsl`/`toHSL`).

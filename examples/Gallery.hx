@@ -12,6 +12,7 @@ import smidr.UITheme;
 import smidr.types.UIAnimationPreset;
 import smidr.types.UIGlyph;
 import smidr.widgets.UIAccordion;
+import smidr.widgets.UIBalloon;
 import smidr.widgets.UIButton;
 import smidr.widgets.UICheckbox;
 import smidr.widgets.UIChip;
@@ -26,8 +27,11 @@ import smidr.widgets.UIProgressBar;
 import smidr.widgets.UIMenuBar;
 import smidr.widgets.UIModal;
 import smidr.widgets.UIPanel;
+import smidr.widgets.UIPieMenu;
+import smidr.widgets.UIRadioGroup;
 import smidr.widgets.UIScrollPane;
 import smidr.widgets.UISegmentedControl;
+import smidr.widgets.UIStatusBar;
 import smidr.widgets.UISeparator;
 import smidr.widgets.UISlider;
 import smidr.widgets.UIStepper;
@@ -401,6 +405,45 @@ class Gallery extends Sprite {
 			animRow.addChild(ab);
 		}
 		put(animRow, 28);
+
+		rule();
+
+		head("UIRadioGroup");
+		var radio = new UIRadioGroup(["Low", "Medium", "High"], COL, 1, (i) -> setStatus('Radio: $i'));
+		put(radio, radio.h);
+
+		head("UIStatusBar");
+		var sbar = new UIStatusBar(COL, 24);
+		sbar.setCells([{text: "Ready"}, {text: "Ln 1, Col 1", rightAlign: true}, {text: "UTF-8", rightAlign: true}]);
+		put(sbar, 24);
+
+		head("UIBalloon / UIPieMenu — popups");
+		var balloonBtn = new UIButton("Balloon", 120, 30);
+		balloonBtn.onClick = () -> openBalloon(balloonBtn);
+		var pieBtn = new UIButton("Pie menu", 120, 30, () -> openPie());
+		pieBtn.x = 132;
+		var popRow = new Sprite();
+		popRow.addChild(balloonBtn);
+		popRow.addChild(pieBtn);
+		put(popRow, 30);
+	}
+
+	function openBalloon(anchor:UIButton):Void {
+		var balloon = new UIBalloon(220, 92, "Balloon");
+		var msg = new UILabel("A callout with a tail that points at whatever opened it.", 12, SECONDARY);
+		msg.wrapWidth = 196;
+		msg.x = 12;
+		balloon.body.addChild(msg);
+		balloon.openAt(anchor);
+	}
+
+	function openPie():Void {
+		UIPieMenu.open(ui.mouseX, ui.mouseY, [
+			{label: "Cut", onSelect: () -> setStatus("Pie: Cut")},
+			{label: "Copy", onSelect: () -> setStatus("Pie: Copy")},
+			{label: "Paste", onSelect: () -> setStatus("Pie: Paste")},
+			{label: "Delete", onSelect: () -> setStatus("Pie: Delete")}
+		]);
 	}
 
 	function playDemo(target:DisplayObject, preset:UIAnimationPreset):Void {
