@@ -17,6 +17,8 @@ import smidr.widgets.UIButton;
 import smidr.widgets.UICheckbox;
 import smidr.widgets.UIChip;
 import smidr.overlays.UIContextMenu;
+import smidr.widgets.UIDockHost;
+import smidr.widgets.UIDockPanel;
 import smidr.widgets.UIDropdown;
 import smidr.widgets.UIIcon;
 import smidr.widgets.UIIconRail;
@@ -454,6 +456,30 @@ class Gallery extends Sprite {
 		head("UIWindow — draggable / resizable / collapsible (content stays clickable)");
 		var spawnBtn = new UIButton("Open window", 150, 30, () -> spawnWindow());
 		put(spawnBtn, 30);
+
+		rule();
+
+		head("UIDockHost — drag tabs to re-dock, drag dividers to resize");
+		var dock = new UIDockHost(COL, 220);
+		var explorer = new UIDockPanel("Explorer");
+		var exLabel = new UILabel("File tree", 12, SECONDARY);
+		exLabel.x = 12;
+		exLabel.y = 12;
+		explorer.content.addChild(exLabel);
+		var mainGroup = dock.addPanel(explorer);
+		var editor = new UIDockPanel("Editor");
+		var edLabel = new UILabel("Code here", 12, SECONDARY);
+		edLabel.x = 12;
+		edLabel.y = 12;
+		editor.content.addChild(edLabel);
+		var editorGroup = dock.dock(editor, mainGroup, RIGHT);
+		var output = new UIDockPanel("Output");
+		var outLabel = new UILabel("Build log", 12, SECONDARY);
+		outLabel.x = 12;
+		outLabel.y = 12;
+		output.content.addChild(outLabel);
+		dock.dock(output, editorGroup, BOTTOM);
+		put(dock, 220);
 	}
 
 	function spawnWindow():Void {

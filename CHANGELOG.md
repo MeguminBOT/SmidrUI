@@ -7,6 +7,11 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
+- `UIDockHost` -- editor-style panel docking: a tree of resizable splits with tabbed
+  `UIDockGroup`s at the leaves. `UIDockPanel`s dock via `addPanel` / `dock(panel, target, zone)`
+  or by dragging a tab (a drop-zone overlay shows where it lands: `CENTER` tabs into a group, the
+  edges split it), emptied groups collapse, and split dividers drag to reproportion. Adds
+  `smidr.types.UIDockZone`.
 - `UIStack` -- a flow-layout container (row/column, `gap`/`padding`, `stretch` or `align`).
 - `UISplitter` -- two resizable panes with a draggable divider (side-by-side or stacked).
 - `UIRadioGroup` -- an exclusive vertical radio list (the counterpart to `UISegmentedControl`).
