@@ -7,6 +7,19 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
+- `UITreeView` -- a hierarchical, expandable tree built on `UIList` virtualization: a mutable
+  `UITreeNode` model is flattened to its visible nodes and fed to the list, so a huge tree still
+  only instantiates on-screen rows. Rows indent by depth and draw an expand/collapse chevron
+  (chevron toggles the branch, elsewhere selects); `expandAll`/`collapseAll`, `onSelect`/
+  `onActivate`/`onToggle`.
+- `UIDataGrid` -- a virtualized data table: a fixed header of `UIDataColumn`s over a `UIList` of
+  multi-cell rows. Provider-driven (`setData(rowCount, cell)`, never copies the source); clicking a
+  sortable header sorts a display-order permutation in place (text or `numeric`), selection is kept
+  in SOURCE row indices across sorts.
+- `UITileGrid` -- a virtualized icon/tile grid: fixed-size tiles reflow into as many columns as the
+  width allows and scroll vertically, recycling on-screen tiles like `UIList` (wheel + thumb + touch
+  fling, arrow-key navigation). The default `UITile` draws an optional glyph over a centered label;
+  custom tiles subclass `UITile` via `tileFactory`.
 - `UIDockHost` -- editor-style panel docking: a tree of resizable splits with tabbed
   `UIDockGroup`s at the leaves. `UIDockPanel`s dock via `addPanel` / `dock(panel, target, zone)`
   or by dragging a tab (a drop-zone overlay shows where it lands: `CENTER` tabs into a group, the

@@ -17,6 +17,8 @@ import smidr.widgets.UIButton;
 import smidr.widgets.UICheckbox;
 import smidr.widgets.UIChip;
 import smidr.overlays.UIContextMenu;
+import smidr.widgets.UIDataGrid;
+import smidr.widgets.UIDataGrid.UIDataColumn;
 import smidr.widgets.UIDockHost;
 import smidr.widgets.UIDockPanel;
 import smidr.widgets.UIDropdown;
@@ -42,6 +44,9 @@ import smidr.widgets.UIStepper;
 import smidr.widgets.UISwitch;
 import smidr.widgets.UITabs;
 import smidr.widgets.UITextInput;
+import smidr.widgets.UITileGrid;
+import smidr.widgets.UITreeView;
+import smidr.widgets.UITreeView.UITreeNode;
 import smidr.overlays.UIToast;
 import smidr.overlays.UITooltip;
 import smidr.widgets.UIWindow;
@@ -480,6 +485,51 @@ class Gallery extends Sprite {
 		output.content.addChild(outLabel);
 		dock.dock(output, editorGroup, BOTTOM);
 		put(dock, 220);
+
+		rule();
+
+		head("UITreeView — expandable hierarchy (click a chevron)");
+		var tree = new UITreeView(COL, 168);
+		tree.setRoots([
+			new UITreeNode("src", [
+				new UITreeNode("smidr", [
+					new UITreeNode("widgets", [new UITreeNode("UIButton.hx"), new UITreeNode("UIList.hx")], true),
+					new UITreeNode("types", [new UITreeNode("UIGlyph.hx"), new UITreeNode("UIAlign.hx")])
+				], true),
+				new UITreeNode("Main.hx")
+			], true)
+		]);
+		tree.onSelect = (node) -> setStatus('Tree: ${node.label}');
+		tree.onToggle = (node, open) -> setStatus('Tree ${open ? "expand" : "collapse"}: ${node.label}');
+		put(tree, 168);
+
+		head("UIDataGrid — click a header to sort");
+		var files:Array<Array<String>> = [
+			["README.md", "4", "Markdown"],
+			["UIList.hx", "18", "Haxe"],
+			["project.xml", "2", "XML"],
+			["logo.png", "56", "Image"],
+			["CHANGELOG.md", "9", "Markdown"],
+			["Gallery.hx", "21", "Haxe"],
+			["haxelib.json", "1", "JSON"]
+		];
+		var grid = new UIDataGrid(COL, 168);
+		grid.setColumns([
+			new UIDataColumn("Name", 220),
+			new UIDataColumn("Size (KB)", 100, END, true, true),
+			new UIDataColumn("Kind", 180)
+		]);
+		grid.setData(files.length, (row, col) -> files[row][col]);
+		grid.onSelect = (row) -> setStatus('Grid: ${files[row][0]}');
+		put(grid, 168);
+
+		head("UITileGrid — reflowing icon tiles");
+		var tileNames:Array<String> = ["Docs", "Readme", "Photo", "Star", "Heart", "Bell", "Home", "User", "Lock", "Clock", "Config", "Search"];
+		var tileGlyphs:Array<UIGlyph> = [FOLDER, FILE, IMAGE, STAR, HEART, BELL, HOME, USER, LOCK, CLOCK, GEAR, SEARCH];
+		var tileGrid = new UITileGrid(COL, 208);
+		tileGrid.setProvider(tileNames.length, (i) -> tileNames[i], (i) -> tileGlyphs[i]);
+		tileGrid.onSelect = (i) -> setStatus('Tile: ${tileNames[i]}');
+		put(tileGrid, 208);
 	}
 
 	function spawnWindow():Void {
