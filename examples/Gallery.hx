@@ -3,9 +3,13 @@ package;
 import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 import openfl.events.Event;
+import smidr.UIAnimation;
+import smidr.UIColor;
+import smidr.UIGradient;
 import smidr.UILocale;
 import smidr.UIRoot;
 import smidr.UITheme;
+import smidr.types.UIAnimationPreset;
 import smidr.types.UIGlyph;
 import smidr.widgets.UIAccordion;
 import smidr.widgets.UIButton;
@@ -61,6 +65,7 @@ class Gallery extends Sprite {
 	var statusBg:UIPanel;
 	var statusTf:UILabel;
 	var bar:UIProgressBar;
+	var demoAnim:UIAnimation = null;
 
 	var cy:Float = 0;        // build cursor inside the scroll content
 	var contentH:Float = 0;  // total content height (for refreshContent on resize)
@@ -360,6 +365,48 @@ class Gallery extends Sprite {
 		var ctxBtn = new UIButton("Right-click (or click) me", 220, 30, () -> openContextMenu());
 		ctxBtn.onRightClick = openContextMenu;
 		put(ctxBtn, 30);
+
+		rule();
+
+		head("UIGradient — linear panel + gradient button");
+		var gpanel = new UIPanel(COL, 44);
+		gpanel.corner = 8;
+		gpanel.gradient = UIGradient.linear([UIColor.opaque(0x2A2440), UIColor.opaque(0x4A3A7E)], 90);
+		put(gpanel, 44);
+		var gbtn = new UIButton("Gradient button", 180, 34, () -> setStatus("Gradient button"));
+		gbtn.gradient = UIGradient.horizontal(UITheme.accentDark, UITheme.accentAlt);
+		put(gbtn, 34);
+
+		head("UIAnimation — replay a preset on the box");
+		var animTarget = new UIPanel(120, 40, PANEL2);
+		animTarget.corner = 8;
+		animTarget.outline = true;
+		var atl = new UILabel("Animate me", 12, SECONDARY);
+		atl.x = 12;
+		atl.y = 12;
+		animTarget.addChild(atl);
+		put(animTarget, 40);
+		var presets:Array<{n:String, p:UIAnimationPreset}> = [
+			{n: "Pop", p: POP}, {n: "Fly", p: FLY_IN}, {n: "Zoom", p: ZOOM_IN}, {n: "Flip", p: FLIP},
+			{n: "Revolve", p: REVOLVE}, {n: "Shake", p: SHAKE}, {n: "Pulse", p: PULSE}
+		];
+		var animRow = new Sprite();
+		for (i in 0...presets.length) {
+			var pr = presets[i];
+			var ab = new UIButton(pr.n, 68, 28, () -> {
+				playDemo(animTarget, pr.p);
+				setStatus('Animate: ${pr.n}');
+			});
+			ab.x = i * 72;
+			animRow.addChild(ab);
+		}
+		put(animRow, 28);
+	}
+
+	function playDemo(target:DisplayObject, preset:UIAnimationPreset):Void {
+		if (demoAnim != null)
+			demoAnim.stop(true);
+		demoAnim = UIAnimation.play(target, preset);
 	}
 
 	function openContextMenu():Void {

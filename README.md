@@ -42,6 +42,9 @@ SmiðrUI also ships an optional Flixel bridge (compiled only when the `flixel` h
   ints, so there's zero runtime cost.
 - **Pluggable fonts & i18n** — point `UIFonts` at any embedded font asset; wire `UILocale` to
   your own translation lookup. The library ships dependency-free defaults.
+- **Motion & color toolkit** — a full easing library (`UIEase`), a preset animation engine
+  (`UIAnimation`: fly / zoom / fade / pop / flip / revolve / shake / pulse), gradient fills
+  (`UIGradient`), global cursor control (`UICursors`), and ARGB / HSV / HSL color math (`UIColor`).
 - **Optional Flixel bridge** — `smidr.flixel.FlxSmidr` handles viewport matching, cursor and
   input arbitration when the `flixel` haxelib is present.
 

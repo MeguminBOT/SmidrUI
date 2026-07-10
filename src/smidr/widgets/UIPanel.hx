@@ -2,6 +2,7 @@ package smidr.widgets;
 
 import smidr.UIColor;
 import smidr.UIComponent;
+import smidr.UIGradient;
 import smidr.UITheme;
 import smidr.types.UIFill;
 
@@ -17,6 +18,9 @@ import smidr.types.UIFill;
 final class UIPanel extends UIComponent {
 	/** What the panel paints: a theme slot (follows theme swaps) or a fixed ARGB colour. **/
 	public var fill(default, set):UIFill = PANEL;
+
+	/** Optional gradient fill; overrides `fill` when set (fixed colours — see `UIGradient`). **/
+	public var gradient(default, set):UIGradient = null;
 
 	/** Corner radius in scaled pixels (0 = square). **/
 	public var corner(default, set):Float = 0;
@@ -45,13 +49,17 @@ final class UIPanel extends UIComponent {
 	override public function render():Void {
 		var g = graphics;
 		g.clear();
-		var f:Int = fill.resolve();
-		g.beginFill(UIColor.rgb(f), UIColor.alphaOf(f));
-		if (corner > 0)
-			g.drawRoundRect(0, 0, w, h, corner, corner);
-		else
-			g.drawRect(0, 0, w, h);
-		g.endFill();
+		if (gradient != null)
+			gradient.fillRect(g, 0, 0, w, h, corner);
+		else {
+			var f:Int = fill.resolve();
+			g.beginFill(UIColor.rgb(f), UIColor.alphaOf(f));
+			if (corner > 0)
+				g.drawRoundRect(0, 0, w, h, corner, corner);
+			else
+				g.drawRect(0, 0, w, h);
+			g.endFill();
+		}
 
 		if (outline) {
 			g.lineStyle(1, UIColor.rgb(UITheme.border));
@@ -77,6 +85,12 @@ final class UIPanel extends UIComponent {
 
 	function set_fill(v:UIFill):UIFill {
 		fill = v;
+		invalidate();
+		return v;
+	}
+
+	function set_gradient(v:UIGradient):UIGradient {
+		gradient = v;
 		invalidate();
 		return v;
 	}

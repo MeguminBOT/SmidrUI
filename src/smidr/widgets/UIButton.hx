@@ -5,6 +5,7 @@ import openfl.text.TextFormatAlign;
 import smidr.UIColor;
 import smidr.UIComponent;
 import smidr.UIFonts;
+import smidr.UIGradient;
 import smidr.UILocale;
 import smidr.UITheme;
 
@@ -27,6 +28,10 @@ final class UIButton extends UIComponent {
 
 	/** Base (unscaled) font size. **/
 	public var fontSize(default, set):Int = 13;
+
+	/** Optional gradient fill; overrides the variant fill when set. Hover/press still show as a
+		scrim over it, and the label takes contrast from the first stop (fixed colours — see `UIGradient`). **/
+	public var gradient(default, set):UIGradient = null;
 
 	/** The hosted icon, or `null`; set through `setIcon` (the static `icon` factory uses it). **/
 	var iconObj:UIIcon = null;
@@ -77,25 +82,36 @@ final class UIButton extends UIComponent {
 	}
 
 	override public function render():Void {
-		var base:Int = accent ? UITheme.accentDark : (danger ? 0xFF60202E : UITheme.panel2);
-		var line:Int = accent ? UITheme.accent : (danger ? UITheme.danger : UITheme.border);
-		if (pressed)
-			base = UIColor.darken(base, 0.18);
-		else if (hovered)
-			base = UIColor.lighten(base, 0.10);
 		var g = graphics;
 		g.clear();
 		var r:Float = UITheme.px(UITheme.radius);
-		g.beginFill(UIColor.rgb(base));
-		g.drawRoundRect(0, 0, w, h, r * 2, r * 2);
-		g.endFill();
+		var textColor:Int;
+		if (gradient != null) {
+			gradient.fillRect(g, 0, 0, w, h, r * 2);
+			// hover lightens, press dips — as a translucent scrim over the fixed gradient
+			if (pressed || hovered) {
+				g.beginFill(pressed ? 0x000000 : 0xFFFFFF, pressed ? 0.18 : 0.10);
+				g.drawRoundRect(0, 0, w, h, r * 2, r * 2);
+				g.endFill();
+			}
+			textColor = UIColor.contrastText(gradient.colors[0]);
+		} else {
+			var base:Int = accent ? UITheme.accentDark : (danger ? 0xFF60202E : UITheme.panel2);
+			if (pressed)
+				base = UIColor.darken(base, 0.18);
+			else if (hovered)
+				base = UIColor.lighten(base, 0.10);
+			g.beginFill(UIColor.rgb(base));
+			g.drawRoundRect(0, 0, w, h, r * 2, r * 2);
+			g.endFill();
+			// accent/danger fills are dark in every theme, so pick contrast from the fill rather
+			// than UITheme.text (which flips to dark on light themes and would vanish on the button)
+			textColor = (accent || danger) ? UIColor.contrastText(base) : UITheme.text2;
+		}
+		var line:Int = accent ? UITheme.accent : (danger ? UITheme.danger : UITheme.border);
 		g.lineStyle(1, UIColor.rgb(line));
 		g.drawRoundRect(0.5, 0.5, w - 1, h - 1, r * 2, r * 2);
 		g.lineStyle();
-
-		// accent/danger fills are dark in every theme, so pick contrast from the fill rather than
-		// UITheme.text (which flips to dark on light themes and would vanish on the button)
-		var textColor:Int = (accent || danger) ? UIColor.contrastText(base) : UITheme.text2;
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), textColor, TextFormatAlign.CENTER);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
 		if (resolved == null)
@@ -169,6 +185,12 @@ final class UIButton extends UIComponent {
 
 	function set_fontSize(v:Int):Int {
 		fontSize = v;
+		invalidate();
+		return v;
+	}
+
+	function set_gradient(v:UIGradient):UIGradient {
+		gradient = v;
 		invalidate();
 		return v;
 	}

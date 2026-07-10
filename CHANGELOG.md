@@ -7,6 +7,21 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
+- Color helpers on `UIColor`: `opaque(rgb)` (force a plain 6-digit `0xRRGGBB` opaque — bare hex
+  literals are alpha 0, i.e. transparent), `fromRGB(r, g, b, ?a)`, `withAlpha(c, a)`, and HSV/HSL
+  round-trips (`hsv`/`toHSV`, `hsl`/`toHSL`).
+- The full easing set on `UIEase` -- the Penner families (SINE / CUBIC / QUART / QUINT / EXPO /
+  CIRC / BACK / ELASTIC / BOUNCE) in `IN_*` / `OUT_*` / `IN_OUT_*` variants. The four originals
+  keep their ids, so nothing breaks.
+- `UIGradient` -- a linear/radial gradient fill (`linear`/`radial`/`vertical`/`horizontal`),
+  opt-in on `UIPanel.gradient` and `UIButton.gradient` (overrides the flat `UIFill`; fixed colours,
+  so it does not follow theme swaps).
+- `UICursor` (named cursor shapes) + `UICursors` (global cursor override: `set`/`reset`/`busy`/
+  `hide`/`show`). Custom bitmap cursors are not offered -- OpenFL 9.5.2 compiles out
+  `Mouse.registerCursor`.
+- `UIAnimation` -- preset transform animations on any `DisplayObject` over the pooled `UITween`,
+  centre-pivoted: `FLY_IN`/`FLY_OUT`, `ZOOM_IN`/`ZOOM_OUT`, `FADE_IN`/`FADE_OUT`, `POP`, `FLIP`
+  (2D scale fake), `REVOLVE`, `SHAKE`, `PULSE`. Plus `UIEdge` (`LEFT`/`TOP`/`RIGHT`/`BOTTOM`).
 - `UIWindow` -- a draggable, titled window panel: widgets parented into its `content` move
   with the window automatically (display-list children), the title bar drags with viewport
   clamping, and the body follows the theme via a `UIFill`.
