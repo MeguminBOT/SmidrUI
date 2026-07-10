@@ -1,4 +1,4 @@
-package smidr.widgets;
+package smidr.overlays;
 
 import openfl.display.Sprite;
 import openfl.text.TextField;

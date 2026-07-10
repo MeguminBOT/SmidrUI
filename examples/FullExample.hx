@@ -11,7 +11,7 @@ import smidr.widgets.UIAccordion;
 import smidr.widgets.UIButton;
 import smidr.widgets.UICheckbox;
 import smidr.widgets.UIChip;
-import smidr.widgets.UIContextMenu;
+import smidr.overlays.UIContextMenu;
 import smidr.widgets.UIDropdown;
 import smidr.widgets.UIIcon;
 import smidr.widgets.UIIconRail;
@@ -30,8 +30,8 @@ import smidr.widgets.UIStepper;
 import smidr.widgets.UISwitch;
 import smidr.widgets.UITabs;
 import smidr.widgets.UITextInput;
-import smidr.widgets.UIToast;
-import smidr.widgets.UITooltip;
+import smidr.overlays.UIToast;
+import smidr.overlays.UITooltip;
 
 /**
 	A full tour of SmiðrUI that instantiates **every widget** in the library. A left icon rail

@@ -9,7 +9,7 @@ import smidr.widgets.UIButton;
 import smidr.widgets.UILabel;
 import smidr.widgets.UIPanel;
 import smidr.widgets.UISlider;
-import smidr.widgets.UITooltip;
+import smidr.overlays.UITooltip;
 
 /**
 	SmiðrUI on a HaxeFlixel state. The `smidr.flixel.FlxSmidr` bridge is compiled only

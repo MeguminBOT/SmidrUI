@@ -11,6 +11,7 @@ import smidr.UIRoot;
 import smidr.UITheme;
 import smidr.UITween;
 import smidr.types.UIEase;
+import smidr.types.UIMenuItem;
 
 /**
 	A radial (pie) menu: entries laid out as donut sectors around the open point on

@@ -1,4 +1,4 @@
-package smidr.widgets;
+package smidr.overlays;
 
 import openfl.display.Sprite;
 import openfl.text.TextField;
@@ -9,6 +9,7 @@ import smidr.UILocale;
 import smidr.UIRoot;
 import smidr.UITheme;
 import smidr.types.UIEase;
+import smidr.types.UIMenuItem;
 
 /**
 	A popup menu shown on `UIRoot.popupLayer` behind a click-blocking backdrop. Used by
@@ -144,7 +145,7 @@ final class UIContextMenu {
 		container.removeChildren();
 	}
 
-	@:allow(smidr.widgets.UIMenuRow)
+	@:allow(smidr.overlays.UIMenuRow)
 	function pick(item:UIMenuItem):Void {
 		close();
 		if (item.onSelect != null)

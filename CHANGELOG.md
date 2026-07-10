@@ -81,6 +81,10 @@ All notable changes to this project are documented here. The format is based on
   fill, so the label stays legible on light themes instead of going dark-on-dark.
 
 ### Changed
+- **Breaking:** the non-widget files moved out of `smidr.widgets`. The static popup services
+  `UIToast` / `UITooltip` / `UIContextMenu` are now in `smidr.overlays`, and the `UIMenuItem` /
+  `UIRailTabDef` typedefs are now in `smidr.types`. Update imports accordingly; `smidr.widgets`
+  now holds only `UIComponent` widgets.
 - `UIPanel` is now theme-following by default: `fill` is a `UIFill`, and the constructor's
   colour argument became optional -- `new UIPanel(w, h)` paints the live `PANEL` slot and
   follows theme swaps like every other widget, `new UIPanel(w, h, CARD)` picks another slot,

@@ -1,4 +1,4 @@
-package smidr.widgets;
+package smidr.types;
 
 /** One `UIIconRail` tab definition: a short label (<=4 chars reads best) + optional tooltip. **/
 typedef UIRailTabDef = {

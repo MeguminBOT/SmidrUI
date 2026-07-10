@@ -1,4 +1,4 @@
-package smidr.widgets;
+package smidr.types;
 
 /** One menu entry (`UIContextMenu`/`UIMenuBar`). `separator` renders a divider (other fields ignored). **/
 typedef UIMenuItem = {

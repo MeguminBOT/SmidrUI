@@ -7,6 +7,7 @@ import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
 import smidr.types.UIEase;
+import smidr.types.UIRailTabDef;
 
 /**
 	A vertical icon rail (Blender/VSCode-style activity bar): fixed-width column of tabs,

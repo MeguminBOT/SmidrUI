@@ -7,6 +7,8 @@ import smidr.UIComponent;
 import smidr.UIFonts;
 import smidr.UILocale;
 import smidr.UITheme;
+import smidr.overlays.UIContextMenu;
+import smidr.types.UIMenuItem;
 
 /** One top-level menu: a title plus an item factory (evaluated on open, so checkmarks and
 	shortcut labels are always current). **/

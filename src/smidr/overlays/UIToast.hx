@@ -1,4 +1,4 @@
-package smidr.widgets;
+package smidr.overlays;
 
 import openfl.text.TextField;
 import smidr.UIColor;
