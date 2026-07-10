@@ -53,7 +53,7 @@ SmiðrUI also ships an optional Flixel bridge (compiled only when the `flixel` h
 Buttons (with optional glyph/asset icons), labels, icons, panels and separators, icon rails and
 tabs, checkboxes, switches, chips, sliders, steppers, segmented controls, text inputs, keybind
 capture, dropdowns (with optional type-ahead), date/time pickers, context menus, menu bars,
-accordions, scroll panes, stacks, split views,
+toolbars, breadcrumbs, accordions, expanders, scroll panes, stacks, split views,
 movable windows, dockable panels, data-bound lists, tree views, data grids, tile grids, radio
 groups, colour pickers, progress bars, spinners, ratings, badges, status bars, modals, balloons,
 pie menus, tooltips and toasts.

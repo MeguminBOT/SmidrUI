@@ -7,6 +7,11 @@ All notable changes to this project are documented here. The format is based on
 ## [0.3.0] — 2026-07-07
 
 ### Added
+- `UIToolbar` -- a horizontal strip of text/icon buttons with separators and flexible spacers
+  (items after a spacer right-align); buttons are `UIButton`s returned for further tweaking.
+  `UIBreadcrumb` -- a clickable path trail (chevron-separated segments, last is the current
+  location, `onSelect(index)`). `UIExpander` -- a single collapsible section that owns its body via
+  `content` and grows/shrinks its own height (unlike the header-only `UIAccordion`).
 - `UISpinner` -- an indeterminate busy spinner (faint ring + sweeping arc) that steps a `UIRoot`
   ticker only while `spinning`, so an idle one is free. `UIBadge` -- a count/status pill sized to
   its text (hidden at 0 unless `showZero`, `N+` past `maxCount`, or a custom `text`) to overlay a

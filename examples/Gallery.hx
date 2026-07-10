@@ -14,6 +14,7 @@ import smidr.types.UIGlyph;
 import smidr.widgets.UIAccordion;
 import smidr.widgets.UIBadge;
 import smidr.widgets.UIBalloon;
+import smidr.widgets.UIBreadcrumb;
 import smidr.widgets.UIButton;
 import smidr.widgets.UICheckbox;
 import smidr.widgets.UIChip;
@@ -25,6 +26,7 @@ import smidr.widgets.UIDateTimePicker;
 import smidr.widgets.UIDockHost;
 import smidr.widgets.UIDockPanel;
 import smidr.widgets.UIDropdown;
+import smidr.widgets.UIExpander;
 import smidr.widgets.UIIcon;
 import smidr.widgets.UIIconRail;
 import smidr.widgets.UIKeybind;
@@ -50,6 +52,7 @@ import smidr.widgets.UISwitch;
 import smidr.widgets.UITabs;
 import smidr.widgets.UITextInput;
 import smidr.widgets.UITileGrid;
+import smidr.widgets.UIToolbar;
 import smidr.widgets.UITreeView;
 import smidr.widgets.UITreeView.UITreeNode;
 import smidr.overlays.UIToast;
@@ -575,6 +578,33 @@ class Gallery extends Sprite {
 		tileGrid.setProvider(tileNames.length, (i) -> tileNames[i], (i) -> tileGlyphs[i]);
 		tileGrid.onSelect = (i) -> setStatus('Tile: ${tileNames[i]}');
 		put(tileGrid, 208);
+
+		rule();
+
+		head("UIToolbar — icon strip with a spacer");
+		var toolbar = new UIToolbar(36);
+		toolbar.addIconButton(UIIcon.fromGlyph(FILE, 16), () -> setStatus("New"));
+		toolbar.addIconButton(UIIcon.fromGlyph(FOLDER_OPEN, 16), () -> setStatus("Open"));
+		toolbar.addIconButton(UIIcon.fromGlyph(SAVE, 16), () -> setStatus("Save"));
+		toolbar.addSeparator();
+		toolbar.addButton("Build", 70, () -> setStatus("Build"));
+		toolbar.addSpacer();
+		toolbar.addIconButton(UIIcon.fromGlyph(GEAR, 16), () -> setStatus("Settings"));
+		put(toolbar, 36);
+
+		head("UIBreadcrumb — click a segment");
+		var crumb = new UIBreadcrumb((i) -> setStatus('Breadcrumb: $i'));
+		crumb.setPath(["Home", "Projects", "SmidrUI", "src"]);
+		put(crumb, 24);
+
+		head("UIExpander — self-collapsing section");
+		var expander = new UIExpander("Advanced options", COL, false, (open) -> setStatus('Expander: $open'));
+		var expanderBody = new UILabel("Body content, hidden until the section is expanded.", 12, SECONDARY);
+		expanderBody.x = 12;
+		expanderBody.y = 8;
+		expander.content.addChild(expanderBody);
+		expander.contentHeight = 36;
+		put(expander, 30);
 	}
 
 	function spawnWindow():Void {
