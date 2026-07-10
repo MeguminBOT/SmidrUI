@@ -123,8 +123,8 @@ final class UIBalloon extends UIComponent {
 			tailCenter = w - edge;
 	}
 
-	function setAlpha(a:Float):Void {
-		alpha = a;
+	function setAlpha(value:Float):Void {
+		alpha = value;
 	}
 
 	/** Closes the balloon (fade out, then dispose). **/
@@ -166,36 +166,36 @@ final class UIBalloon extends UIComponent {
 	}
 
 	/** Traces the rounded panel outline with the tail notch integrated into the tailed edge. **/
-	function drawBubble(g:Graphics):Void {
+	function drawBubble(graphics:Graphics):Void {
 		var radius:Float = UITheme.px(8);
-		var t:Float = tailSize;
-		var cx:Float = tailCenter;
+		var tail:Float = tailSize;
+		var tailX:Float = tailCenter;
 		if (tailOnTop) {
-			g.moveTo(radius, 0);
-			g.lineTo(cx - t, 0);
-			g.lineTo(cx, -t);
-			g.lineTo(cx + t, 0);
-			g.lineTo(w - radius, 0);
-			g.curveTo(w, 0, w, radius);
-			g.lineTo(w, h - radius);
-			g.curveTo(w, h, w - radius, h);
-			g.lineTo(radius, h);
-			g.curveTo(0, h, 0, h - radius);
-			g.lineTo(0, radius);
-			g.curveTo(0, 0, radius, 0);
+			graphics.moveTo(radius, 0);
+			graphics.lineTo(tailX - tail, 0);
+			graphics.lineTo(tailX, -tail);
+			graphics.lineTo(tailX + tail, 0);
+			graphics.lineTo(w - radius, 0);
+			graphics.curveTo(w, 0, w, radius);
+			graphics.lineTo(w, h - radius);
+			graphics.curveTo(w, h, w - radius, h);
+			graphics.lineTo(radius, h);
+			graphics.curveTo(0, h, 0, h - radius);
+			graphics.lineTo(0, radius);
+			graphics.curveTo(0, 0, radius, 0);
 		} else {
-			g.moveTo(radius, 0);
-			g.lineTo(w - radius, 0);
-			g.curveTo(w, 0, w, radius);
-			g.lineTo(w, h - radius);
-			g.curveTo(w, h, w - radius, h);
-			g.lineTo(cx + t, h);
-			g.lineTo(cx, h + t);
-			g.lineTo(cx - t, h);
-			g.lineTo(radius, h);
-			g.curveTo(0, h, 0, h - radius);
-			g.lineTo(0, radius);
-			g.curveTo(0, 0, radius, 0);
+			graphics.moveTo(radius, 0);
+			graphics.lineTo(w - radius, 0);
+			graphics.curveTo(w, 0, w, radius);
+			graphics.lineTo(w, h - radius);
+			graphics.curveTo(w, h, w - radius, h);
+			graphics.lineTo(tailX + tail, h);
+			graphics.lineTo(tailX, h + tail);
+			graphics.lineTo(tailX - tail, h);
+			graphics.lineTo(radius, h);
+			graphics.curveTo(0, h, 0, h - radius);
+			graphics.lineTo(0, radius);
+			graphics.curveTo(0, 0, radius, 0);
 		}
 	}
 

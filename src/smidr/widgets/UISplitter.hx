@@ -69,16 +69,16 @@ final class UISplitter extends UIComponent {
 	inline function mainExtent():Float
 		return vertical ? h : w;
 
-	function clampPosition(p:Float):Float {
-		var t:Float = UITheme.px(dividerThickness);
-		var max:Float = mainExtent() - t - minSecond;
-		if (p > max)
-			p = max;
-		if (p < minFirst)
-			p = minFirst;
-		if (p < 0)
-			p = 0;
-		return p;
+	function clampPosition(pos:Float):Float {
+		var thickness:Float = UITheme.px(dividerThickness);
+		var max:Float = mainExtent() - thickness - minSecond;
+		if (pos > max)
+			pos = max;
+		if (pos < minFirst)
+			pos = minFirst;
+		if (pos < 0)
+			pos = 0;
+		return pos;
 	}
 
 	@:allow(smidr.widgets.UISplitterHandle)

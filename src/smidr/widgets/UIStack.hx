@@ -103,11 +103,11 @@ final class UIStack extends UIComponent {
 		render();
 	}
 
-	inline function widthOf(o:DisplayObject):Float
-		return (o is UIComponent) ? (cast o : UIComponent).w : o.width;
+	inline function widthOf(child:DisplayObject):Float
+		return (child is UIComponent) ? (cast child : UIComponent).w : child.width;
 
-	inline function heightOf(o:DisplayObject):Float
-		return (o is UIComponent) ? (cast o : UIComponent).h : o.height;
+	inline function heightOf(child:DisplayObject):Float
+		return (child is UIComponent) ? (cast child : UIComponent).h : child.height;
 
 	override public function render():Void {
 		var pad:Float = UITheme.px(padding);

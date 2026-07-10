@@ -132,10 +132,10 @@ final class UIStatusBar extends UIComponent {
 		}
 	}
 
-	inline function separator(g:openfl.display.Graphics, x:Float):Void {
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(x, UITheme.px(5), 1, h - UITheme.px(10));
-		g.endFill();
+	inline function separator(graphics:openfl.display.Graphics, x:Float):Void {
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(x, UITheme.px(5), 1, h - UITheme.px(10));
+		graphics.endFill();
 	}
 
 	function set_fontSize(v:Int):Int {

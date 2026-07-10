@@ -90,14 +90,14 @@ final class UIPieMenu extends UIComponent {
 		UITween.to(setOpenProgress, 0, 1, 150, OUT_BACK);
 	}
 
-	function setOpenProgress(p:Float):Void {
-		alpha = (p < 0) ? 0 : (p > 1 ? 1 : p);
-		var s:Float = 0.85 + 0.15 * p; // OUT_BACK overshoots then settles at 1
-		scaleX = s;
-		scaleY = s;
+	function setOpenProgress(progress:Float):Void {
+		alpha = (progress < 0) ? 0 : (progress > 1 ? 1 : progress);
+		var scale:Float = 0.85 + 0.15 * progress; // OUT_BACK overshoots then settles at 1
+		scaleX = scale;
+		scaleY = scale;
 		// keep the center pinned while scaling from the top-left origin
-		x = centerX - outerRadius * s;
-		y = centerY - outerRadius * s;
+		x = centerX - outerRadius * scale;
+		y = centerY - outerRadius * scale;
 	}
 
 	function __onMove(_:MouseEvent):Void {
@@ -146,8 +146,8 @@ final class UIPieMenu extends UIComponent {
 		UITween.to(setAlpha, alpha, 0, 100, IN_QUAD, finishClose);
 	}
 
-	function setAlpha(a:Float):Void {
-		alpha = a;
+	function setAlpha(value:Float):Void {
+		alpha = value;
 	}
 
 	function finishClose():Void {
@@ -198,24 +198,24 @@ final class UIPieMenu extends UIComponent {
 		}
 	}
 
-	/** Traces one donut sector (inner radius `r` to outer `R`, angles `a0`..`a1`). **/
-	function sector(g:Graphics, cx:Float, cy:Float, r:Float, R:Float, a0:Float, a1:Float):Void {
-		var steps:Int = Std.int((a1 - a0) / 0.18);
+	/** Traces one donut sector (inner to outer radius, `fromAngle`..`toAngle`). **/
+	function sector(graphics:Graphics, centerX:Float, centerY:Float, innerRadius:Float, outerRadius:Float, fromAngle:Float, toAngle:Float):Void {
+		var steps:Int = Std.int((toAngle - fromAngle) / 0.18);
 		if (steps < 2)
 			steps = 2;
-		g.moveTo(cx + r * Math.cos(a0), cy + r * Math.sin(a0));
-		g.lineTo(cx + R * Math.cos(a0), cy + R * Math.sin(a0));
+		graphics.moveTo(centerX + innerRadius * Math.cos(fromAngle), centerY + innerRadius * Math.sin(fromAngle));
+		graphics.lineTo(centerX + outerRadius * Math.cos(fromAngle), centerY + outerRadius * Math.sin(fromAngle));
 		var k:Int = 1;
 		while (k <= steps) {
-			var a:Float = a0 + (a1 - a0) * k / steps;
-			g.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+			var angle:Float = fromAngle + (toAngle - fromAngle) * k / steps;
+			graphics.lineTo(centerX + outerRadius * Math.cos(angle), centerY + outerRadius * Math.sin(angle));
 			k++;
 		}
-		g.lineTo(cx + r * Math.cos(a1), cy + r * Math.sin(a1));
+		graphics.lineTo(centerX + innerRadius * Math.cos(toAngle), centerY + innerRadius * Math.sin(toAngle));
 		k = steps - 1;
 		while (k >= 0) {
-			var a:Float = a0 + (a1 - a0) * k / steps;
-			g.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
+			var angle:Float = fromAngle + (toAngle - fromAngle) * k / steps;
+			graphics.lineTo(centerX + innerRadius * Math.cos(angle), centerY + innerRadius * Math.sin(angle));
 			k--;
 		}
 	}
