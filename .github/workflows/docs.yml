@@ -44,6 +44,21 @@ jobs:
       - name: Apply smidr Dark theme
         run: bash doc/apply-theme.sh
 
+      - name: Build web examples (HTML5)
+        run: |
+          for ex in calculator gallery small full; do
+            haxelib run lime build "examples/$ex/project.xml" html5 -release
+          done
+
+      - name: Assemble examples into the site
+        run: |
+          mkdir -p doc/site/examples
+          cp doc/examples/index.html doc/site/examples/index.html
+          for ex in calculator gallery small full; do
+            mkdir -p "doc/site/examples/$ex"
+            cp -r "examples/$ex/bin/html5/bin/." "doc/site/examples/$ex/"
+          done
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

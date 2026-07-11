@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="SmiðrUI Gallery" package="com.meguminbot.smidr.gallery" version="0.1.0" company="MeguminBOT" />
+
+	<!--
+		A scrollable showcase of every widget. Build from the repo root:
+		  lime test examples/gallery/project.xml windows
+		  lime build examples/gallery/project.xml html5     (static web build -> bin/html5/bin)
+		Swap `windows` for `mac`, `linux`, `html5`, `hl`, etc.
+	-->
+	<app main="Gallery" file="Gallery" path="bin" />
+	<window width="600" height="780" fps="60" background="#121214" vsync="true" resizable="true" />
+
+	<source path="../../src" />
+	<source path="." />
+
+	<haxelib name="openfl" />
+
+	<!-- optional embedded font (falls back to a default font when absent); build with -Dassets -->
+	<assets path="../assets" rename="assets" if="assets" />
+</project>

@@ -2,7 +2,10 @@
 # Run from the repo root:  haxe examples/check.hxml
 # Requires (local .haxelib):  lime, openfl, hxcpp
 -cp src
--cp examples
+-cp examples/calculator
+-cp examples/gallery
+-cp examples/small
+-cp examples/full
 -lib lime
 -lib openfl
 -lib hxcpp

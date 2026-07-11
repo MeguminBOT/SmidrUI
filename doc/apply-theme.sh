@@ -23,4 +23,13 @@ find "$site" -name '*.html' -exec sed -i \
 	-e 's/(!localStorage.theme \&\& systemDarkMode) || localStorage.theme == "dark"/localStorage.theme != "light"/g' \
 	-e 's/backgroundColor = "#111"/backgroundColor = "#121214"/g' {} +
 
+# Inject a floating "Examples" link into every page (a fixed-position anchor, so it does not
+# depend on the dox template markup and works at any page depth). Uses a site-absolute path;
+# change EXAMPLES_URL if the repo name or hosting domain changes.
+# @ is the sed delimiter because the inlined CSS contains '#' hex colours.
+EXAMPLES_URL="/SmidrUI/examples/"
+STYLE='<style>.smidr-examples-link{position:fixed;bottom:16px;right:16px;z-index:9999;background:#8a5ee0;color:#fff;padding:9px 15px;border-radius:8px;font:600 13px/1 sans-serif;text-decoration:none;box-shadow:0 3px 12px rgba(0,0,0,.45)}.smidr-examples-link:hover{background:#9a72ea}</style>'
+LINK="<a class=\"smidr-examples-link\" href=\"${EXAMPLES_URL}\">Examples ↗</a>"
+find "$site" -name '*.html' -exec sed -i "s@</body>@${STYLE}${LINK}</body>@" {} +
+
 echo "Applied smidr Dark theme to $site"

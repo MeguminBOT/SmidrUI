@@ -2,7 +2,7 @@
 # Run from the repo root:  haxe examples/check-flixel.hxml
 # Requires (local .haxelib):  lime, openfl, flixel, hscript, hxcpp
 -cp src
--cp examples
+-cp examples/flixel
 -lib lime
 -lib openfl
 -lib flixel
