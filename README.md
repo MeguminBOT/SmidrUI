@@ -151,10 +151,15 @@ haxe examples/check-flixel.hxml   # the Flixel bridge example (needs -lib flixel
 
 ## Documentation
 
-**[Browse the API docs →](https://meguminbot.github.io/SmidrUI/)**
+The docs site has four parts:
 
-Full API docs are generated with [dox](https://github.com/HaxeFoundation/dox) (the same tool
-behind the OpenFL and Flixel API sites) and published to GitHub Pages by
+- **[Home](https://meguminbot.github.io/SmidrUI/)** — what SmiðrUI is, at a glance.
+- **[Widget guide](https://meguminbot.github.io/SmidrUI/widgets.html)** — every widget with its description (generated from the source docstrings).
+- **[Live examples](https://meguminbot.github.io/SmidrUI/examples/)** — the OpenFL examples compiled to HTML5.
+- **[API reference](https://meguminbot.github.io/SmidrUI/api/)** — the full dox-generated member reference.
+
+The reference is generated with [dox](https://github.com/HaxeFoundation/dox) (the same tool behind
+the OpenFL and Flixel API sites); the whole site is published to GitHub Pages by
 [`.github/workflows/docs.yml`](.github/workflows/docs.yml).
 
 Build the site locally:
@@ -162,9 +167,11 @@ Build the site locally:
 ```bash
 haxelib install dox
 haxelib install flixel   # the smidr.flixel bridge is documented too, so flixel is required
-haxe doc.hxml                                                      # -> doc/xml/smidr.xml
-haxelib run dox -i doc/xml -o doc/site -in smidr --title "SmiðrUI API"
-bash doc/apply-theme.sh                                            # recolor to the "Dark" palette
+haxe doc.hxml                                                          # -> doc/xml/smidr.xml
+haxelib run dox -i doc/xml -o doc/site/api -in smidr --title "SmiðrUI API"
+bash doc/apply-theme.sh                                                # recolor + nav
+cp doc/pages/index.html doc/site/index.html                           # home page
+python3 doc/build-widget-guide.py doc/site/widgets.html               # widget guide
 # open doc/site/index.html
 ```
 

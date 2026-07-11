@@ -5,66 +5,46 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>SmiðrUI · Examples</title>
 	<style>
-		:root {
-			--bg: #121214;
-			--panel: #1c1c20;
-			--panel2: #232329;
-			--border: #33333c;
-			--text: #e6e6ea;
-			--text2: #a0a0a8;
-			--text3: #6e6e78;
-			--accent: #8a5ee0;
-			--accent-hover: #9a72ea;
-		}
-		* { box-sizing: border-box; }
-		html, body { margin: 0; padding: 0; }
-		body {
-			background: var(--bg);
-			color: var(--text);
-			font: 15px/1.55 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-			-webkit-font-smoothing: antialiased;
-		}
-		.wrap { max-width: 900px; margin: 0 auto; padding: 48px 20px 72px; }
-		header { border-bottom: 1px solid var(--border); padding-bottom: 22px; margin-bottom: 30px; }
-		h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: 0.2px; }
-		.tagline { color: var(--text2); margin: 0; }
-		.back { display: inline-block; margin-bottom: 26px; color: var(--accent); text-decoration: none; font-size: 14px; }
-		.back:hover { color: var(--accent-hover); }
-		.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px; }
-		.card {
-			background: var(--panel);
-			border: 1px solid var(--border);
-			border-radius: 12px;
-			padding: 20px;
-			display: flex;
-			flex-direction: column;
-		}
-		.card h2 { font-size: 18px; margin: 0 0 6px; }
-		.card p { color: var(--text2); margin: 0 0 18px; font-size: 14px; flex: 1; }
-		.actions { display: flex; gap: 10px; }
-		.btn {
-			text-decoration: none;
-			font-size: 13px;
-			font-weight: 600;
-			padding: 8px 14px;
-			border-radius: 7px;
-			transition: background 0.15s, border-color 0.15s;
-		}
-		.btn-primary { background: var(--accent); color: #fff; }
-		.btn-primary:hover { background: var(--accent-hover); }
-		.btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
-		.btn-ghost:hover { color: var(--text); border-color: var(--text3); }
-		footer { margin-top: 44px; color: var(--text3); font-size: 13px; }
-		footer a { color: var(--text2); }
+		:root{--bg:#121214;--panel:#1c1c20;--panel2:#232329;--border:#33333c;--text:#e6e6ea;--text2:#a0a0a8;--text3:#6e6e78;--accent:#8a5ee0;--accent2:#9a72ea}
+		*{box-sizing:border-box}html,body{margin:0;padding:0}
+		body{background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+		.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 22px;height:54px;background:#17171a;border-bottom:1px solid var(--border)}
+		.nav .brand{color:var(--text);font-weight:700;font-size:17px;text-decoration:none;letter-spacing:.2px}
+		.nav .links{display:flex;gap:6px;flex-wrap:wrap}
+		.nav .links a{color:var(--text2);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:7px}
+		.nav .links a:hover{color:var(--text);background:var(--panel2)}
+		.nav .links a.active{color:#fff;background:var(--accent)}
+		.wrap{max-width:900px;margin:0 auto;padding:36px 20px 80px}
+		h1{font-size:30px;margin:0 0 6px}
+		.lead{color:var(--text2);margin:0 0 30px}
+		.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+		.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column}
+		.card h2{font-size:18px;margin:0 0 6px}
+		.card p{color:var(--text2);margin:0 0 18px;font-size:14px;flex:1}
+		.actions{display:flex;gap:10px}
+		.btn{text-decoration:none;font-size:13px;font-weight:600;padding:8px 14px;border-radius:7px}
+		.btn-primary{background:var(--accent);color:#fff}
+		.btn-primary:hover{background:var(--accent2)}
+		.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+		.btn-ghost:hover{color:var(--text);border-color:var(--text3)}
+		footer{margin-top:44px;color:var(--text3);font-size:13px}
+		footer a{color:var(--text2)}
 	</style>
 </head>
 <body>
+	<nav class="nav">
+		<a class="brand" href="/SmidrUI/">SmiðrUI</a>
+		<div class="links">
+			<a href="/SmidrUI/">Home</a>
+			<a href="/SmidrUI/widgets.html">Widgets</a>
+			<a class="active" href="/SmidrUI/examples/">Examples</a>
+			<a href="/SmidrUI/api/">API</a>
+		</div>
+	</nav>
+
 	<div class="wrap">
-		<a class="back" href="../">&larr; API documentation</a>
-		<header>
-			<h1>SmiðrUI &middot; Live examples</h1>
-			<p class="tagline">The examples below are the OpenFL sources compiled to HTML5 &mdash; they run right here in your browser.</p>
-		</header>
+		<h1>Live examples</h1>
+		<p class="lead">The OpenFL sources compiled to HTML5 &mdash; they run right here in your browser.</p>
 
 		<div class="grid">
 			<div class="card">

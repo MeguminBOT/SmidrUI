@@ -38,11 +38,16 @@ jobs:
       - name: Generate type XML
         run: haxe doc.hxml
 
-      - name: Build docs site
-        run: haxelib run dox -i doc/xml -o doc/site -in smidr --title "SmiðrUI API"
+      - name: Build API reference (dox)
+        run: haxelib run dox -i doc/xml -o doc/site/api -in smidr --title "SmiðrUI API"
 
-      - name: Apply smidr Dark theme
+      - name: Apply smidr Dark theme + nav
         run: bash doc/apply-theme.sh
+
+      - name: Assemble the hand-authored pages
+        run: |
+          cp doc/pages/index.html doc/site/index.html
+          python3 doc/build-widget-guide.py doc/site/widgets.html
 
       - name: Build web examples (HTML5)
         run: |
