@@ -129,6 +129,7 @@ Each example is a self-contained project under [`examples/`](examples/):
 | --- | --- |
 | [`calculator/`](examples/calculator/Calculator.hx) | A small four-function calculator app: display panel, button grid, keyboard input, running-expression line. |
 | [`gallery/`](examples/gallery/Gallery.hx) | A full-window, responsive showcase of **every widget**, sorted into categories as a reflowing card masonry. |
+| [`snip/`](examples/snip/Snip.hx) | A snipping tool (desktop only): freezes the desktop and drags a region / full-screen / active-window snip to a PNG + clipboard. Shells out to the OS screenshot facility (OpenFL can't capture the desktop itself). |
 | [`flixel/`](examples/flixel/FlixelExample.hx) | The `smidr.flixel.FlxSmidr` bridge on an `FlxState`: viewport matching, cursor handling, input arbitration, and a HUD label anchored to a world object. |
 
 **Run** any one as an OpenFL app (from the repo root):

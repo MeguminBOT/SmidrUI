@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="SmiðrUI Snip" package="com.meguminbot.smidr.snip" version="0.1.0" company="MeguminBOT" />
+
+	<!--
+		A snipping-tool example: freeze the desktop, drag a region (or pick full-screen / the
+		active window), and save the crop to a PNG (and the clipboard). Desktop only - it shells
+		out to the OS screenshot facility (PowerShell on Windows, screencapture on macOS,
+		grim/scrot/import on Linux), so there is no HTML5 build.
+
+		  lime test examples/snip/project.xml windows      (or mac / linux)
+
+		Set SMIDR_SNIP_AUTO=full to capture the whole screen headlessly and exit (a quick check).
+	-->
+	<app main="Snip" file="Snip" path="bin" />
+	<window fullscreen="true" borderless="true" resizable="false" allow-high-dpi="true" vsync="true" background="#101014" fps="60" />
+
+	<source path="../../src" />
+	<source path="." />
+
+	<haxelib name="openfl" />
+</project>

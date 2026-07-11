@@ -4,10 +4,12 @@
 -cp src
 -cp examples/calculator
 -cp examples/gallery
+-cp examples/snip
 -lib lime
 -lib openfl
 -lib hxcpp
 Gallery
 Calculator
+Snip
 -cpp examples/bin/check
 --no-output
