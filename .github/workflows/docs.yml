@@ -51,7 +51,7 @@ jobs:
 
       - name: Build web examples (HTML5)
         run: |
-          for ex in calculator gallery small full; do
+          for ex in calculator gallery; do
             haxelib run lime build "examples/$ex/project.xml" html5 -release
           done
 
@@ -59,7 +59,7 @@ jobs:
         run: |
           mkdir -p doc/site/examples
           cp doc/examples/index.html doc/site/examples/index.html
-          for ex in calculator gallery small full; do
+          for ex in calculator gallery; do
             mkdir -p "doc/site/examples/$ex"
             cp -r "examples/$ex/bin/html5/bin/." "doc/site/examples/$ex/"
           done

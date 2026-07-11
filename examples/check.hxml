@@ -4,13 +4,9 @@
 -cp src
 -cp examples/calculator
 -cp examples/gallery
--cp examples/small
--cp examples/full
 -lib lime
 -lib openfl
 -lib hxcpp
-SmallExample
-FullExample
 Gallery
 Calculator
 -cpp examples/bin/check

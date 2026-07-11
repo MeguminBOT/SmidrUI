@@ -128,15 +128,13 @@ Each example is a self-contained project under [`examples/`](examples/):
 | Example | What it shows |
 | --- | --- |
 | [`calculator/`](examples/calculator/Calculator.hx) | A small four-function calculator app: display panel, button grid, keyboard input, running-expression line. |
-| [`gallery/`](examples/gallery/Gallery.hx) | A scrollable showcase of **every widget**, each wired to a status line. |
-| [`small/`](examples/small/SmallExample.hx) | The minimum: attach a root, a panel, a label and a button. |
-| [`full/`](examples/full/FullExample.hx) | A settings-style screen: an icon rail switching sections over a menu bar, with tabs, sliders, steppers, switches, checkboxes, segmented controls, icon buttons, a progress bar, a dropdown, text input, chip, keybind, icon, a data-bound list, collapsible accordions in a scroll pane, a modal, a context menu and toasts — plus font/theme/locale/tooltip setup. |
+| [`gallery/`](examples/gallery/Gallery.hx) | A full-window, responsive showcase of **every widget**, sorted into categories as a reflowing card masonry. |
 | [`flixel/`](examples/flixel/FlixelExample.hx) | The `smidr.flixel.FlxSmidr` bridge on an `FlxState`: viewport matching, cursor handling, input arbitration, and a HUD label anchored to a world object. |
 
 **Run** any one as an OpenFL app (from the repo root):
 
 ```bash
-lime test examples/calculator/project.xml windows   # or gallery / small / full / flixel
+lime test examples/calculator/project.xml windows   # or gallery / flixel
 lime build examples/gallery/project.xml html5       # a static web build -> bin/html5/bin
 ```
 
@@ -145,7 +143,7 @@ Swap `windows` for `mac`, `linux`, `html5`, `hl`, etc.
 **Typecheck** them without a window (what CI runs):
 
 ```bash
-haxe examples/check.hxml          # the four OpenFL examples
+haxe examples/check.hxml          # the OpenFL examples (calculator, gallery)
 haxe examples/check-flixel.hxml   # the Flixel bridge example (needs -lib flixel)
 ```
 
