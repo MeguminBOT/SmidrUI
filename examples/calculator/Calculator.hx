@@ -243,8 +243,11 @@ class Calculator extends Sprite {
 	}
 
 	function percent():Void {
-		var value:Float = Std.parseFloat(shown) / 100;
-		shown = format(value);
+		var value:Float = Std.parseFloat(shown);
+		// For + and -, the percent is taken of the first operand (50 + 10% adds 10% OF 50 = 5).
+		// For x, / and standalone it is a plain fraction (50 x 10% = 50 x 0.1).
+		var result:Float = (pendingOp == "+" || pendingOp == "-") ? stored * value / 100 : value / 100;
+		shown = format(result);
 		freshEntry = true;
 		refresh();
 	}
