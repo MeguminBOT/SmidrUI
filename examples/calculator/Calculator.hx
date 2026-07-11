@@ -182,6 +182,12 @@ class Calculator extends Sprite {
 	}
 
 	function inputDigit(d:String):Void {
+		// a digit after an error starts a fresh calculation
+		if (shown == "Error") {
+			stored = 0;
+			pendingOp = null;
+			expression = "";
+		}
 		// starting a brand-new number after "=" clears the finished equation
 		if (freshEntry && pendingOp == null)
 			expression = "";
@@ -200,6 +206,8 @@ class Calculator extends Sprite {
 	}
 
 	function inputOp(op:String):Void {
+		if (shown == "Error") // locked until a digit or Clear starts fresh
+			return;
 		var value:Float = Std.parseFloat(shown);
 		if (pendingOp != null && !freshEntry) {
 			stored = apply(stored, value, pendingOp);
@@ -214,7 +222,7 @@ class Calculator extends Sprite {
 	}
 
 	function equals():Void {
-		if (pendingOp == null)
+		if (pendingOp == null || shown == "Error")
 			return;
 		var value:Float = Std.parseFloat(shown);
 		expression = format(stored) + " " + symbol(pendingOp) + " " + shown + " =";
@@ -243,6 +251,8 @@ class Calculator extends Sprite {
 	}
 
 	function percent():Void {
+		if (shown == "Error")
+			return;
 		var value:Float = Std.parseFloat(shown);
 		// For + and -, the percent is taken of the first operand (50 + 10% adds 10% OF 50 = 5).
 		// For x, / and standalone it is a plain fraction (50 x 10% = 50 x 0.1).
