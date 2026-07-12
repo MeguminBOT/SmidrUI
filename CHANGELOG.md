@@ -4,6 +4,41 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `UITextArea` — a multi-line, scrollable text editor (the multi-line counterpart to the single-line
+  `UITextInput`). It reuses one non-interactive `TextField` for glyph layout and its visual-line
+  queries (with variable per-line heights), then draws its own caret, selection, list markers and
+  scrollbar, so it stays retained-mode and `UIFocus`-routed (the mobile IME bridge and app-keybind
+  gating work unchanged). Editing: printable input, Enter for newlines, Tab, Backspace/Delete,
+  Left/Right (Ctrl = word jump), Up/Down with a desired column, Home/End (Ctrl = document ends),
+  PageUp/PageDown, Ctrl+A/C/X/V; word-wrap by default with vertical scrolling via wheel, a draggable
+  thumb, and drag-to-scroll on mobile. `placeholder`, `readOnly`, `maxLength`, `onChange`,
+  `onCaretMove`/`caretIndex`, and `getStyleData`/`setRich` for persisting styled content. Double-click
+  selects a word and triple-click a paragraph; caret placement rounds to the nearest glyph boundary;
+  and `undo`/`redo` (Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z) keep a coalesced edit history.
+- `smidr.text` — pluggable rich-text modules for `UITextArea`. The editor is **style-agnostic**: it
+  carries one opaque `Int` style word per character and defers all meaning to an optional installed
+  `styler`. `UITextStyler` / `UIStyledText` are the small interfaces at the boundary (so modules
+  never depend on the widget); `UIRichStyler` is the WYSIWYG module (bold / italic / underline /
+  outline, a colour palette, size tiers, H1-H3 headings, bullet + numbered lists) that turns style
+  words into `TextFormat` runs, list markers, indentation and outline boxes; `UIMarkdown` converts
+  the model to/from Markdown; `UITextStyle` is the shared bit vocabulary. With no styler installed,
+  `UITextArea` is a plain uniform-format field.
+- `UITreeView.onNodeRightClick(node, x, y)` — a right-click / long-press hook that selects the node
+  and reports it (with stage coordinates) for a context menu. `UITreeNode.icons` draws small glyph
+  badges (e.g. a pin or a lock) before a node's label.
+- `UIToolbar.addWidget(widget, width)` — hosts an arbitrary widget (e.g. a `UIDropdown`) on the bar,
+  sized and centered like a button, so toolbars can carry pickers, not just buttons.
+- Two notepad examples. `examples/notepad/` is a full desktop note app on the above: a WYSIWYG rich
+  editor, a folder **tree** sidebar with search (by name / contents / date), a formatting toolbar,
+  right-click context menus (rename / pin / mark important / move to folder / export / delete),
+  pinning, deletion-protection for important notes, created/modified timestamps, an options screen
+  (accent colour, theme, max notes, save location), note-switch animations, and native Markdown
+  open/save via `lime.ui.FileDialog` — persisting to `<documents>/SmidrNotes/notes.json`.
+  `examples/notepad-mobile/` is a touch-first build (a `UIDrawer` note list, soft-keyboard IME).
+
 ## [0.3.0] — 2026-07-07
 
 ### Added

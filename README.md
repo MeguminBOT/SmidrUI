@@ -51,7 +51,8 @@ SmiðrUI also ships an optional Flixel bridge (compiled only when the `flixel` h
 ### Widgets
 
 Buttons (with optional glyph/asset icons), labels, icons, panels and separators, icon rails and
-tabs, checkboxes, switches, chips, sliders, steppers, segmented controls, text inputs, keybind
+tabs, checkboxes, switches, chips, sliders, steppers, segmented controls, single-line text inputs,
+multi-line text areas (with pluggable WYSIWYG rich-text / Markdown modules), keybind
 capture, dropdowns (with optional type-ahead), date/time pickers, context menus, menu bars,
 toolbars, breadcrumbs, accordions, expanders, scroll panes, stacks, split views,
 movable windows, dockable panels, data-bound lists, tree views, data grids, tile grids, radio
@@ -129,6 +130,8 @@ Each example is a self-contained project under [`examples/`](examples/):
 | --- | --- |
 | [`calculator/`](examples/calculator/Calculator.hx) | A small four-function calculator app: display panel, button grid, keyboard input, running-expression line. |
 | [`gallery/`](examples/gallery/Gallery.hx) | A full-window, responsive showcase of **every widget**, sorted into categories as a reflowing card masonry. |
+| [`notepad/`](examples/notepad/Notepad.hx) | A full desktop note app: a **WYSIWYG rich-text** `UITextArea` (bold/italic/underline, colours, sizes, H1-H3, bullet + numbered lists), a folder tree with search, a formatting toolbar, right-click context menus, pinning, deletion-protected "important" notes, timestamps, an options screen, and native Markdown open/save. Persists to `<documents>/SmidrNotes/notes.json`. |
+| [`notepad-mobile/`](examples/notepad-mobile/NotepadMobile.hx) | The touch-first notepad (built for Android): an app bar whose menu button slides open a `UIDrawer` note list, with the editor raising the soft keyboard via the `UIFocus` IME bridge. Runs on desktop too (phone-sized window). |
 | [`snip/`](examples/snip/Snip.hx) | A snipping tool (desktop only): freezes the desktop and drags a region / full-screen / active-window snip to a PNG + clipboard. Shells out to the OS screenshot facility (OpenFL can't capture the desktop itself). |
 | [`flixel/`](examples/flixel/FlixelExample.hx) | The `smidr.flixel.FlxSmidr` bridge on an `FlxState`: viewport matching, cursor handling, input arbitration, and a HUD label anchored to a world object. |
 
@@ -144,11 +147,15 @@ Swap `windows` for `mac`, `linux`, `html5`, `hl`, etc.
 **Typecheck** them without a window (what CI runs):
 
 ```bash
-haxe examples/check.hxml          # the OpenFL examples (calculator, gallery)
+haxe examples/check.hxml          # the OpenFL examples (calculator, gallery, snip, notepad, notepad-mobile)
 haxe examples/check-flixel.hxml   # the Flixel bridge example (needs -lib flixel)
 ```
 
 ## Documentation
+
+New here? Start with the **[Getting started guide](doc/getting-started.md)** — it walks from an empty
+project to a running app, covers the core classes, adding widgets, theming, and writing your own
+widget.
 
 The docs site has four parts:
 
@@ -212,6 +219,12 @@ UILocale.refresh();
 ```
 
 Widgets with a `localize(key, fallback)` method (e.g. `UIButton`) resolve through this hook.
+
+## Contributing
+
+Contributions are welcome. See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the conventions this project
+enforces — strict typing, the retained-mode/invalidation model, keeping generic widgets free of app
+logic, the naming and docstring rules, the typecheck suite to run, and a checklist for adding a widget.
 
 ## License
 
