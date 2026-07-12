@@ -5,11 +5,15 @@
 -cp examples/calculator
 -cp examples/gallery
 -cp examples/snip
+-cp examples/notepad
+-cp examples/notepad-mobile
 -lib lime
 -lib openfl
 -lib hxcpp
 Gallery
 Calculator
 Snip
+Notepad
+NotepadMobile
 -cpp examples/bin/check
 --no-output

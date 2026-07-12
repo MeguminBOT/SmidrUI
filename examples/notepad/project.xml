@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="SmiðrUI Notepad" package="com.meguminbot.smidr.notepad" version="0.1.0" company="MeguminBOT" />
+
+	<!--
+		A desktop notepad: toolbar, a sidebar list of notes, a title field and the multi-line
+		UITextArea editor, plus a status bar. Notes persist in a SharedObject. Build from the
+		repo root:
+		  lime test examples/notepad/project.xml windows
+		  lime build examples/notepad/project.xml html5    (static web build -> bin/html5/bin)
+		Swap `windows` for `mac`, `linux`, `html5`, `hl`, etc.
+	-->
+	<app main="Notepad" file="Notepad" path="bin" />
+	<window width="880" height="580" fps="60" background="#121214" vsync="true" resizable="true" />
+
+	<source path="../../src" />
+	<source path="." />
+
+	<haxelib name="openfl" />
+
+	<!-- optional embedded font (falls back to a default font when absent); build with -Dassets -->
+	<assets path="../assets" rename="assets" if="assets" />
+</project>

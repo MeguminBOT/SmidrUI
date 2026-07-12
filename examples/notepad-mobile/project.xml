@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="SmiðrUI Notes" package="com.meguminbot.smidr.notepadmobile" version="0.1.0" company="MeguminBOT" />
+
+	<!--
+		A touch-first notepad, built for Android but runnable anywhere. A slide-out UIDrawer lists
+		notes; the multi-line UITextArea raises the soft keyboard through the UIFocus IME bridge.
+		Build from the repo root:
+		  lime test examples/notepad-mobile/project.xml android
+		  lime test examples/notepad-mobile/project.xml windows   (phone-sized desktop preview)
+	-->
+	<app main="NotepadMobile" file="NotepadMobile" path="bin" />
+
+	<!-- portrait phone; the desktop preview window matches a typical phone aspect -->
+	<window fps="60" background="#121214" vsync="true" />
+	<window if="mobile" orientation="portrait" fullscreen="true" allow-high-dpi="true" />
+	<window unless="mobile" width="400" height="740" resizable="true" />
+
+	<source path="../../src" />
+	<source path="." />
+
+	<haxelib name="openfl" />
+
+	<!-- optional embedded font (falls back to a default font when absent); build with -Dassets -->
+	<assets path="../assets" rename="assets" if="assets" />
+</project>
