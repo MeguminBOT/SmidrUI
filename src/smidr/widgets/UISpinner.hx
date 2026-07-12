@@ -71,8 +71,7 @@ final class UISpinner extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var cx:Float = w / 2;
 		var cy:Float = h / 2;
 		var stroke:Float = UITheme.px(thickness);
@@ -80,24 +79,23 @@ final class UISpinner extends UIComponent {
 		if (radius <= 0)
 			return;
 
-		g.lineStyle(stroke, UIColor.rgb(UITheme.border2), 0.5, false, null, CapsStyle.ROUND);
+		graphics.lineStyle(stroke, UIColor.rgb(UITheme.border2), 0.5, false, null, CapsStyle.ROUND);
 		drawArc(cx, cy, radius, 0, Math.PI * 2);
 
 		var arcColor:Int = (color == -1) ? UITheme.accent : color;
-		g.lineStyle(stroke, UIColor.rgb(arcColor), 1, false, null, CapsStyle.ROUND);
+		graphics.lineStyle(stroke, UIColor.rgb(arcColor), 1, false, null, CapsStyle.ROUND);
 		drawArc(cx, cy, radius, phase, phase + Math.PI * 1.5);
-		g.lineStyle();
+		graphics.lineStyle();
 	}
 
 	function drawArc(cx:Float, cy:Float, radius:Float, from:Float, to:Float):Void {
-		var g = graphics;
 		var segments:Int = 32;
 		var step:Float = (to - from) / segments;
-		g.moveTo(cx + Math.cos(from) * radius, cy + Math.sin(from) * radius);
+		graphics.moveTo(cx + Math.cos(from) * radius, cy + Math.sin(from) * radius);
 		var i:Int = 1;
 		while (i <= segments) {
-			var a:Float = from + step * i;
-			g.lineTo(cx + Math.cos(a) * radius, cy + Math.sin(a) * radius);
+			var angle:Float = from + step * i;
+			graphics.lineTo(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
 			i++;
 		}
 	}

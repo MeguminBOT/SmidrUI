@@ -79,8 +79,8 @@ final class UIScrollPane extends UIComponent {
 	public var maxScroll(get, never):Float;
 
 	inline function get_maxScroll():Float {
-		var m:Float = contentHeight - h;
-		return (m > 0) ? m : 0;
+		var max:Float = contentHeight - h;
+		return (max > 0) ? max : 0;
 	}
 
 	/**
@@ -88,94 +88,93 @@ final class UIScrollPane extends UIComponent {
 		@param value the target offset in pixels (clamped to 0..`maxScroll`)
 	**/
 	public function setScroll(value:Float):Void {
-		var m:Float = maxScroll;
+		var max:Float = maxScroll;
 		if (value < 0)
 			value = 0;
-		if (value > m)
-			value = m;
+		if (value > max)
+			value = max;
 		scrollY = value;
 		content.scrollRect = new Rectangle(0, scrollY, w, h);
 		positionThumb();
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 		content.scrollRect = new Rectangle(0, scrollY, w, h);
 		drawThumb();
 	}
 
 	function drawThumb():Void {
-		var g = thumb.graphics;
-		g.clear();
-		var m:Float = maxScroll;
-		thumb.visible = (m > 0);
-		if (m <= 0)
+		var thumbGraphics = thumb.graphics;
+		thumbGraphics.clear();
+		var max:Float = maxScroll;
+		thumb.visible = (max > 0);
+		if (max <= 0)
 			return;
 		var barW:Float = UITheme.px(4);
 		var trackH:Float = h - 4;
 		var thumbH:Float = trackH * (h / contentHeight);
 		if (thumbH < 24)
 			thumbH = 24;
-		g.beginFill(UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0, 0, barW, thumbH, barW, barW);
-		g.endFill();
+		thumbGraphics.beginFill(UIColor.rgb(UITheme.border2));
+		thumbGraphics.drawRoundRect(0, 0, barW, thumbH, barW, barW);
+		thumbGraphics.endFill();
 		positionThumb();
 	}
 
 	function positionThumb():Void {
-		var m:Float = maxScroll;
-		if (m <= 0)
+		var max:Float = maxScroll;
+		if (max <= 0)
 			return;
 		var trackH:Float = h - 4;
 		var thumbH:Float = trackH * (h / contentHeight);
 		if (thumbH < 24)
 			thumbH = 24;
 		thumb.x = w - UITheme.px(4) - 2;
-		thumb.y = 2 + (trackH - thumbH) * (scrollY / m);
+		thumb.y = 2 + (trackH - thumbH) * (scrollY / max);
 	}
 
-	function __onWheel(e:MouseEvent):Void {
+	function __onWheel(event:MouseEvent):Void {
 		if (maxScroll <= 0)
 			return;
 		stopFling();
-		setScroll(scrollY - e.delta * wheelStep);
-		e.stopPropagation();
+		setScroll(scrollY - event.delta * wheelStep);
+		event.stopPropagation();
 	}
 
-	function __onDown(e:MouseEvent):Void {
+	function __onDown(event:MouseEvent):Void {
 		stopFling();
 		if (maxScroll <= 0)
 			return;
 		if (mouseX >= w - UITheme.px(4) - 4) {
 			mode = MODE_THUMB;
-			dragGrabY = e.stageY;
+			dragGrabY = event.stageY;
 			dragStartScroll = scrollY;
 			beginCapture();
-			e.stopPropagation();
+			event.stopPropagation();
 			return;
 		}
 		if (touchScroll) {
 			dragPending = true;
-			dragGrabY = e.stageY;
+			dragGrabY = event.stageY;
 			dragStartScroll = scrollY;
-			lastPointerY = e.stageY;
+			lastPointerY = event.stageY;
 			lastPointerTime = Lib.getTimer();
 			velocity = 0;
 		}
 	}
 
-	function __onMove(e:MouseEvent):Void {
+	function __onMove(event:MouseEvent):Void {
 		if (!dragPending || mode != MODE_NONE)
 			return;
-		if (!e.buttonDown) {
+		if (!event.buttonDown) {
 			dragPending = false;
 			return;
 		}
-		if (Math.abs(e.stageY - dragGrabY) < UITheme.px(8) * scaleFactorY())
+		if (Math.abs(event.stageY - dragGrabY) < UITheme.px(8) * scaleFactorY())
 			return;
 		// a deeper widget (e.g. a UIList inside the pane) may already own the drag
 		if (UIPointer.captureTarget != null) {

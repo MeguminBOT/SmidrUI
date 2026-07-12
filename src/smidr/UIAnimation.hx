@@ -68,9 +68,9 @@ final class UIAnimation {
 		@return the running animation (hold it only if you may `stop()`)
 	**/
 	public static function play(target:DisplayObject, preset:UIAnimationPreset, ?opts:UIAnimOptions):UIAnimation {
-		var a:UIAnimation = new UIAnimation(target, preset, opts);
-		a.start();
-		return a;
+		var animation:UIAnimation = new UIAnimation(target, preset, opts);
+		animation.start();
+		return animation;
 	}
 
 	function new(target:DisplayObject, preset:UIAnimationPreset, ?opts:UIAnimOptions) {
@@ -118,33 +118,33 @@ final class UIAnimation {
 			onDone();
 	}
 
-	function step(v:Float):Void {
+	function step(progress:Float):Void {
 		switch (preset) {
 			case FLY_IN:
-				apply(1, 1, 0, edgeX * (1 - v) * distance, edgeY * (1 - v) * distance, unit(v));
+				apply(1, 1, 0, edgeX * (1 - progress) * distance, edgeY * (1 - progress) * distance, unit(progress));
 			case FLY_OUT:
-				apply(1, 1, 0, edgeX * v * distance, edgeY * v * distance, unit(1 - v));
+				apply(1, 1, 0, edgeX * progress * distance, edgeY * progress * distance, unit(1 - progress));
 			case ZOOM_IN:
-				apply(v, v, 0, 0, 0, unit(v));
+				apply(progress, progress, 0, 0, 0, unit(progress));
 			case ZOOM_OUT:
-				var s:Float = 1 - v;
-				apply(s, s, 0, 0, 0, unit(s));
+				var scale:Float = 1 - progress;
+				apply(scale, scale, 0, 0, 0, unit(scale));
 			case FADE_IN:
-				apply(1, 1, 0, 0, 0, unit(v));
+				apply(1, 1, 0, 0, 0, unit(progress));
 			case FADE_OUT:
-				apply(1, 1, 0, 0, 0, unit(1 - v));
+				apply(1, 1, 0, 0, 0, unit(1 - progress));
 			case POP:
-				apply(v, v, 0, 0, 0, unit(v * 1.4));
+				apply(progress, progress, 0, 0, 0, unit(progress * 1.4));
 			case FLIP:
-				var vv:Float = unit(v);
+				var vv:Float = unit(progress);
 				apply(-Math.cos(vv * Math.PI), 1, 0, 0, 0, (1 - Math.cos(vv * Math.PI)) / 2);
 			case REVOLVE:
-				apply(v, v, (1 - v) * 2 * Math.PI, 0, 0, unit(v));
+				apply(progress, progress, (1 - progress) * 2 * Math.PI, 0, 0, unit(progress));
 			case SHAKE:
-				apply(1, 1, 0, Math.sin(v * Math.PI * 6) * amplitude * (1 - v), 0, 1);
+				apply(1, 1, 0, Math.sin(progress * Math.PI * 6) * amplitude * (1 - progress), 0, 1);
 			case PULSE:
-				var s:Float = 1 + Math.sin(v * Math.PI) * 0.08;
-				apply(s, s, 0, 0, 0, 1);
+				var scale:Float = 1 + Math.sin(progress * Math.PI) * 0.08;
+				apply(scale, scale, 0, 0, 0, 1);
 			default:
 		}
 	}
@@ -168,16 +168,16 @@ final class UIAnimation {
 		target.alpha = baseAlpha;
 	}
 
-	static inline function isExit(p:UIAnimationPreset):Bool {
-		return p == FLY_OUT || p == ZOOM_OUT || p == FADE_OUT;
+	static inline function isExit(preset:UIAnimationPreset):Bool {
+		return preset == FLY_OUT || preset == ZOOM_OUT || preset == FADE_OUT;
 	}
 
-	static inline function unit(v:Float):Float {
-		return (v < 0) ? 0 : (v > 1 ? 1 : v);
+	static inline function unit(value:Float):Float {
+		return (value < 0) ? 0 : (value > 1 ? 1 : value);
 	}
 
-	static function defaultDuration(p:UIAnimationPreset):Float {
-		return switch (p) {
+	static function defaultDuration(preset:UIAnimationPreset):Float {
+		return switch (preset) {
 			case SHAKE: 420;
 			case PULSE: 340;
 			case FLY_OUT | ZOOM_OUT | FADE_OUT: 180;
@@ -185,8 +185,8 @@ final class UIAnimation {
 		}
 	}
 
-	static function defaultEase(p:UIAnimationPreset):UIEase {
-		return switch (p) {
+	static function defaultEase(preset:UIAnimationPreset):UIEase {
+		return switch (preset) {
 			case POP: OUT_BACK;
 			case REVOLVE: OUT_CUBIC;
 			case FLY_OUT | ZOOM_OUT | FADE_OUT: IN_QUAD;

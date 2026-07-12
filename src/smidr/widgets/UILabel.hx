@@ -99,12 +99,12 @@ final class UILabel extends UIComponent {
 		}
 	}
 
-	function set_wrapWidth(v:Float):Float {
-		if (wrapWidth == v)
-			return v;
-		wrapWidth = v;
+	function set_wrapWidth(value:Float):Float {
+		if (wrapWidth == value)
+			return value;
+		wrapWidth = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
 	/**
@@ -118,41 +118,41 @@ final class UILabel extends UIComponent {
 		return h;
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_text(v:String):String {
-		if (text == v)
-			return v;
-		text = v;
+	function set_text(value:String):String {
+		if (text == value)
+			return value;
+		text = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_tone(v:UITone):UITone {
-		tone = v;
+	function set_tone(value:UITone):UITone {
+		tone = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_colorOverride(v:Int):Int {
-		colorOverride = v;
+	function set_colorOverride(value:Int):Int {
+		colorOverride = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_size(v:Int):Int {
-		size = v;
+	function set_size(value:Int):Int {
+		size = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_align(v:TextFormatAlign):TextFormatAlign {
-		align = v;
+	function set_align(value:TextFormatAlign):TextFormatAlign {
+		align = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

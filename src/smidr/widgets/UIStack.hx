@@ -111,12 +111,12 @@ final class UIStack extends UIComponent {
 
 	override public function render():Void {
 		var pad:Float = UITheme.px(padding);
-		var g:Float = UITheme.px(gap);
+		var gapPx:Float = UITheme.px(gap);
 		var crossExtent:Float = (vertical ? w : h) - pad * 2;
 		var pos:Float = pad;
 		var i:Int = 0;
-		var n:Int = items.length;
-		while (i < n) {
+		var count:Int = items.length;
+		while (i < count) {
 			var child:DisplayObject = items[i];
 			if (stretch && (child is UIComponent)) {
 				var uc:UIComponent = cast child;
@@ -137,16 +137,16 @@ final class UIStack extends UIComponent {
 			if (vertical) {
 				child.x = crossPos;
 				child.y = pos;
-				pos += heightOf(child) + g;
+				pos += heightOf(child) + gapPx;
 			} else {
 				child.x = pos;
 				child.y = crossPos;
-				pos += widthOf(child) + g;
+				pos += widthOf(child) + gapPx;
 			}
 			i++;
 		}
-		if (n > 0)
-			pos -= g; // drop the trailing gap
+		if (count > 0)
+			pos -= gapPx; // drop the trailing gap
 		pos += pad;
 		if (vertical)
 			h = pos;
@@ -154,33 +154,33 @@ final class UIStack extends UIComponent {
 			w = pos;
 	}
 
-	function set_vertical(v:Bool):Bool {
-		vertical = v;
+	function set_vertical(value:Bool):Bool {
+		vertical = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_gap(v:Float):Float {
-		gap = v;
+	function set_gap(value:Float):Float {
+		gap = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_padding(v:Float):Float {
-		padding = v;
+	function set_padding(value:Float):Float {
+		padding = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_stretch(v:Bool):Bool {
-		stretch = v;
+	function set_stretch(value:Bool):Bool {
+		stretch = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_align(v:UIAlign):UIAlign {
-		align = v;
+	function set_align(value:UIAlign):UIAlign {
+		align = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

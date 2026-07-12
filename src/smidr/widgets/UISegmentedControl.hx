@@ -78,10 +78,10 @@ final class UISegmentedControl extends UIComponent {
 		segmentFields.resize(0);
 		i = 0;
 		while (i < items.length) {
-			var t:TextField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2, TextFormatAlign.CENTER);
-			t.autoSize = openfl.text.TextFieldAutoSize.NONE;
-			addChild(t);
-			segmentFields.push(t);
+			var field:TextField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2, TextFormatAlign.CENTER);
+			field.autoSize = openfl.text.TextFieldAutoSize.NONE;
+			addChild(field);
+			segmentFields.push(field);
 			i++;
 		}
 		if (selectedIndex >= items.length)
@@ -105,16 +105,16 @@ final class UISegmentedControl extends UIComponent {
 	}
 
 	override function onPress(localX:Float, localY:Float):Void {
-		var n:Int = items.length;
+		var count:Int = items.length;
 		var bx:Float = boxX();
-		if (n == 0 || localX < bx)
+		if (count == 0 || localX < bx)
 			return;
 		var pad:Float = UITheme.px(2);
-		var idx:Int = Std.int((localX - bx - pad) / ((controlWidth - pad * 2) / n));
+		var idx:Int = Std.int((localX - bx - pad) / ((controlWidth - pad * 2) / count));
 		if (idx < 0)
 			idx = 0;
-		if (idx >= n)
-			idx = n - 1;
+		if (idx >= count)
+			idx = count - 1;
 		pick(idx);
 	}
 
@@ -133,8 +133,8 @@ final class UISegmentedControl extends UIComponent {
 			onSelect(idx);
 	}
 
-	function applyPill(v:Float):Void {
-		pillX = v;
+	function applyPill(value:Float):Void {
+		pillX = value;
 		invalidate();
 	}
 
@@ -155,45 +155,44 @@ final class UISegmentedControl extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
-		var n:Int = items.length;
+		var count:Int = items.length;
 		var bx:Float = boxX();
 		var bw:Float = (label != "" || key != null) ? controlWidth : w;
-		var r:Float = UITheme.px(6);
+		var radius:Float = UITheme.px(6);
 		var pad:Float = UITheme.px(2);
 
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRoundRect(bx, 1, bw, h - 2, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border));
-		g.drawRoundRect(bx + 0.5, 1.5, bw - 1, h - 3, r, r);
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(UITheme.panel2));
+		graphics.drawRoundRect(bx, 1, bw, h - 2, radius, radius);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(UITheme.border));
+		graphics.drawRoundRect(bx + 0.5, 1.5, bw - 1, h - 3, radius, radius);
+		graphics.lineStyle();
 
-		if (n > 0) {
-			var segW:Float = (bw - pad * 2) / n;
+		if (count > 0) {
+			var segW:Float = (bw - pad * 2) / count;
 			if (!pillAnim)
 				pillX = bx + pad + selectedIndex * segW;
-			g.beginFill(UIColor.rgb(UITheme.accentDark));
-			g.drawRoundRect(pillX, 1 + pad, segW, h - 2 - pad * 2, r, r);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.accentDark));
+			graphics.drawRoundRect(pillX, 1 + pad, segW, h - 2 - pad * 2, radius, radius);
+			graphics.endFill();
 
 			var i:Int = 0;
-			while (i < n) {
-				var t:TextField = segmentFields[i];
+			while (i < count) {
+				var field:TextField = segmentFields[i];
 				var active:Bool = (i == selectedIndex);
-				UIFonts.restyle(t, UITheme.fs(fontSize), active ? UITheme.text : UITheme.text2, TextFormatAlign.CENTER);
+				UIFonts.restyle(field, UITheme.fs(fontSize), active ? UITheme.text : UITheme.text2, TextFormatAlign.CENTER);
 				var resolved:String = (itemKeys != null && itemKeys[i] != null) ? UILocale.t(itemKeys[i], items[i]) : items[i];
-				if (t.text != resolved)
-					t.text = resolved;
-				t.width = segW;
-				t.height = t.textHeight + 4;
-				t.x = bx + pad + i * segW;
-				t.y = (h - t.height) / 2;
+				if (field.text != resolved)
+					field.text = resolved;
+				field.width = segW;
+				field.height = field.textHeight + 4;
+				field.x = bx + pad + i * segW;
+				field.y = (h - field.height) / 2;
 				i++;
 			}
 		}
@@ -212,21 +211,21 @@ final class UISegmentedControl extends UIComponent {
 		super.dispose();
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

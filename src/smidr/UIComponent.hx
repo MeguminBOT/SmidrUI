@@ -165,13 +165,13 @@ class UIComponent extends Sprite {
 		UIRoot.tooltipLeave(this);
 	}
 
-	function __onMouseDown(e:MouseEvent):Void {
+	function __onMouseDown(event:MouseEvent):Void {
 		if (!enabled)
 			return;
 		pressed = true;
 		@:privateAccess UIPointer.beginPress(this);
 		onStateChanged();
-		onPress(e.localX, e.localY);
+		onPress(event.localX, event.localY);
 	}
 
 	/**
@@ -181,10 +181,10 @@ class UIComponent extends Sprite {
 	**/
 	function onPress(localX:Float, localY:Float):Void {}
 
-	function __onRightMouseDown(e:MouseEvent):Void {
+	function __onRightMouseDown(event:MouseEvent):Void {
 		if (!enabled)
 			return;
-		onRightPress(e.localX, e.localY);
+		onRightPress(event.localX, event.localY);
 		if (onRightClick != null)
 			onRightClick();
 	}

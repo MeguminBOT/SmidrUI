@@ -253,17 +253,17 @@ final class UIDockHost extends UIComponent {
 			groups.push(node.group);
 			return;
 		}
-		var t:Float = UITheme.px(dividerThickness);
+		var thickness:Float = UITheme.px(dividerThickness);
 		if (node.vertical) {
-			var firstH:Float = (nh - t) * node.ratio;
+			var firstH:Float = (nh - thickness) * node.ratio;
 			layoutNode(node.first, x, y, nw, firstH);
-			divider(node).setBounds(x, y + firstH, nw, t);
-			layoutNode(node.second, x, y + firstH + t, nw, nh - firstH - t);
+			divider(node).setBounds(x, y + firstH, nw, thickness);
+			layoutNode(node.second, x, y + firstH + thickness, nw, nh - firstH - thickness);
 		} else {
-			var firstW:Float = (nw - t) * node.ratio;
+			var firstW:Float = (nw - thickness) * node.ratio;
 			layoutNode(node.first, x, y, firstW, nh);
-			divider(node).setBounds(x + firstW, y, t, nh);
-			layoutNode(node.second, x + firstW + t, y, nw - firstW - t, nh);
+			divider(node).setBounds(x + firstW, y, thickness, nh);
+			layoutNode(node.second, x + firstW + thickness, y, nw - firstW - thickness, nh);
 		}
 	}
 
@@ -388,17 +388,16 @@ private final class UIDockDivider extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.beginFill(UIColor.rgb(hovered ? UITheme.border2 : UITheme.border));
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(hovered ? UITheme.border2 : UITheme.border));
 		if (node != null && node.vertical)
-			g.drawRect(0, h / 2 - 0.5, w, 1);
+			graphics.drawRect(0, h / 2 - 0.5, w, 1);
 		else
-			g.drawRect(w / 2 - 0.5, 0, 1, h);
-		g.endFill();
+			graphics.drawRect(w / 2 - 0.5, 0, 1, h);
+		graphics.endFill();
 	}
 }
 
@@ -418,27 +417,26 @@ private final class UIDockOverlay extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.accent), 0.12);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.lineStyle(2, UIColor.rgb(UITheme.accent));
-		g.drawRect(1, 1, w - 2, h - 2);
-		g.lineStyle();
-		g.beginFill(UIColor.rgb(UITheme.accent), 0.28);
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.accent), 0.12);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.lineStyle(2, UIColor.rgb(UITheme.accent));
+		graphics.drawRect(1, 1, w - 2, h - 2);
+		graphics.lineStyle();
+		graphics.beginFill(UIColor.rgb(UITheme.accent), 0.28);
 		switch (zone) {
 			case LEFT:
-				g.drawRect(0, 0, w / 2, h);
+				graphics.drawRect(0, 0, w / 2, h);
 			case RIGHT:
-				g.drawRect(w / 2, 0, w / 2, h);
+				graphics.drawRect(w / 2, 0, w / 2, h);
 			case TOP:
-				g.drawRect(0, 0, w, h / 2);
+				graphics.drawRect(0, 0, w, h / 2);
 			case BOTTOM:
-				g.drawRect(0, h / 2, w, h / 2);
+				graphics.drawRect(0, h / 2, w, h / 2);
 			default:
-				g.drawRect(0, 0, w, h);
+				graphics.drawRect(0, 0, w, h);
 		}
-		g.endFill();
+		graphics.endFill();
 	}
 }

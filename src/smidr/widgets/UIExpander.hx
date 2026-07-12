@@ -102,18 +102,18 @@ final class UIExpander extends UIComponent {
 			header.resize(w, UITheme.px(headerHeightBase));
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		if (header != null)
 			header.invalidate();
-		return v;
+		return value;
 	}
 
-	function set_title(v:String):String {
-		title = v;
+	function set_title(value:String):String {
+		title = value;
 		if (header != null)
 			header.invalidate();
-		return v;
+		return value;
 	}
 }
 
@@ -135,28 +135,27 @@ private final class UIExpanderHeader extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		var r:Float = UITheme.px(6);
-		g.beginFill(UIColor.rgb(hovered ? UITheme.panel3 : UITheme.panel2));
-		g.drawRoundRect(0, 0, w, h, r, r);
-		g.endFill();
+		graphics.clear();
+		var radius:Float = UITheme.px(6);
+		graphics.beginFill(UIColor.rgb(hovered ? UITheme.panel3 : UITheme.panel2));
+		graphics.drawRoundRect(0, 0, w, h, radius, radius);
+		graphics.endFill();
 
 		// chevron: right when collapsed, down when expanded
 		var cx:Float = UITheme.px(14);
 		var cy:Float = h / 2;
 		var reach:Float = UITheme.px(4);
-		g.beginFill(UIColor.rgb(UITheme.text2));
+		graphics.beginFill(UIColor.rgb(UITheme.text2));
 		if (owner.expanded) {
-			g.moveTo(cx - reach, cy - reach * 0.5);
-			g.lineTo(cx + reach, cy - reach * 0.5);
-			g.lineTo(cx, cy + reach * 0.7);
+			graphics.moveTo(cx - reach, cy - reach * 0.5);
+			graphics.lineTo(cx + reach, cy - reach * 0.5);
+			graphics.lineTo(cx, cy + reach * 0.7);
 		} else {
-			g.moveTo(cx - reach * 0.5, cy - reach);
-			g.lineTo(cx + reach * 0.7, cy);
-			g.lineTo(cx - reach * 0.5, cy + reach);
+			graphics.moveTo(cx - reach * 0.5, cy - reach);
+			graphics.lineTo(cx + reach * 0.7, cy);
+			graphics.lineTo(cx - reach * 0.5, cy + reach);
 		}
-		g.endFill();
+		graphics.endFill();
 
 		UIFonts.restyle(titleField, UITheme.fs(13), UITheme.text);
 		var resolved:String = (owner.key != null) ? UILocale.t(owner.key, owner.fallback) : owner.title;

@@ -45,14 +45,14 @@ final class UIToast {
 		var padY:Float = UITheme.px(7);
 		var pw:Float = messageField.width + padX * 2;
 		var ph:Float = messageField.height + padY * 2;
-		var g = panel.graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel2), 0.96);
-		g.drawRoundRect(0, 0, pw, ph, ph, ph);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0.5, 0.5, pw - 1, ph - 1, ph, ph);
-		g.lineStyle();
+		var panelGraphics = panel.graphics;
+		panelGraphics.clear();
+		panelGraphics.beginFill(UIColor.rgb(UITheme.panel2), 0.96);
+		panelGraphics.drawRoundRect(0, 0, pw, ph, ph, ph);
+		panelGraphics.endFill();
+		panelGraphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		panelGraphics.drawRoundRect(0.5, 0.5, pw - 1, ph - 1, ph, ph);
+		panelGraphics.lineStyle();
 		messageField.x = padX;
 		messageField.y = padY;
 

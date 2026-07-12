@@ -65,14 +65,14 @@ final class UIContextMenu {
 			totalH += (it.separator == true) ? sepH : rowH;
 
 		var panel:Sprite = new Sprite();
-		var g = panel.graphics;
-		var r:Float = UITheme.px(8);
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRoundRect(0, 0, mw, totalH, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0.5, 0.5, mw - 1, totalH - 1, r, r);
-		g.lineStyle();
+		var panelGraphics = panel.graphics;
+		var radius:Float = UITheme.px(8);
+		panelGraphics.beginFill(UIColor.rgb(UITheme.panel2));
+		panelGraphics.drawRoundRect(0, 0, mw, totalH, radius, radius);
+		panelGraphics.endFill();
+		panelGraphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		panelGraphics.drawRoundRect(0.5, 0.5, mw - 1, totalH - 1, radius, radius);
+		panelGraphics.lineStyle();
 		// clamp inside the window so long menus never clip offscreen
 		if (root != null && root.stage != null) {
 			var vw:Float = (root.scaleX > 0) ? root.stage.stageWidth / root.scaleX : 1280;
@@ -92,13 +92,13 @@ final class UIContextMenu {
 
 		var cy:Float = pad;
 		var i:Int = 0;
-		var n:Int = items.length;
-		while (i < n) {
+		var count:Int = items.length;
+		while (i < count) {
 			var it:UIMenuItem = items[i];
 			if (it.separator == true) {
-				g.beginFill(UIColor.rgb(UITheme.border));
-				g.drawRect(UITheme.px(10), cy + sepH / 2, mw - UITheme.px(20), 1);
-				g.endFill();
+				panelGraphics.beginFill(UIColor.rgb(UITheme.border));
+				panelGraphics.drawRect(UITheme.px(10), cy + sepH / 2, mw - UITheme.px(20), 1);
+				panelGraphics.endFill();
 				cy += sepH;
 			} else {
 				var row:UIMenuRow = new UIMenuRow(this, it, mw - 4, rowH);
@@ -181,26 +181,25 @@ private final class UIMenuRow extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		if (hovered && enabled) {
-			g.beginFill(UIColor.rgb(UITheme.panel3));
-			g.drawRoundRect(2, 1, w - 4, h - 2, UITheme.px(6), UITheme.px(6));
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3));
+			graphics.drawRoundRect(2, 1, w - 4, h - 2, UITheme.px(6), UITheme.px(6));
+			graphics.endFill();
 		} else {
-			g.beginFill(0, 0);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(0, 0);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		}
 
 		var textX:Float = UITheme.px(12);
 		if (item.checked != null) {
 			if (item.checked) {
-				g.lineStyle(2, UIColor.rgb(UITheme.accent));
-				g.moveTo(UITheme.px(9), h * 0.52);
-				g.lineTo(UITheme.px(13), h * 0.68);
-				g.lineTo(UITheme.px(19), h * 0.32);
-				g.lineStyle();
+				graphics.lineStyle(2, UIColor.rgb(UITheme.accent));
+				graphics.moveTo(UITheme.px(9), h * 0.52);
+				graphics.lineTo(UITheme.px(13), h * 0.68);
+				graphics.lineTo(UITheme.px(19), h * 0.32);
+				graphics.lineStyle();
 			}
 			textX = UITheme.px(26);
 		}

@@ -97,8 +97,8 @@ final class UIMenuBar extends UIComponent {
 
 	function titleAt(localX:Float):Int {
 		var i:Int = 0;
-		var n:Int = menus.length;
-		while (i < n) {
+		var count:Int = menus.length;
+		while (i < count) {
 			if (localX >= titleX[i] && localX < titleX[i] + titleW[i])
 				return i;
 			i++;
@@ -145,14 +145,13 @@ final class UIMenuBar extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(0, h - 1, w, 1);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel2));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(0, h - 1, w, 1);
+		graphics.endFill();
 
 		var x:Float = UITheme.px(12);
 		if (brand != "") {
@@ -172,11 +171,11 @@ final class UIMenuBar extends UIComponent {
 		titleW.resize(0);
 		var mouseLocalX:Float = (stage != null) ? globalToLocal(new Point(stage.mouseX, stage.mouseY)).x : -1;
 		var i:Int = 0;
-		var n:Int = menus.length;
-		while (i < n) {
+		var count:Int = menus.length;
+		while (i < count) {
 			var tf:TextField = titleFields[i];
-			var m:UIMenuDef = menus[i];
-			var resolved:String = (m.key != null) ? UILocale.t(m.key, m.fallback != null ? m.fallback : m.title) : m.title;
+			var menu:UIMenuDef = menus[i];
+			var resolved:String = (menu.key != null) ? UILocale.t(menu.key, menu.fallback != null ? menu.fallback : menu.title) : menu.title;
 			var active:Bool = (i == openIndex);
 			UIFonts.restyle(tf, UITheme.fs(fontSize), active ? UITheme.text : UITheme.text2);
 			if (tf.text != resolved)
@@ -185,9 +184,9 @@ final class UIMenuBar extends UIComponent {
 			titleX.push(x - UITheme.px(8));
 			titleW.push(cellW);
 			if (active) {
-				g.beginFill(UIColor.rgb(UITheme.panel3));
-				g.drawRoundRect(x - UITheme.px(8), UITheme.px(3), cellW, h - UITheme.px(6), UITheme.px(6), UITheme.px(6));
-				g.endFill();
+				graphics.beginFill(UIColor.rgb(UITheme.panel3));
+				graphics.drawRoundRect(x - UITheme.px(8), UITheme.px(3), cellW, h - UITheme.px(6), UITheme.px(6), UITheme.px(6));
+				graphics.endFill();
 			}
 			tf.x = x;
 			tf.y = (h - tf.height) / 2;
@@ -201,15 +200,15 @@ final class UIMenuBar extends UIComponent {
 		super.dispose();
 	}
 
-	function set_brand(v:String):String {
-		brand = v;
+	function set_brand(value:String):String {
+		brand = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

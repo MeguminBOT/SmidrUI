@@ -63,8 +63,7 @@ final class UIBadge extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 
 		var hidden:Bool = (text == null && count <= 0 && !showZero);
 		labelField.visible = !hidden;
@@ -87,9 +86,9 @@ final class UIBadge extends UIComponent {
 		if (w != width || h != height)
 			resize(width, height);
 
-		g.beginFill(UIColor.rgb((color == -1) ? UITheme.danger : color));
-		g.drawRoundRect(0, 0, width, height, height, height);
-		g.endFill();
+		graphics.beginFill(UIColor.rgb((color == -1) ? UITheme.danger : color));
+		graphics.drawRoundRect(0, 0, width, height, height, height);
+		graphics.endFill();
 		labelField.x = (width - labelField.width) / 2;
 		labelField.y = (height - labelField.height) / 2;
 	}

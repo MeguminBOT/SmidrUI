@@ -51,11 +51,10 @@ final class UIBreadcrumb extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		while (fields.length > segments.length) {
 			var extra:TextField = fields.pop();
@@ -87,19 +86,19 @@ final class UIBreadcrumb extends UIComponent {
 			if (!last) {
 				var cx:Float = x + chevronGap;
 				var cy:Float = h / 2;
-				g.beginFill(UIColor.rgb(UITheme.text3));
-				g.moveTo(cx, cy - chevronW);
-				g.lineTo(cx + chevronW * 0.8, cy);
-				g.lineTo(cx, cy + chevronW);
-				g.endFill();
+				graphics.beginFill(UIColor.rgb(UITheme.text3));
+				graphics.moveTo(cx, cy - chevronW);
+				graphics.lineTo(cx + chevronW * 0.8, cy);
+				graphics.lineTo(cx, cy + chevronW);
+				graphics.endFill();
 				x += chevronGap * 2 + chevronW;
 			}
 		}
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

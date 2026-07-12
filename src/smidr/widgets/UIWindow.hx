@@ -153,18 +153,17 @@ final class UIWindow extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var barH:Float = barPx();
 		var bodyH:Float = collapsed ? barH : h;
-		var f:Int = fill.resolve();
+		var fillColor:Int = fill.resolve();
 
-		g.beginFill(UIColor.rgb(f), UIColor.alphaOf(f));
-		g.drawRect(0, 0, w, bodyH);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border));
-		g.drawRect(0.5, 0.5, w - 1, bodyH - 1);
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(fillColor), UIColor.alphaOf(fillColor));
+		graphics.drawRect(0, 0, w, bodyH);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(UITheme.border));
+		graphics.drawRect(0.5, 0.5, w - 1, bodyH - 1);
+		graphics.lineStyle();
 
 		bar.resize(w, barH);
 		content.x = 0;
@@ -202,11 +201,11 @@ final class UIWindow extends UIComponent {
 			return;
 		var tl:Point = parent.globalToLocal(new Point(0, 0));
 		var br:Point = parent.globalToLocal(new Point(stage.stageWidth, stage.stageHeight));
-		var m:Float = UITheme.px(40);
-		if (x < tl.x - w + m)
-			x = tl.x - w + m;
-		if (x > br.x - m)
-			x = br.x - m;
+		var minSize:Float = UITheme.px(40);
+		if (x < tl.x - w + minSize)
+			x = tl.x - w + minSize;
+		if (x > br.x - minSize)
+			x = br.x - minSize;
 		if (y < tl.y)
 			y = tl.y;
 		if (y > br.y - barPx())
@@ -242,77 +241,77 @@ final class UIWindow extends UIComponent {
 		super.dispose();
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		if (bar != null)
 			bar.invalidate();
-		return v;
+		return value;
 	}
 
-	function set_title(v:String):String {
-		title = v;
+	function set_title(value:String):String {
+		title = value;
 		if (bar != null)
 			bar.invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fill(v:UIFill):UIFill {
-		fill = v;
+	function set_fill(value:UIFill):UIFill {
+		fill = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_barHeight(v:Float):Float {
-		barHeight = v;
+	function set_barHeight(value:Float):Float {
+		barHeight = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		if (bar != null)
 			bar.invalidate();
-		return v;
+		return value;
 	}
 
-	function set_resizable(v:Bool):Bool {
-		resizable = v;
-		if (v && grip == null) {
+	function set_resizable(value:Bool):Bool {
+		resizable = value;
+		if (value && grip == null) {
 			grip = new UIWindowGrip(this);
 			addChild(grip);
 		}
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_closable(v:Bool):Bool {
-		closable = v;
-		if (v && closeButton == null) {
+	function set_closable(value:Bool):Bool {
+		closable = value;
+		if (value && closeButton == null) {
 			closeButton = new UIWindowButton(true);
 			closeButton.onClick = requestClose;
 			addChild(closeButton);
-		} else if (!v && closeButton != null) {
+		} else if (!value && closeButton != null) {
 			removeChild(closeButton);
 			closeButton.dispose();
 			closeButton = null;
 		}
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_collapsible(v:Bool):Bool {
-		collapsible = v;
-		if (v && collapseButton == null) {
+	function set_collapsible(value:Bool):Bool {
+		collapsible = value;
+		if (value && collapseButton == null) {
 			collapseButton = new UIWindowButton(false);
 			collapseButton.onClick = toggleCollapse;
 			addChild(collapseButton);
-		} else if (!v && collapseButton != null) {
+		} else if (!value && collapseButton != null) {
 			removeChild(collapseButton);
 			collapseButton.dispose();
 			collapseButton = null;
 		}
 		invalidate();
-		return v;
+		return value;
 	}
 }
 
@@ -349,9 +348,9 @@ private final class UIWindowBar extends UIComponent {
 	override function onDragMove(stageX:Float, stageY:Float):Void {
 		if (!dragging || owner.parent == null)
 			return;
-		var p:Point = owner.parent.globalToLocal(new Point(stageX, stageY));
-		owner.x = p.x - grabX;
-		owner.y = p.y - grabY;
+		var point:Point = owner.parent.globalToLocal(new Point(stageX, stageY));
+		owner.x = point.x - grabX;
+		owner.y = point.y - grabY;
 		owner.clampToViewport();
 		if (owner.onMoved != null)
 			owner.onMoved(owner.x, owner.y);
@@ -362,14 +361,13 @@ private final class UIWindowBar extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(owner.isActive ? UITheme.panel3 : UITheme.panel2));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(0, h - 1, w, 1);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(owner.isActive ? UITheme.panel3 : UITheme.panel2));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(0, h - 1, w, 1);
+		graphics.endFill();
 
 		UIFonts.restyle(tf, UITheme.fs(owner.fontSize), owner.isActive ? UITheme.text : UITheme.text2);
 		var resolved:String = (owner.key != null) ? UILocale.t(owner.key, owner.fallback) : owner.title;
@@ -403,37 +401,36 @@ private final class UIWindowButton extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 		if (hovered) {
-			g.beginFill(UIColor.rgb(isClose ? UITheme.danger : UITheme.panel3), isClose ? 0.9 : 1.0);
-			var m:Float = UITheme.px(4);
-			g.drawRoundRect(m, m, w - 2 * m, h - 2 * m, UITheme.px(4), UITheme.px(4));
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(isClose ? UITheme.danger : UITheme.panel3), isClose ? 0.9 : 1.0);
+			var inset:Float = UITheme.px(4);
+			graphics.drawRoundRect(inset, inset, w - 2 * inset, h - 2 * inset, UITheme.px(4), UITheme.px(4));
+			graphics.endFill();
 		}
 		var color:Int = (hovered && isClose) ? 0xFFF4F4F8 : UITheme.text2;
-		g.lineStyle(1.6, UIColor.rgb(color));
+		graphics.lineStyle(1.6, UIColor.rgb(color));
 		var cx:Float = w / 2;
 		var cy:Float = h / 2;
-		var s:Float = UITheme.px(3.4);
+		var size:Float = UITheme.px(3.4);
 		if (isClose) {
-			g.moveTo(cx - s, cy - s);
-			g.lineTo(cx + s, cy + s);
-			g.moveTo(cx + s, cy - s);
-			g.lineTo(cx - s, cy + s);
+			graphics.moveTo(cx - size, cy - size);
+			graphics.lineTo(cx + size, cy + size);
+			graphics.moveTo(cx + size, cy - size);
+			graphics.lineTo(cx - size, cy + size);
 		} else if (collapsedState) {
-			g.moveTo(cx - s, cy - s * 0.5);
-			g.lineTo(cx, cy + s * 0.5);
-			g.lineTo(cx + s, cy - s * 0.5);
+			graphics.moveTo(cx - size, cy - size * 0.5);
+			graphics.lineTo(cx, cy + size * 0.5);
+			graphics.lineTo(cx + size, cy - size * 0.5);
 		} else {
-			g.moveTo(cx - s, cy + s * 0.5);
-			g.lineTo(cx, cy - s * 0.5);
-			g.lineTo(cx + s, cy + s * 0.5);
+			graphics.moveTo(cx - size, cy + size * 0.5);
+			graphics.lineTo(cx, cy - size * 0.5);
+			graphics.lineTo(cx + size, cy + size * 0.5);
 		}
-		g.lineStyle();
+		graphics.lineStyle();
 	}
 }
 
@@ -456,31 +453,30 @@ private final class UIWindowGrip extends UIComponent {
 			return;
 		startW = owner.w;
 		startH = owner.h;
-		var p:Point = owner.parent.globalToLocal(new Point(stage.mouseX, stage.mouseY));
-		grabX = p.x;
-		grabY = p.y;
+		var point:Point = owner.parent.globalToLocal(new Point(stage.mouseX, stage.mouseY));
+		grabX = point.x;
+		grabY = point.y;
 		beginCapture();
 	}
 
 	override function onDragMove(stageX:Float, stageY:Float):Void {
 		if (owner.parent == null)
 			return;
-		var p:Point = owner.parent.globalToLocal(new Point(stageX, stageY));
-		owner.resizeByDrag(startW + (p.x - grabX), startH + (p.y - grabY));
+		var point:Point = owner.parent.globalToLocal(new Point(stageX, stageY));
+		owner.resizeByDrag(startW + (point.x - grabX), startH + (point.y - grabY));
 	}
 
 	override public function render():Void {
-		var g:Graphics = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(UITheme.border2));
 		var pad:Float = UITheme.px(3);
-		g.moveTo(w - pad, h - pad - UITheme.px(6));
-		g.lineTo(w - pad - UITheme.px(6), h - pad);
-		g.moveTo(w - pad, h - pad - UITheme.px(3));
-		g.lineTo(w - pad - UITheme.px(3), h - pad);
-		g.lineStyle();
+		graphics.moveTo(w - pad, h - pad - UITheme.px(6));
+		graphics.lineTo(w - pad - UITheme.px(6), h - pad);
+		graphics.moveTo(w - pad, h - pad - UITheme.px(3));
+		graphics.lineTo(w - pad - UITheme.px(3), h - pad);
+		graphics.lineStyle();
 	}
 }

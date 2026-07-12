@@ -37,11 +37,10 @@ final class UIDockPanel extends UIComponent {
 
 	override public function render():Void {
 		// a transparent hit surface so the blocking panel body never leaks pointer hits through
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 		content.x = 0;
 		content.y = 0;
 	}
@@ -57,9 +56,9 @@ final class UIDockPanel extends UIComponent {
 		super.dispose();
 	}
 
-	function set_title(v:String):String {
-		title = v;
+	function set_title(value:String):String {
+		title = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

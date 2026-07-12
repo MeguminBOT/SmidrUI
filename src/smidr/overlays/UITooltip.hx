@@ -62,14 +62,14 @@ final class UITooltip {
 		var pw:Float = padX * 2 + (hasText ? textField.width : 0) + gap + (hasShortcut ? shortcutField.width : 0);
 		var ph:Float = padY * 2 + Math.max(hasText ? textField.height : 0, hasShortcut ? shortcutField.height : 0);
 
-		var g = panel.graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel3), 0.97);
-		g.drawRoundRect(0, 0, pw, ph, UITheme.px(6), UITheme.px(6));
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0.5, 0.5, pw - 1, ph - 1, UITheme.px(6), UITheme.px(6));
-		g.lineStyle();
+		var panelGraphics = panel.graphics;
+		panelGraphics.clear();
+		panelGraphics.beginFill(UIColor.rgb(UITheme.panel3), 0.97);
+		panelGraphics.drawRoundRect(0, 0, pw, ph, UITheme.px(6), UITheme.px(6));
+		panelGraphics.endFill();
+		panelGraphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		panelGraphics.drawRoundRect(0.5, 0.5, pw - 1, ph - 1, UITheme.px(6), UITheme.px(6));
+		panelGraphics.lineStyle();
 		textField.x = padX;
 		textField.y = padY;
 		shortcutField.x = pw - padX - shortcutField.width;

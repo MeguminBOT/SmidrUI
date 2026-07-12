@@ -160,11 +160,11 @@ final class UIDrawer extends UIComponent {
 		}
 	}
 
-	function applyProgress(p:Float):Void {
-		progress = p;
-		x = (side == LEFT) ? (p - 1) * w : viewportWidth - p * w;
+	function applyProgress(value:Float):Void {
+		progress = value;
+		x = (side == LEFT) ? (value - 1) * w : viewportWidth - value * w;
 		y = 0;
-		scrim.alpha = p;
+		scrim.alpha = value;
 	}
 
 	function finishOpen():Void {
@@ -189,29 +189,29 @@ final class UIDrawer extends UIComponent {
 			onClosed();
 	}
 
-	function __onEdgePress(e:MouseEvent):Void {
+	function __onEdgePress(event:MouseEvent):Void {
 		if (!edgeSwipeEnabled)
 			return;
-		beginDrag(e.stageX);
-		e.stopPropagation();
+		beginDrag(event.stageX);
+		event.stopPropagation();
 	}
 
-	function __onPanelDown(e:MouseEvent):Void {
+	function __onPanelDown(event:MouseEvent):Void {
 		horizontalDragPending = true;
-		dragStartX = e.stageX;
-		dragStartY = e.stageY;
+		dragStartX = event.stageX;
+		dragStartY = event.stageY;
 	}
 
-	function __onPanelMove(e:MouseEvent):Void {
+	function __onPanelMove(event:MouseEvent):Void {
 		if (!horizontalDragPending || dragging)
 			return;
-		if (!e.buttonDown) {
+		if (!event.buttonDown) {
 			horizontalDragPending = false;
 			return;
 		}
 		var sf:Float = scaleFactorX();
-		var dx:Float = Math.abs(e.stageX - dragStartX);
-		var dy:Float = Math.abs(e.stageY - dragStartY);
+		var dx:Float = Math.abs(event.stageX - dragStartX);
+		var dy:Float = Math.abs(event.stageY - dragStartY);
 		var slop:Float = UITheme.px(10) * sf;
 		if (dx < slop && dy < slop)
 			return;
@@ -223,7 +223,7 @@ final class UIDrawer extends UIComponent {
 		if (pt != null)
 			@:privateAccess pt.releasePress(false);
 		@:privateAccess UIPointer.clearPress();
-		beginDrag(e.stageX);
+		beginDrag(event.stageX);
 	}
 
 	function beginDrag(stageX:Float):Void {
@@ -253,12 +253,12 @@ final class UIDrawer extends UIComponent {
 			lastPointerTime = now;
 		}
 		var delta:Float = (stageX - dragStartX) / sf / w;
-		var p:Float = dragStartProgress + ((side == LEFT) ? delta : -delta);
-		if (p < 0)
-			p = 0;
-		if (p > 1)
-			p = 1;
-		applyProgress(p);
+		var nextProgress:Float = dragStartProgress + ((side == LEFT) ? delta : -delta);
+		if (nextProgress < 0)
+			nextProgress = 0;
+		if (nextProgress > 1)
+			nextProgress = 1;
+		applyProgress(nextProgress);
 	}
 
 	override function onDragEnd():Void {
@@ -279,16 +279,15 @@ final class UIDrawer extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 		var edgeX:Float = (side == LEFT) ? w - 0.5 : 0.5;
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.moveTo(edgeX, 0);
-		g.lineTo(edgeX, h);
-		g.lineStyle();
+		graphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		graphics.moveTo(edgeX, 0);
+		graphics.lineTo(edgeX, h);
+		graphics.lineStyle();
 		content.x = 0;
 		content.y = 0;
 	}

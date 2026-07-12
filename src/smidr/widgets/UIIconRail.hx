@@ -91,36 +91,35 @@ final class UIIconRail extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(w - 1, 0, 1, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel2));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(w - 1, 0, 1, h);
+		graphics.endFill();
 
 		var pad:Float = UITheme.px(6);
 		var i:Int = 0;
-		var n:Int = tabs.length;
-		while (i < n) {
+		var count:Int = tabs.length;
+		while (i < count) {
 			var cy:Float = pad + i * (cellH + UITheme.px(2));
 			var active:Bool = (i == selectedIndex);
 			if (active) {
-				g.beginFill(UIColor.rgb(UITheme.panel3));
-				g.drawRoundRect(UITheme.px(3), cy, w - UITheme.px(6), cellH, UITheme.px(7), UITheme.px(7));
-				g.endFill();
+				graphics.beginFill(UIColor.rgb(UITheme.panel3));
+				graphics.drawRoundRect(UITheme.px(3), cy, w - UITheme.px(6), cellH, UITheme.px(7), UITheme.px(7));
+				graphics.endFill();
 				// the accent indicator slides between tabs
 				if (indicatorY < 0)
 					indicatorY = cy + UITheme.px(6);
-				g.beginFill(UIColor.rgb(UITheme.accent));
-				g.drawRoundRect(1, indicatorY, UITheme.px(3), cellH - UITheme.px(12), 3, 3);
-				g.endFill();
+				graphics.beginFill(UIColor.rgb(UITheme.accent));
+				graphics.drawRoundRect(1, indicatorY, UITheme.px(3), cellH - UITheme.px(12), 3, 3);
+				graphics.endFill();
 			}
 			// glyph placeholder ring (icon assets can replace this later)
-			g.lineStyle(2, UIColor.rgb(active ? UITheme.text : UITheme.text3));
-			g.drawCircle(w / 2, cy + cellH * 0.34, UITheme.px(7));
-			g.lineStyle();
+			graphics.lineStyle(2, UIColor.rgb(active ? UITheme.text : UITheme.text3));
+			graphics.drawCircle(w / 2, cy + cellH * 0.34, UITheme.px(7));
+			graphics.lineStyle();
 
 			var tf:TextField = labelFields[i];
 			UIFonts.restyle(tf, UITheme.fs(9), active ? UITheme.text : UITheme.text3);

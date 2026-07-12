@@ -71,10 +71,10 @@ final class UIModal extends UIComponent {
 		UITween.to(setOpenProgress, 0, 1, 155, OUT_QUAD);
 	}
 
-	function setOpenProgress(p:Float):Void {
-		alpha = p;
-		backdrop.alpha = p;
-		scaleX = 0.98 + 0.02 * p;
+	function setOpenProgress(progress:Float):Void {
+		alpha = progress;
+		backdrop.alpha = progress;
+		scaleX = 0.98 + 0.02 * progress;
 		scaleY = scaleX;
 	}
 
@@ -104,15 +104,14 @@ final class UIModal extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		var r:Float = UITheme.px(12);
-		g.beginFill(UIColor.rgb(UITheme.panel));
-		g.drawRoundRect(0, 0, w, h, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0.5, 0.5, w - 1, h - 1, r, r);
-		g.lineStyle();
+		graphics.clear();
+		var radius:Float = UITheme.px(12);
+		graphics.beginFill(UIColor.rgb(UITheme.panel));
+		graphics.drawRoundRect(0, 0, w, h, radius, radius);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		graphics.drawRoundRect(0.5, 0.5, w - 1, h - 1, radius, radius);
+		graphics.lineStyle();
 
 		titleLabel.text = titleText;
 		titleLabel.x = UITheme.px(16);
@@ -121,9 +120,9 @@ final class UIModal extends UIComponent {
 		body.y = UITheme.px(40);
 	}
 
-	function set_titleText(v:String):String {
-		titleText = v;
+	function set_titleText(value:String):String {
+		titleText = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

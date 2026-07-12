@@ -58,12 +58,11 @@ final class UICheckbox extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		// invisible hit surface across the row
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var box:Float = UITheme.px(16);
 		var bx:Float = w - box;
@@ -71,18 +70,18 @@ final class UICheckbox extends UIComponent {
 		var fill:Int = checked ? UITheme.accentDark : UITheme.panel2;
 		if (hovered)
 			fill = UIColor.lighten(fill, 0.10);
-		g.beginFill(UIColor.rgb(fill));
-		g.drawRoundRect(bx, by, box, box, UITheme.px(6), UITheme.px(6));
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(bx + 0.5, by + 0.5, box - 1, box - 1, UITheme.px(6), UITheme.px(6));
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(fill));
+		graphics.drawRoundRect(bx, by, box, box, UITheme.px(6), UITheme.px(6));
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		graphics.drawRoundRect(bx + 0.5, by + 0.5, box - 1, box - 1, UITheme.px(6), UITheme.px(6));
+		graphics.lineStyle();
 		if (checked) {
-			g.lineStyle(2, UIColor.rgb(UITheme.text));
-			g.moveTo(bx + box * 0.22, by + box * 0.52);
-			g.lineTo(bx + box * 0.44, by + box * 0.74);
-			g.lineTo(bx + box * 0.80, by + box * 0.28);
-			g.lineStyle();
+			graphics.lineStyle(2, UIColor.rgb(UITheme.text));
+			graphics.moveTo(bx + box * 0.22, by + box * 0.52);
+			graphics.lineTo(bx + box * 0.44, by + box * 0.74);
+			graphics.lineTo(bx + box * 0.80, by + box * 0.28);
+			graphics.lineStyle();
 		}
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
@@ -93,29 +92,29 @@ final class UICheckbox extends UIComponent {
 		labelField.y = (h - labelField.height) / 2;
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_checked(v:Bool):Bool {
-		if (checked == v)
-			return v;
-		checked = v;
+	function set_checked(value:Bool):Bool {
+		if (checked == value)
+			return value;
+		checked = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

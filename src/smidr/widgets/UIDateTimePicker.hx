@@ -99,8 +99,8 @@ final class UIDateTimePicker extends UIComponent {
 		invalidate();
 	}
 
-	inline function pad2(n:Int):String {
-		return (n < 10) ? "0" + n : "" + n;
+	inline function pad2(number:Int):String {
+		return (number < 10) ? "0" + number : "" + number;
 	}
 
 	function formatValue(date:Date):String {
@@ -118,25 +118,24 @@ final class UIDateTimePicker extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var bx:Float = w - controlWidth;
-		var r:Float = UITheme.px(6);
+		var radius:Float = UITheme.px(6);
 		var fill:Int = UITheme.panel2;
 		if (hovered)
 			fill = UIColor.lighten(fill, 0.08);
-		g.beginFill(UIColor.rgb(fill));
-		g.drawRoundRect(bx, 1, controlWidth, h - 2, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(popup != null ? UITheme.accent : UITheme.border));
-		g.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, r, r);
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(fill));
+		graphics.drawRoundRect(bx, 1, controlWidth, h - 2, radius, radius);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(popup != null ? UITheme.accent : UITheme.border));
+		graphics.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, radius, radius);
+		graphics.lineStyle();
 		// calendar glyph
-		UIGlyphs.draw(g, UIGlyph.CLOCK, w - UITheme.px(18), h / 2 - UITheme.px(6), UITheme.px(12), UIColor.rgb(UITheme.text2));
+		UIGlyphs.draw(graphics, UIGlyph.CLOCK, w - UITheme.px(18), h / 2 - UITheme.px(6), UITheme.px(12), UIColor.rgb(UITheme.text2));
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
@@ -146,9 +145,9 @@ final class UIDateTimePicker extends UIComponent {
 		labelField.y = (h - labelField.height) / 2;
 
 		UIFonts.restyle(valueField, UITheme.fs(fontSize), UITheme.text);
-		var v:String = formatValue(value);
-		if (valueField.text != v)
-			valueField.text = v;
+		var formatted:String = formatValue(value);
+		if (valueField.text != formatted)
+			valueField.text = formatted;
 		valueField.width = controlWidth - UITheme.px(28);
 		valueField.height = valueField.textHeight + 4;
 		valueField.x = bx + UITheme.px(8);
@@ -186,14 +185,14 @@ final class UIDateTimePicker extends UIComponent {
 		var panelH:Float = headerH + weekdayH + gridH + footerH + pad;
 
 		var panel:Sprite = new Sprite();
-		var g = panel.graphics;
-		var r:Float = UITheme.px(8);
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRoundRect(0, 0, panelW, panelH, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0.5, 0.5, panelW - 1, panelH - 1, r, r);
-		g.lineStyle();
+		var panelGraphics = panel.graphics;
+		var radius:Float = UITheme.px(8);
+		panelGraphics.beginFill(UIColor.rgb(UITheme.panel2));
+		panelGraphics.drawRoundRect(0, 0, panelW, panelH, radius, radius);
+		panelGraphics.endFill();
+		panelGraphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		panelGraphics.drawRoundRect(0.5, 0.5, panelW - 1, panelH - 1, radius, radius);
+		panelGraphics.lineStyle();
 
 		var origin:Point = localToGlobal(new Point(w - controlWidth, h));
 		var local:Point = root.popupLayer.globalToLocal(origin);
@@ -399,22 +398,22 @@ final class UIDateTimePicker extends UIComponent {
 		super.dispose();
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }
 
@@ -455,26 +454,25 @@ private final class UIDayCell extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var inset:Float = UITheme.px(2);
-		var r:Float = UITheme.px(5);
+		var radius:Float = UITheme.px(5);
 		if (selected) {
-			g.beginFill(UIColor.rgb(UITheme.accent));
-			g.drawRoundRect(inset, inset, w - inset * 2, h - inset * 2, r, r);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.accent));
+			graphics.drawRoundRect(inset, inset, w - inset * 2, h - inset * 2, radius, radius);
+			graphics.endFill();
 		} else if (hovered) {
-			g.beginFill(UIColor.rgb(UITheme.panel3));
-			g.drawRoundRect(inset, inset, w - inset * 2, h - inset * 2, r, r);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3));
+			graphics.drawRoundRect(inset, inset, w - inset * 2, h - inset * 2, radius, radius);
+			graphics.endFill();
 		} else {
-			g.beginFill(0, 0);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(0, 0);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 			if (today) {
-				g.lineStyle(1, UIColor.rgb(UITheme.accent));
-				g.drawRoundRect(inset + 0.5, inset + 0.5, w - inset * 2 - 1, h - inset * 2 - 1, r, r);
-				g.lineStyle();
+				graphics.lineStyle(1, UIColor.rgb(UITheme.accent));
+				graphics.drawRoundRect(inset + 0.5, inset + 0.5, w - inset * 2 - 1, h - inset * 2 - 1, radius, radius);
+				graphics.lineStyle();
 			}
 		}
 

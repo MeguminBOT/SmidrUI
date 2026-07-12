@@ -181,23 +181,22 @@ final class UIKeybind extends UIComponent implements IUIFocusable {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var bx:Float = w - controlWidth;
-		var r:Float = UITheme.px(6);
+		var radius:Float = UITheme.px(6);
 		var fill:Int = listening ? UITheme.inputBg : UITheme.panel2;
 		if (hovered && !listening)
 			fill = UIColor.lighten(fill, 0.08);
-		g.beginFill(UIColor.rgb(fill));
-		g.drawRoundRect(bx, 1, controlWidth, h - 2, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(listening ? UITheme.accent : UITheme.border));
-		g.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, r, r);
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(fill));
+		graphics.drawRoundRect(bx, 1, controlWidth, h - 2, radius, radius);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(listening ? UITheme.accent : UITheme.border));
+		graphics.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, radius, radius);
+		graphics.lineStyle();
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
@@ -207,9 +206,9 @@ final class UIKeybind extends UIComponent implements IUIFocusable {
 		labelField.y = (h - labelField.height) / 2;
 
 		UIFonts.restyle(valueField, UITheme.fs(fontSize), listening ? UITheme.highlight : UITheme.text, TextFormatAlign.CENTER);
-		var v:String = listening ? UILocale.t("smidr.keybind.press", "Press a key") : (keyCode < 0 ? "-" : keyName(keyCode));
-		if (valueField.text != v)
-			valueField.text = v;
+		var text:String = listening ? UILocale.t("smidr.keybind.press", "Press a key") : (keyCode < 0 ? "-" : keyName(keyCode));
+		if (valueField.text != text)
+			valueField.text = text;
 		valueField.width = controlWidth - UITheme.px(12);
 		valueField.height = valueField.textHeight + 4;
 		valueField.x = bx + UITheme.px(6);
@@ -221,21 +220,21 @@ final class UIKeybind extends UIComponent implements IUIFocusable {
 		super.dispose();
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

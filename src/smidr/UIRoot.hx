@@ -96,11 +96,11 @@ final class UIRoot extends Sprite {
 		Queues a widget repaint for the next frame (deduplicated).
 		@param c the widget whose `render()` should run on the next flush
 	**/
-	public static function schedule(c:UIComponent):Void {
-		if (c.__dirty)
+	public static function schedule(component:UIComponent):Void {
+		if (component.__dirty)
 			return;
-		c.__dirty = true;
-		dirty.push(c);
+		component.__dirty = true;
+		dirty.push(component);
 	}
 
 	static var overlayClosers:Array<Void->Void> = [];
@@ -212,14 +212,14 @@ final class UIRoot extends Sprite {
 	static var longPressArmed:Bool = false;
 
 	@:allow(smidr.UIComponent)
-	static function tooltipEnter(c:UIComponent):Void {
-		hoverComp = c;
+	static function tooltipEnter(component:UIComponent):Void {
+		hoverComp = component;
 		hoverTime = 0;
 	}
 
 	@:allow(smidr.UIComponent)
-	static function tooltipLeave(c:UIComponent):Void {
-		if (hoverComp != c)
+	static function tooltipLeave(component:UIComponent):Void {
+		if (hoverComp != component)
 			return;
 		hoverComp = null;
 		hoverTime = 0;
@@ -245,11 +245,11 @@ final class UIRoot extends Sprite {
 			dirty = dirtySwap;
 			dirtySwap = flushing;
 			var i:Int = 0;
-			var n:Int = flushing.length;
-			while (i < n) {
-				var c:UIComponent = flushing[i];
-				c.__dirty = false;
-				c.render();
+			var count:Int = flushing.length;
+			while (i < count) {
+				var component:UIComponent = flushing[i];
+				component.__dirty = false;
+				component.render();
 				i++;
 			}
 			flushing.resize(0);
@@ -326,8 +326,8 @@ final class UIRoot extends Sprite {
 		attachedStage = null;
 	}
 
-	function __onStageMouseDown(e:MouseEvent):Void {
-		var target:DisplayObject = cast(e.target, DisplayObject);
+	function __onStageMouseDown(event:MouseEvent):Void {
+		var target:DisplayObject = cast(event.target, DisplayObject);
 		var inside:Bool = containsTarget(target);
 		if (!inside)
 			@:privateAccess UIPointer.clearPress();
@@ -335,8 +335,8 @@ final class UIRoot extends Sprite {
 
 		if (longPressEnabled && inside) {
 			longPressArmed = true;
-			pressStageX = e.stageX;
-			pressStageY = e.stageY;
+			pressStageX = event.stageX;
+			pressStageY = event.stageY;
 			pressTime = 0;
 		}
 
@@ -363,27 +363,27 @@ final class UIRoot extends Sprite {
 		@:privateAccess UIPointer.clearPress();
 	}
 
-	function __onStageMouseMove(e:MouseEvent):Void {
-		@:privateAccess UIPointer.setOverUI(containsTarget(cast(e.target, DisplayObject)));
+	function __onStageMouseMove(event:MouseEvent):Void {
+		@:privateAccess UIPointer.setOverUI(containsTarget(cast(event.target, DisplayObject)));
 		if (longPressArmed) {
 			var slop:Float = UITheme.px(10) * ((scaleX > 0) ? scaleX : 1.0);
-			if (Math.abs(e.stageX - pressStageX) > slop || Math.abs(e.stageY - pressStageY) > slop)
+			if (Math.abs(event.stageX - pressStageX) > slop || Math.abs(event.stageY - pressStageY) > slop)
 				longPressArmed = false;
 		}
 		var capture:UIComponent = UIPointer.captureTarget;
 		if (capture != null)
-			capture.onDragMove(e.stageX, e.stageY);
+			capture.onDragMove(event.stageX, event.stageY);
 	}
 
-	function __onStageKeyDown(e:KeyboardEvent):Void {
-		if (UIFocus.keyDown(e.keyCode, e.charCode, e.ctrlKey, e.shiftKey, e.altKey)) {
-			e.stopImmediatePropagation();
+	function __onStageKeyDown(event:KeyboardEvent):Void {
+		if (UIFocus.keyDown(event.keyCode, event.charCode, event.ctrlKey, event.shiftKey, event.altKey)) {
+			event.stopImmediatePropagation();
 			return;
 		}
-		if (e.keyCode == 27 && overlayClosers.length > 0) {
+		if (event.keyCode == 27 && overlayClosers.length > 0) {
 			var closer:Void->Void = overlayClosers[overlayClosers.length - 1];
 			closer();
-			e.stopImmediatePropagation();
+			event.stopImmediatePropagation();
 		}
 	}
 

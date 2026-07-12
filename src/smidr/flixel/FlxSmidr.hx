@@ -115,12 +115,12 @@ final class FlxSmidr {
 	public static function syncViewport():Void {
 		if (root == null)
 			return;
-		var s = FlxG.scaleMode.scale;
+		var scale = FlxG.scaleMode.scale;
 		if (attachedAboveGame) {
-			root.setViewport(0, 0, s.x, s.y);
+			root.setViewport(0, 0, scale.x, scale.y);
 		} else {
-			var o = FlxG.scaleMode.offset;
-			root.setViewport(o.x, o.y, s.x, s.y);
+			var offset = FlxG.scaleMode.offset;
+			root.setViewport(offset.x, offset.y, scale.x, scale.y);
 		}
 	}
 
@@ -132,8 +132,8 @@ final class FlxSmidr {
 		@return the x in UI coordinates
 	**/
 	public static inline function worldToUIX(worldX:Float, ?camera:FlxCamera):Float {
-		var c:FlxCamera = (camera != null) ? camera : FlxG.camera;
-		return c.x + c.width * 0.5 + (worldX - c.scroll.x - c.width * 0.5) * c.zoom;
+		var cam:FlxCamera = (camera != null) ? camera : FlxG.camera;
+		return cam.x + cam.width * 0.5 + (worldX - cam.scroll.x - cam.width * 0.5) * cam.zoom;
 	}
 
 	/**
@@ -143,8 +143,8 @@ final class FlxSmidr {
 		@return the y in UI coordinates
 	**/
 	public static inline function worldToUIY(worldY:Float, ?camera:FlxCamera):Float {
-		var c:FlxCamera = (camera != null) ? camera : FlxG.camera;
-		return c.y + c.height * 0.5 + (worldY - c.scroll.y - c.height * 0.5) * c.zoom;
+		var cam:FlxCamera = (camera != null) ? camera : FlxG.camera;
+		return cam.y + cam.height * 0.5 + (worldY - cam.scroll.y - cam.height * 0.5) * cam.zoom;
 	}
 
 	/**
@@ -155,8 +155,8 @@ final class FlxSmidr {
 		@return the world-space x
 	**/
 	public static inline function uiToWorldX(uiX:Float, ?camera:FlxCamera):Float {
-		var c:FlxCamera = (camera != null) ? camera : FlxG.camera;
-		return c.scroll.x + c.width * 0.5 + (uiX - c.x - c.width * 0.5) / c.zoom;
+		var cam:FlxCamera = (camera != null) ? camera : FlxG.camera;
+		return cam.scroll.x + cam.width * 0.5 + (uiX - cam.x - cam.width * 0.5) / cam.zoom;
 	}
 
 	/**
@@ -166,8 +166,8 @@ final class FlxSmidr {
 		@return the world-space y
 	**/
 	public static inline function uiToWorldY(uiY:Float, ?camera:FlxCamera):Float {
-		var c:FlxCamera = (camera != null) ? camera : FlxG.camera;
-		return c.scroll.y + c.height * 0.5 + (uiY - c.y - c.height * 0.5) / c.zoom;
+		var cam:FlxCamera = (camera != null) ? camera : FlxG.camera;
+		return cam.scroll.y + cam.height * 0.5 + (uiY - cam.y - cam.height * 0.5) / cam.zoom;
 	}
 
 	/**
@@ -222,10 +222,10 @@ final class FlxSmidr {
 
 		var i:Int = anchors.length;
 		while (--i >= 0) {
-			var a:FlxSmidrAnchor = anchors[i];
-			var c:FlxCamera = (a.camera != null) ? a.camera : FlxG.camera;
-			a.target.x = c.x + c.width * 0.5 + (a.worldX - c.scroll.x - c.width * 0.5) * c.zoom + a.offsetX;
-			a.target.y = c.y + c.height * 0.5 + (a.worldY - c.scroll.y - c.height * 0.5) * c.zoom + a.offsetY;
+			var anchor:FlxSmidrAnchor = anchors[i];
+			var cam:FlxCamera = (anchor.camera != null) ? anchor.camera : FlxG.camera;
+			anchor.target.x = cam.x + cam.width * 0.5 + (anchor.worldX - cam.scroll.x - cam.width * 0.5) * cam.zoom + anchor.offsetX;
+			anchor.target.y = cam.y + cam.height * 0.5 + (anchor.worldY - cam.scroll.y - cam.height * 0.5) * cam.zoom + anchor.offsetY;
 		}
 	}
 

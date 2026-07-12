@@ -68,8 +68,8 @@ final class UISwitch extends UIComponent {
 		knobTween = UITween.to(applyKnob, knobProgress, on ? 1 : 0, 160, OUT_QUAD, endKnob);
 	}
 
-	function applyKnob(v:Float):Void {
-		knobProgress = v;
+	function applyKnob(value:Float):Void {
+		knobProgress = value;
 		invalidate();
 	}
 
@@ -85,11 +85,10 @@ final class UISwitch extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var trackW:Float = UITheme.px(#if mobile 44 #else 34 #end);
 		var trackH:Float = UITheme.px(#if mobile 24 #else 18 #end);
@@ -99,17 +98,17 @@ final class UISwitch extends UIComponent {
 		var fill:Int = UIColor.mix(UITheme.panel3, UITheme.accentDark, knobProgress);
 		if (hovered)
 			fill = UIColor.lighten(fill, 0.08);
-		g.beginFill(UIColor.rgb(fill));
-		g.drawRoundRect(tx, ty, trackW, trackH, trackH, trackH);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UIColor.mix(UITheme.border2, UITheme.accent, knobProgress)));
-		g.drawRoundRect(tx + 0.5, ty + 0.5, trackW - 1, trackH - 1, trackH, trackH);
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(fill));
+		graphics.drawRoundRect(tx, ty, trackW, trackH, trackH, trackH);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(UIColor.mix(UITheme.border2, UITheme.accent, knobProgress)));
+		graphics.drawRoundRect(tx + 0.5, ty + 0.5, trackW - 1, trackH - 1, trackH, trackH);
+		graphics.lineStyle();
 
 		var kr:Float = trackH / 2 - UITheme.px(2.5);
-		g.beginFill(UIColor.rgb(UITheme.text));
-		g.drawCircle(tx + trackH / 2 + (trackW - trackH) * knobProgress, ty + trackH / 2, kr);
-		g.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.text));
+		graphics.drawCircle(tx + trackH / 2 + (trackW - trackH) * knobProgress, ty + trackH / 2, kr);
+		graphics.endFill();
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
@@ -125,30 +124,30 @@ final class UISwitch extends UIComponent {
 		super.dispose();
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_on(v:Bool):Bool {
-		if (on == v)
-			return v;
-		on = v;
+	function set_on(value:Bool):Bool {
+		if (on == value)
+			return value;
+		on = value;
 		animateKnob();
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

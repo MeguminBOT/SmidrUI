@@ -124,36 +124,35 @@ final class UIDropdown extends UIComponent implements IUIFocusable {
 	}
 
 	function displayAt(index:Int):String {
-		var s:String = (index >= 0 && index < display.length) ? display[index] : "";
-		return (s == "") ? "-" : s;
+		var text:String = (index >= 0 && index < display.length) ? display[index] : "";
+		return (text == "") ? "-" : text;
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var bx:Float = w - controlWidth;
-		var r:Float = UITheme.px(6);
+		var radius:Float = UITheme.px(6);
 		var fill:Int = UITheme.panel2;
 		if (hovered)
 			fill = UIColor.lighten(fill, 0.08);
-		g.beginFill(UIColor.rgb(fill));
-		g.drawRoundRect(bx, 1, controlWidth, h - 2, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(popup != null ? UITheme.accent : UITheme.border));
-		g.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, r, r);
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(fill));
+		graphics.drawRoundRect(bx, 1, controlWidth, h - 2, radius, radius);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(popup != null ? UITheme.accent : UITheme.border));
+		graphics.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, radius, radius);
+		graphics.lineStyle();
 		// arrow
 		var ax:Float = w - UITheme.px(13);
 		var ay:Float = h / 2 - UITheme.px(1.5);
-		g.beginFill(UIColor.rgb(UITheme.text2));
-		g.moveTo(ax - UITheme.px(4), ay);
-		g.lineTo(ax + UITheme.px(4), ay);
-		g.lineTo(ax, ay + UITheme.px(4.5));
-		g.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.text2));
+		graphics.moveTo(ax - UITheme.px(4), ay);
+		graphics.lineTo(ax + UITheme.px(4), ay);
+		graphics.lineTo(ax, ay + UITheme.px(4.5));
+		graphics.endFill();
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
@@ -163,9 +162,9 @@ final class UIDropdown extends UIComponent implements IUIFocusable {
 		labelField.y = (h - labelField.height) / 2;
 
 		UIFonts.restyle(valueField, UITheme.fs(fontSize), UITheme.text);
-		var v:String = displayAt(selectedIndex);
-		if (valueField.text != v)
-			valueField.text = v;
+		var text:String = displayAt(selectedIndex);
+		if (valueField.text != text)
+			valueField.text = text;
 		valueField.width = controlWidth - UITheme.px(26);
 		valueField.height = valueField.textHeight + 4;
 		valueField.x = bx + UITheme.px(8);
@@ -197,18 +196,18 @@ final class UIDropdown extends UIComponent implements IUIFocusable {
 		var local:Point = root.popupLayer.globalToLocal(origin);
 
 		var panel:Sprite = new Sprite();
-		var g = panel.graphics;
-		var r:Float = UITheme.px(6);
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRoundRect(0, 0, controlWidth, panelH, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0.5, 0.5, controlWidth - 1, panelH - 1, r, r);
-		g.lineStyle();
+		var panelGraphics = panel.graphics;
+		var radius:Float = UITheme.px(6);
+		panelGraphics.beginFill(UIColor.rgb(UITheme.panel2));
+		panelGraphics.drawRoundRect(0, 0, controlWidth, panelH, radius, radius);
+		panelGraphics.endFill();
+		panelGraphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		panelGraphics.drawRoundRect(0.5, 0.5, controlWidth - 1, panelH - 1, radius, radius);
+		panelGraphics.lineStyle();
 		if (searchable) {
-			g.beginFill(UIColor.rgb(UITheme.border), 0.6);
-			g.drawRect(UITheme.px(8), headerH - 1, controlWidth - UITheme.px(16), 1);
-			g.endFill();
+			panelGraphics.beginFill(UIColor.rgb(UITheme.border), 0.6);
+			panelGraphics.drawRect(UITheme.px(8), headerH - 1, controlWidth - UITheme.px(16), 1);
+			panelGraphics.endFill();
 		}
 		panel.x = local.x;
 		// open upward when the list would clip past the window bottom
@@ -388,22 +387,22 @@ final class UIDropdown extends UIComponent implements IUIFocusable {
 		return false;
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }
 
@@ -432,16 +431,15 @@ private final class UIDropdownRow extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		if (hovered) {
-			g.beginFill(UIColor.rgb(UITheme.panel3));
-			g.drawRoundRect(2, 0, w - 4, h, UITheme.px(5), UITheme.px(5));
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3));
+			graphics.drawRoundRect(2, 0, w - 4, h, UITheme.px(5), UITheme.px(5));
+			graphics.endFill();
 		} else {
-			g.beginFill(0, 0);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(0, 0);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		}
 		labelField.x = UITheme.px(8);
 		labelField.y = (h - labelField.height) / 2;

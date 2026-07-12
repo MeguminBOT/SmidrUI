@@ -17,10 +17,9 @@ final class UISeparator extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(0, 0, (w > 1) ? w : 1, (h > 1) ? h : 1);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(0, 0, (w > 1) ? w : 1, (h > 1) ? h : 1);
+		graphics.endFill();
 	}
 }

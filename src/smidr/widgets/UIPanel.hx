@@ -47,87 +47,86 @@ final class UIPanel extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		if (gradient != null)
-			gradient.fillRect(g, 0, 0, w, h, corner);
+			gradient.fillRect(graphics, 0, 0, w, h, corner);
 		else {
-			var f:Int = fill.resolve();
-			g.beginFill(UIColor.rgb(f), UIColor.alphaOf(f));
+			var fillColor:Int = fill.resolve();
+			graphics.beginFill(UIColor.rgb(fillColor), UIColor.alphaOf(fillColor));
 			if (corner > 0)
-				g.drawRoundRect(0, 0, w, h, corner, corner);
+				graphics.drawRoundRect(0, 0, w, h, corner, corner);
 			else
-				g.drawRect(0, 0, w, h);
-			g.endFill();
+				graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		}
 
 		if (outline) {
-			g.lineStyle(1, UIColor.rgb(UITheme.border));
+			graphics.lineStyle(1, UIColor.rgb(UITheme.border));
 			if (corner > 0)
-				g.drawRoundRect(0.5, 0.5, w - 1, h - 1, corner, corner);
+				graphics.drawRoundRect(0.5, 0.5, w - 1, h - 1, corner, corner);
 			else
-				g.drawRect(0.5, 0.5, w - 1, h - 1);
-			g.lineStyle();
+				graphics.drawRect(0.5, 0.5, w - 1, h - 1);
+			graphics.lineStyle();
 			return;
 		}
 
-		g.beginFill(UIColor.rgb(UITheme.border));
+		graphics.beginFill(UIColor.rgb(UITheme.border));
 		if (borderTop)
-			g.drawRect(0, 0, w, 1);
+			graphics.drawRect(0, 0, w, 1);
 		if (borderBottom)
-			g.drawRect(0, h - 1, w, 1);
+			graphics.drawRect(0, h - 1, w, 1);
 		if (borderLeft)
-			g.drawRect(0, 0, 1, h);
+			graphics.drawRect(0, 0, 1, h);
 		if (borderRight)
-			g.drawRect(w - 1, 0, 1, h);
-		g.endFill();
+			graphics.drawRect(w - 1, 0, 1, h);
+		graphics.endFill();
 	}
 
-	function set_fill(v:UIFill):UIFill {
-		fill = v;
+	function set_fill(value:UIFill):UIFill {
+		fill = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_gradient(v:UIGradient):UIGradient {
-		gradient = v;
+	function set_gradient(value:UIGradient):UIGradient {
+		gradient = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_corner(v:Float):Float {
-		corner = v;
+	function set_corner(value:Float):Float {
+		corner = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_borderTop(v:Bool):Bool {
-		borderTop = v;
+	function set_borderTop(value:Bool):Bool {
+		borderTop = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_borderBottom(v:Bool):Bool {
-		borderBottom = v;
+	function set_borderBottom(value:Bool):Bool {
+		borderBottom = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_borderLeft(v:Bool):Bool {
-		borderLeft = v;
+	function set_borderLeft(value:Bool):Bool {
+		borderLeft = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_borderRight(v:Bool):Bool {
-		borderRight = v;
+	function set_borderRight(value:Bool):Bool {
+		borderRight = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_outline(v:Bool):Bool {
-		outline = v;
+	function set_outline(value:Bool):Bool {
+		outline = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

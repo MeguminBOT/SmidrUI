@@ -83,14 +83,13 @@ final class UIStatusBar extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(0, 0, w, 1);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel2));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(0, 0, w, 1);
+		graphics.endFill();
 
 		var padX:Float = UITheme.px(10);
 		var gap:Float = UITheme.px(14);
@@ -100,8 +99,8 @@ final class UIStatusBar extends UIComponent {
 		var rightCount:Int = 0;
 
 		var i:Int = 0;
-		var n:Int = cells.length;
-		while (i < n) {
+		var count:Int = cells.length;
+		while (i < count) {
 			var cell:UIStatusCell = cells[i];
 			var field:TextField = fields[i];
 			var tone:UITone = (cell.tone != null) ? cell.tone : SECONDARY;
@@ -115,14 +114,14 @@ final class UIStatusBar extends UIComponent {
 
 			if (cell.rightAlign == true) {
 				if (rightCount > 0)
-					separator(g, rightX + gap / 2);
+					separator(graphics, rightX + gap / 2);
 				rightX -= cellW;
 				field.x = rightX + (cellW - field.width) / 2;
 				rightX -= gap;
 				rightCount++;
 			} else {
 				if (leftCount > 0)
-					separator(g, leftX - gap / 2);
+					separator(graphics, leftX - gap / 2);
 				field.x = leftX;
 				leftX += cellW + gap;
 				leftCount++;
@@ -138,9 +137,9 @@ final class UIStatusBar extends UIComponent {
 		graphics.endFill();
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

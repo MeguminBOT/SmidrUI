@@ -101,10 +101,10 @@ final class UIRating extends UIComponent {
 		}
 	}
 
-	function __onMove(e:MouseEvent):Void {
+	function __onMove(event:MouseEvent):Void {
 		if (readOnly)
 			return;
-		var preview:Int = starAt(e.localX);
+		var preview:Int = starAt(event.localX);
 		if (preview != hoverRating) {
 			hoverRating = preview;
 			invalidate();
@@ -118,11 +118,10 @@ final class UIRating extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var size:Float = UITheme.px(starSize);
 		var step:Float = pitch();
@@ -130,7 +129,7 @@ final class UIRating extends UIComponent {
 		var fill:Int = (color == -1) ? UITheme.warning : color;
 		for (i in 0...max) {
 			var filled:Bool = (i < shown);
-			UIGlyphs.draw(g, UIGlyph.STAR, i * step, 0, size, UIColor.rgb(filled ? fill : UITheme.text3), filled ? 1 : 0.6);
+			UIGlyphs.draw(graphics, UIGlyph.STAR, i * step, 0, size, UIColor.rgb(filled ? fill : UITheme.text3), filled ? 1 : 0.6);
 		}
 	}
 

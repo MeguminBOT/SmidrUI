@@ -206,8 +206,8 @@ class UITileGrid extends UIComponent implements IUIFocusable {
 	public var maxScroll(get, never):Float;
 
 	inline function get_maxScroll():Float {
-		var m:Float = contentHeight - h;
-		return (m > 0) ? m : 0;
+		var max:Float = contentHeight - h;
+		return (max > 0) ? max : 0;
 	}
 
 	/**
@@ -215,11 +215,11 @@ class UITileGrid extends UIComponent implements IUIFocusable {
 		@param value the target offset in pixels
 	**/
 	public function setScroll(value:Float):Void {
-		var m:Float = maxScroll;
+		var max:Float = maxScroll;
 		if (value < 0)
 			value = 0;
-		if (value > m)
-			value = m;
+		if (value > max)
+			value = max;
 		scrollY = value;
 		clipRect.setTo(0, scrollY, w, h);
 		viewport.scrollRect = clipRect;
@@ -242,17 +242,17 @@ class UITileGrid extends UIComponent implements IUIFocusable {
 	}
 
 	function updateTiles():Void {
-		var n:Int = tiles.length;
-		if (n == 0)
+		var count:Int = tiles.length;
+		if (count == 0)
 			return;
 		var firstRow:Int = Std.int((scrollY - pad) / rowPitch);
 		if (firstRow < 0)
 			firstRow = 0;
 		var first:Int = firstRow * columns;
 		var i:Int = first;
-		var end:Int = first + n;
+		var end:Int = first + count;
 		while (i < end) {
-			var tile:UITile = tiles[i % n];
+			var tile:UITile = tiles[i % count];
 			if (i < itemCount) {
 				if (tile.__index != i) {
 					tile.__index = i;
@@ -309,42 +309,41 @@ class UITileGrid extends UIComponent implements IUIFocusable {
 		}
 		setScroll(scrollY);
 
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 		drawThumb();
 	}
 
 	function drawThumb():Void {
-		var g = thumb.graphics;
-		g.clear();
-		var m:Float = maxScroll;
-		thumb.visible = (m > 0);
-		if (m <= 0)
+		var thumbGraphics = thumb.graphics;
+		thumbGraphics.clear();
+		var max:Float = maxScroll;
+		thumb.visible = (max > 0);
+		if (max <= 0)
 			return;
 		var barW:Float = UITheme.px(4);
 		var trackH:Float = h - 4;
 		var thumbH:Float = trackH * (h / contentHeight);
 		if (thumbH < 24)
 			thumbH = 24;
-		g.beginFill(UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0, 0, barW, thumbH, barW, barW);
-		g.endFill();
+		thumbGraphics.beginFill(UIColor.rgb(UITheme.border2));
+		thumbGraphics.drawRoundRect(0, 0, barW, thumbH, barW, barW);
+		thumbGraphics.endFill();
 		positionThumb();
 	}
 
 	function positionThumb():Void {
-		var m:Float = maxScroll;
-		if (m <= 0)
+		var max:Float = maxScroll;
+		if (max <= 0)
 			return;
 		var trackH:Float = h - 4;
 		var thumbH:Float = trackH * (h / contentHeight);
 		if (thumbH < 24)
 			thumbH = 24;
 		thumb.x = w - UITheme.px(4) - 2;
-		thumb.y = 2 + (trackH - thumbH) * (scrollY / m);
+		thumb.y = 2 + (trackH - thumbH) * (scrollY / max);
 	}
 
 	@:allow(smidr.widgets.UITile)
@@ -412,40 +411,40 @@ class UITileGrid extends UIComponent implements IUIFocusable {
 		return false;
 	}
 
-	function __onWheel(e:MouseEvent):Void {
+	function __onWheel(event:MouseEvent):Void {
 		if (maxScroll <= 0)
 			return;
-		setScroll(scrollY - e.delta * wheelStep);
-		e.stopPropagation();
+		setScroll(scrollY - event.delta * wheelStep);
+		event.stopPropagation();
 	}
 
-	function __onDown(e:MouseEvent):Void {
+	function __onDown(event:MouseEvent):Void {
 		UIFocus.set(this);
 		stopFling();
 		if (maxScroll <= 0)
 			return;
 		if (mouseX >= w - UITheme.px(4) - 4) {
 			mode = MODE_THUMB;
-			dragStartStageY = e.stageY;
+			dragStartStageY = event.stageY;
 			dragStartScroll = scrollY;
 			beginCapture();
-			e.stopPropagation();
+			event.stopPropagation();
 			return;
 		}
 		if (touchScroll) {
 			dragPending = true;
-			dragStartStageY = e.stageY;
+			dragStartStageY = event.stageY;
 			dragStartScroll = scrollY;
-			lastPointerY = e.stageY;
+			lastPointerY = event.stageY;
 			lastPointerTime = Lib.getTimer();
 			velocity = 0;
 		}
 	}
 
-	function __onMove(e:MouseEvent):Void {
+	function __onMove(event:MouseEvent):Void {
 		if (!dragPending || mode != MODE_NONE)
 			return;
-		if (Math.abs(e.stageY - dragStartStageY) < UITheme.px(8) * scaleFactorY())
+		if (Math.abs(event.stageY - dragStartStageY) < UITheme.px(8) * scaleFactorY())
 			return;
 		var pt:UIComponent = UIPointer.pressTarget;
 		if (pt != null)
@@ -559,9 +558,9 @@ class UITile extends UIComponent {
 			labelField = UIFonts.make(UITheme.fs(11), UITheme.text2);
 			addChild(labelField);
 		}
-		var s:String = owner.labelOf(index);
-		if (labelField.text != s)
-			labelField.text = s;
+		var text:String = owner.labelOf(index);
+		if (labelField.text != text)
+			labelField.text = text;
 	}
 
 	override function click():Void {
@@ -571,28 +570,27 @@ class UITile extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var selected:Bool = (__index >= 0 && __index == owner.selectedIndex);
 		var radius:Float = UITheme.px(8);
-		g.beginFill(UIColor.rgb(selected ? UITheme.panel3 : UITheme.panel2));
-		g.drawRoundRect(0, 0, w, h, radius, radius);
-		g.endFill();
+		graphics.beginFill(UIColor.rgb(selected ? UITheme.panel3 : UITheme.panel2));
+		graphics.drawRoundRect(0, 0, w, h, radius, radius);
+		graphics.endFill();
 		if (selected) {
-			g.lineStyle(UITheme.px(1.5), UIColor.rgb(UITheme.accent));
-			g.drawRoundRect(0.75, 0.75, w - 1.5, h - 1.5, radius, radius);
-			g.lineStyle();
+			graphics.lineStyle(UITheme.px(1.5), UIColor.rgb(UITheme.accent));
+			graphics.drawRoundRect(0.75, 0.75, w - 1.5, h - 1.5, radius, radius);
+			graphics.lineStyle();
 		} else if (hovered) {
-			g.beginFill(UIColor.rgb(UITheme.panel3), 0.4);
-			g.drawRoundRect(0, 0, w, h, radius, radius);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3), 0.4);
+			graphics.drawRoundRect(0, 0, w, h, radius, radius);
+			graphics.endFill();
 		}
 
 		var glyph:UIGlyph = owner.glyphOf(__index);
 		var labelTop:Float = h - UITheme.px(22);
 		if ((glyph : Int) != -1) {
 			var glyphSize:Float = UITheme.px(30);
-			UIGlyphs.draw(g, glyph, (w - glyphSize) / 2, (labelTop - glyphSize) / 2, glyphSize, UIColor.rgb(owner.tintOf(__index)));
+			UIGlyphs.draw(graphics, glyph, (w - glyphSize) / 2, (labelTop - glyphSize) / 2, glyphSize, UIColor.rgb(owner.tintOf(__index)));
 		}
 
 		if (labelField != null) {

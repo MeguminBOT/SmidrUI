@@ -83,39 +83,39 @@ final class UISplitter extends UIComponent {
 
 	@:allow(smidr.widgets.UISplitterHandle)
 	function dragTo(mainPos:Float):Void {
-		var p:Float = clampPosition(mainPos);
-		if (p == position)
+		var clamped:Float = clampPosition(mainPos);
+		if (clamped == position)
 			return;
-		@:bypassAccessor position = p;
+		@:bypassAccessor position = clamped;
 		layoutPanes();
 		if (onResized != null) {
-			var t:Float = UITheme.px(dividerThickness);
-			onResized(position, mainExtent() - position - t);
+			var thickness:Float = UITheme.px(dividerThickness);
+			onResized(position, mainExtent() - position - thickness);
 		}
 	}
 
 	function layoutPanes():Void {
-		var t:Float = UITheme.px(dividerThickness);
+		var thickness:Float = UITheme.px(dividerThickness);
 		if (vertical) {
 			first.x = 0;
 			first.y = 0;
 			first.scrollRect = new Rectangle(0, 0, w, position);
 			divider.x = 0;
 			divider.y = position;
-			divider.resize(w, t);
+			divider.resize(w, thickness);
 			second.x = 0;
-			second.y = position + t;
-			second.scrollRect = new Rectangle(0, 0, w, h - position - t);
+			second.y = position + thickness;
+			second.scrollRect = new Rectangle(0, 0, w, h - position - thickness);
 		} else {
 			first.x = 0;
 			first.y = 0;
 			first.scrollRect = new Rectangle(0, 0, position, h);
 			divider.x = position;
 			divider.y = 0;
-			divider.resize(t, h);
-			second.x = position + t;
+			divider.resize(thickness, h);
+			second.x = position + thickness;
 			second.y = 0;
-			second.scrollRect = new Rectangle(0, 0, w - position - t, h);
+			second.scrollRect = new Rectangle(0, 0, w - position - thickness, h);
 		}
 	}
 
@@ -124,16 +124,16 @@ final class UISplitter extends UIComponent {
 		layoutPanes();
 	}
 
-	function set_vertical(v:Bool):Bool {
-		vertical = v;
+	function set_vertical(value:Bool):Bool {
+		vertical = value;
 		if (divider != null)
 			divider.syncCursor();
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_position(v:Float):Float {
-		position = clampPosition(v);
+	function set_position(value:Float):Float {
+		position = clampPosition(value);
 		invalidate();
 		return position;
 	}
@@ -160,35 +160,34 @@ private final class UISplitterHandle extends UIComponent {
 	override function onDragMove(stageX:Float, stageY:Float):Void {
 		if (owner.parent == null)
 			return;
-		var p:Point = owner.globalToLocal(new Point(stageX, stageY));
-		var t:Float = UITheme.px(owner.dividerThickness);
-		owner.dragTo((owner.vertical ? p.y : p.x) - t / 2);
+		var point:Point = owner.globalToLocal(new Point(stageX, stageY));
+		var thickness:Float = UITheme.px(owner.dividerThickness);
+		owner.dragTo((owner.vertical ? point.y : point.x) - thickness / 2);
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.beginFill(UIColor.rgb(hovered ? UITheme.border2 : UITheme.border));
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(hovered ? UITheme.border2 : UITheme.border));
 		if (owner.vertical)
-			g.drawRect(0, h / 2 - 0.5, w, 1);
+			graphics.drawRect(0, h / 2 - 0.5, w, 1);
 		else
-			g.drawRect(w / 2 - 0.5, 0, 1, h);
-		g.endFill();
+			graphics.drawRect(w / 2 - 0.5, 0, 1, h);
+		graphics.endFill();
 		// three grip dots along the divider centre
-		g.beginFill(UIColor.rgb(UITheme.border2));
+		graphics.beginFill(UIColor.rgb(UITheme.border2));
 		var dot:Float = UITheme.px(1.5);
 		var spacing:Float = UITheme.px(5);
 		var k:Int = -1;
 		while (k <= 1) {
 			if (owner.vertical)
-				g.drawCircle(w / 2 + k * spacing, h / 2, dot);
+				graphics.drawCircle(w / 2 + k * spacing, h / 2, dot);
 			else
-				g.drawCircle(w / 2, h / 2 + k * spacing, dot);
+				graphics.drawCircle(w / 2, h / 2 + k * spacing, dot);
 			k++;
 		}
-		g.endFill();
+		graphics.endFill();
 	}
 }

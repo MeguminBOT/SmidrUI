@@ -160,24 +160,23 @@ final class UIIcon extends UIComponent {
 	}
 
 	override public function render():Void {
-		var p:Int = Std.int(UITheme.px(size) + 0.5);
-		w = p;
-		h = p;
-		var g = graphics;
-		g.clear();
+		var pixelSize:Int = Std.int(UITheme.px(size) + 0.5);
+		w = pixelSize;
+		h = pixelSize;
+		graphics.clear();
 
 		if ((glyph : Int) >= 0) {
 			bmp.visible = false;
-			UIGlyphs.draw(g, glyph, 0, 0, p, resolveColor());
+			UIGlyphs.draw(graphics, glyph, 0, 0, pixelSize, resolveColor());
 			return;
 		}
 
-		var bd:BitmapData = getBitmap(asset, p);
+		var bd:BitmapData = getBitmap(asset, pixelSize);
 		if (bd == null) {
 			bmp.visible = false;
-			g.lineStyle(2, UIColor.rgb(resolveColor()));
-			g.drawCircle(p * 0.5, p * 0.5, p * 0.32);
-			g.lineStyle();
+			graphics.lineStyle(2, UIColor.rgb(resolveColor()));
+			graphics.drawCircle(pixelSize * 0.5, pixelSize * 0.5, pixelSize * 0.32);
+			graphics.lineStyle();
 			return;
 		}
 
@@ -187,14 +186,14 @@ final class UIIcon extends UIComponent {
 		bmp.smoothing = true;
 
 		if (tinted) {
-			var c:Int = resolveColor();
+			var color:Int = resolveColor();
 			ct.redMultiplier = 0;
 			ct.greenMultiplier = 0;
 			ct.blueMultiplier = 0;
-			ct.alphaMultiplier = UIColor.alphaOf(c);
-			ct.redOffset = (c >>> 16) & 0xFF;
-			ct.greenOffset = (c >>> 8) & 0xFF;
-			ct.blueOffset = c & 0xFF;
+			ct.alphaMultiplier = UIColor.alphaOf(color);
+			ct.redOffset = (color >>> 16) & 0xFF;
+			ct.greenOffset = (color >>> 8) & 0xFF;
+			ct.blueOffset = color & 0xFF;
 			ct.alphaOffset = 0;
 		} else {
 			ct.redMultiplier = 1;
@@ -209,47 +208,47 @@ final class UIIcon extends UIComponent {
 		bmp.transform.colorTransform = ct;
 	}
 
-	function set_asset(v:String):String {
-		if (asset == v)
-			return v;
-		asset = v;
+	function set_asset(value:String):String {
+		if (asset == value)
+			return value;
+		asset = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_size(v:Float):Float {
-		if (size == v)
-			return v;
-		size = v;
+	function set_size(value:Float):Float {
+		if (size == value)
+			return value;
+		size = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_tone(v:UITone):UITone {
-		tone = v;
+	function set_tone(value:UITone):UITone {
+		tone = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_glyph(v:UIGlyph):UIGlyph {
-		if (glyph == v)
-			return v;
-		glyph = v;
+	function set_glyph(value:UIGlyph):UIGlyph {
+		if (glyph == value)
+			return value;
+		glyph = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_colorOverride(v:Int):Int {
-		colorOverride = v;
+	function set_colorOverride(value:Int):Int {
+		colorOverride = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_tinted(v:Bool):Bool {
-		if (tinted == v)
-			return v;
-		tinted = v;
+	function set_tinted(value:Bool):Bool {
+		if (tinted == value)
+			return value;
+		tinted = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

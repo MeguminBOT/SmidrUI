@@ -87,12 +87,12 @@ final class UISlider extends UIComponent {
 
 	function seekTo(localX:Float):Void {
 		var tx:Float = w - controlWidth;
-		var p:Float = (localX - tx) / controlWidth;
-		if (p < 0)
-			p = 0;
-		if (p > 1)
-			p = 1;
-		var next:Float = min + (max - min) * p;
+		var progress:Float = (localX - tx) / controlWidth;
+		if (progress < 0)
+			progress = 0;
+		if (progress > 1)
+			progress = 1;
+		var next:Float = min + (max - min) * progress;
 		var factor:Float = Math.pow(10, decimals);
 		next = Math.round(next * factor) / factor;
 		if (next == value)
@@ -104,30 +104,29 @@ final class UISlider extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var tx:Float = w - controlWidth;
 		var cy:Float = h / 2;
-		var p:Float = (max > min) ? (value - min) / (max - min) : 0;
-		if (p < 0)
-			p = 0;
-		if (p > 1)
-			p = 1;
+		var progress:Float = (max > min) ? (value - min) / (max - min) : 0;
+		if (progress < 0)
+			progress = 0;
+		if (progress > 1)
+			progress = 1;
 
-		g.beginFill(UIColor.rgb(UITheme.panel3));
-		g.drawRoundRect(tx, cy - UITheme.px(2), controlWidth, UITheme.px(4), UITheme.px(4), UITheme.px(4));
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.accentDark));
-		g.drawRoundRect(tx, cy - UITheme.px(2), controlWidth * p, UITheme.px(4), UITheme.px(4), UITheme.px(4));
-		g.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.panel3));
+		graphics.drawRoundRect(tx, cy - UITheme.px(2), controlWidth, UITheme.px(4), UITheme.px(4), UITheme.px(4));
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.accentDark));
+		graphics.drawRoundRect(tx, cy - UITheme.px(2), controlWidth * progress, UITheme.px(4), UITheme.px(4), UITheme.px(4));
+		graphics.endFill();
 		var knob:Int = hovered || dragging ? UIColor.lighten(UITheme.accent, 0.15) : UITheme.accent;
-		g.beginFill(UIColor.rgb(knob));
-		g.drawCircle(tx + controlWidth * p, cy, UITheme.px(6));
-		g.endFill();
+		graphics.beginFill(UIColor.rgb(knob));
+		graphics.drawCircle(tx + controlWidth * progress, cy, UITheme.px(6));
+		graphics.endFill();
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
@@ -151,29 +150,29 @@ final class UISlider extends UIComponent {
 		return Std.string(Math.round(value * factor) / factor);
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_value(v:Float):Float {
-		if (value == v)
-			return v;
-		value = v;
+	function set_value(next:Float):Float {
+		if (value == next)
+			return next;
+		value = next;
 		invalidate();
-		return v;
+		return next;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

@@ -230,34 +230,33 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var bx:Float = w - controlWidth;
-		var r:Float = UITheme.px(6);
+		var radius:Float = UITheme.px(6);
 		var fill:Int = editing ? UITheme.inputBg : UITheme.panel2;
 		if (hovered && !editing)
 			fill = UIColor.lighten(fill, 0.06);
-		g.beginFill(UIColor.rgb(fill));
-		g.drawRoundRect(bx, 1, controlWidth, h - 2, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(editing ? UITheme.accent : UITheme.border));
-		g.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, r, r);
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(fill));
+		graphics.drawRoundRect(bx, 1, controlWidth, h - 2, radius, radius);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(editing ? UITheme.accent : UITheme.border));
+		graphics.drawRoundRect(bx + 0.5, 1.5, controlWidth - 1, h - 3, radius, radius);
+		graphics.lineStyle();
 
 		var mc:Int = UIColor.rgb(UITheme.text2);
 		var cy:Float = h / 2;
-		g.lineStyle(2, mc);
-		g.moveTo(bx + UITheme.px(8), cy);
-		g.lineTo(bx + UITheme.px(15), cy);
-		g.moveTo(w - UITheme.px(15), cy);
-		g.lineTo(w - UITheme.px(8), cy);
-		g.moveTo(w - UITheme.px(11.5), cy - UITheme.px(3.5));
-		g.lineTo(w - UITheme.px(11.5), cy + UITheme.px(3.5));
-		g.lineStyle();
+		graphics.lineStyle(2, mc);
+		graphics.moveTo(bx + UITheme.px(8), cy);
+		graphics.lineTo(bx + UITheme.px(15), cy);
+		graphics.moveTo(w - UITheme.px(15), cy);
+		graphics.lineTo(w - UITheme.px(8), cy);
+		graphics.moveTo(w - UITheme.px(11.5), cy - UITheme.px(3.5));
+		graphics.lineTo(w - UITheme.px(11.5), cy + UITheme.px(3.5));
+		graphics.lineStyle();
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
@@ -277,14 +276,14 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 	}
 
 	function formatValue():String {
-		var s:String;
+		var text:String;
 		if (decimals <= 0)
-			s = Std.string(Std.int(value));
+			text = Std.string(Std.int(value));
 		else {
 			var factor:Float = Math.pow(10, decimals);
-			s = Std.string(Math.round(value * factor) / factor);
+			text = Std.string(Math.round(value * factor) / factor);
 		}
-		return s + suffix;
+		return text + suffix;
 	}
 
 	override public function dispose():Void {
@@ -293,29 +292,29 @@ final class UIStepper extends UIComponent implements smidr.input.IUIFocusable {
 		super.dispose();
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_value(v:Float):Float {
-		if (value == v)
-			return v;
-		value = v;
+	function set_value(next:Float):Float {
+		if (value == next)
+			return next;
+		value = next;
 		invalidate();
-		return v;
+		return next;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

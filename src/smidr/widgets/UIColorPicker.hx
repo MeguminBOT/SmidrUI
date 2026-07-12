@@ -73,10 +73,10 @@ final class UIColorPicker extends UIComponent {
 		return UIColor.hsv(hue, saturation, value);
 	}
 
-	function set_color(v:Int):Int {
-		applyColor(v);
+	function set_color(next:Int):Int {
+		applyColor(next);
 		invalidate();
-		return v;
+		return next;
 	}
 
 	function applyColor(rgba:Int):Void {
@@ -143,8 +143,8 @@ final class UIColorPicker extends UIComponent {
 		emit();
 	}
 
-	inline function clamp01(v:Float):Float {
-		return (v < 0) ? 0 : (v > 1 ? 1 : v);
+	inline function clamp01(amount:Float):Float {
+		return (amount < 0) ? 0 : (amount > 1 ? 1 : amount);
 	}
 
 	function emit():Void {
@@ -155,8 +155,7 @@ final class UIColorPicker extends UIComponent {
 
 	override public function render():Void {
 		computeLayout();
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 
 		var hueColor:Int = UIColor.rgb(UIColor.hsv(hue, 1, 1));
 		var radius:Float = UITheme.px(6);
@@ -164,43 +163,43 @@ final class UIColorPicker extends UIComponent {
 		// saturation/value square: white->hue horizontally, then transparent->black vertically
 		var mtx:Matrix = new Matrix();
 		mtx.createGradientBox(squareW, squareH, 0, 0, 0);
-		g.beginGradientFill(GradientType.LINEAR, [0xFFFFFF, hueColor], [1, 1], [0, 255], mtx);
-		g.drawRoundRect(0, 0, squareW, squareH, radius, radius);
-		g.endFill();
+		graphics.beginGradientFill(GradientType.LINEAR, [0xFFFFFF, hueColor], [1, 1], [0, 255], mtx);
+		graphics.drawRoundRect(0, 0, squareW, squareH, radius, radius);
+		graphics.endFill();
 		mtx.createGradientBox(squareW, squareH, Math.PI / 2, 0, 0);
-		g.beginGradientFill(GradientType.LINEAR, [0x000000, 0x000000], [0, 1], [0, 255], mtx);
-		g.drawRoundRect(0, 0, squareW, squareH, radius, radius);
-		g.endFill();
+		graphics.beginGradientFill(GradientType.LINEAR, [0x000000, 0x000000], [0, 1], [0, 255], mtx);
+		graphics.drawRoundRect(0, 0, squareW, squareH, radius, radius);
+		graphics.endFill();
 
 		// SV cursor ring
 		var cursorX:Float = saturation * squareW;
 		var cursorY:Float = (1 - value) * squareH;
-		g.lineStyle(UITheme.px(2), (value > 0.5 && saturation < 0.5) ? 0x000000 : 0xFFFFFF);
-		g.drawCircle(cursorX, cursorY, UITheme.px(5));
-		g.lineStyle();
+		graphics.lineStyle(UITheme.px(2), (value > 0.5 && saturation < 0.5) ? 0x000000 : 0xFFFFFF);
+		graphics.drawCircle(cursorX, cursorY, UITheme.px(5));
+		graphics.lineStyle();
 
 		// hue strip
 		var mtxH:Matrix = new Matrix();
 		mtxH.createGradientBox(stripW, squareH, Math.PI / 2, stripX, 0);
-		g.beginGradientFill(GradientType.LINEAR, [0xFF0000, 0xFFFF00, 0x00FF00, 0x00FFFF, 0x0000FF, 0xFF00FF, 0xFF0000],
+		graphics.beginGradientFill(GradientType.LINEAR, [0xFF0000, 0xFFFF00, 0x00FF00, 0x00FFFF, 0x0000FF, 0xFF00FF, 0xFF0000],
 			[1, 1, 1, 1, 1, 1, 1], [0, 42, 85, 128, 170, 213, 255], mtxH);
-		g.drawRoundRect(stripX, 0, stripW, squareH, radius, radius);
-		g.endFill();
+		graphics.drawRoundRect(stripX, 0, stripW, squareH, radius, radius);
+		graphics.endFill();
 		// hue marker
 		var markerY:Float = (hue / 360) * squareH;
-		g.lineStyle(UITheme.px(2), 0xFFFFFF);
-		g.drawRoundRect(stripX - UITheme.px(1), markerY - UITheme.px(2), stripW + UITheme.px(2), UITheme.px(4), UITheme.px(2), UITheme.px(2));
-		g.lineStyle();
+		graphics.lineStyle(UITheme.px(2), 0xFFFFFF);
+		graphics.drawRoundRect(stripX - UITheme.px(1), markerY - UITheme.px(2), stripW + UITheme.px(2), UITheme.px(4), UITheme.px(2), UITheme.px(2));
+		graphics.lineStyle();
 
 		// swatch + hex
 		var swatchY:Float = squareH + UITheme.px(8);
 		var swatchSize:Float = UITheme.px(20);
-		g.beginFill(UIColor.rgb(color));
-		g.drawRoundRect(0, swatchY, swatchSize * 1.4, swatchSize, radius, radius);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0.5, swatchY + 0.5, swatchSize * 1.4 - 1, swatchSize - 1, radius, radius);
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(color));
+		graphics.drawRoundRect(0, swatchY, swatchSize * 1.4, swatchSize, radius, radius);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		graphics.drawRoundRect(0.5, swatchY + 0.5, swatchSize * 1.4 - 1, swatchSize - 1, radius, radius);
+		graphics.lineStyle();
 
 		UIFonts.restyle(hexField, UITheme.fs(12), UITheme.text);
 		var hex:String = "#" + StringTools.hex(UIColor.rgb(color), 6);
@@ -213,12 +212,12 @@ final class UIColorPicker extends UIComponent {
 		var current:Int = color;
 		for (i in 0...presets.length) {
 			var px:Float = i * (presetSize + presetGap);
-			g.beginFill(UIColor.rgb(presets[i]));
-			g.drawRoundRect(px, presetY, presetSize, presetSize, UITheme.px(4), UITheme.px(4));
-			g.endFill();
-			g.lineStyle(1, UIColor.rgb((presets[i] == current) ? UITheme.accent : UITheme.border2));
-			g.drawRoundRect(px + 0.5, presetY + 0.5, presetSize - 1, presetSize - 1, UITheme.px(4), UITheme.px(4));
-			g.lineStyle();
+			graphics.beginFill(UIColor.rgb(presets[i]));
+			graphics.drawRoundRect(px, presetY, presetSize, presetSize, UITheme.px(4), UITheme.px(4));
+			graphics.endFill();
+			graphics.lineStyle(1, UIColor.rgb((presets[i] == current) ? UITheme.accent : UITheme.border2));
+			graphics.drawRoundRect(px + 0.5, presetY + 0.5, presetSize - 1, presetSize - 1, UITheme.px(4), UITheme.px(4));
+			graphics.lineStyle();
 		}
 	}
 }

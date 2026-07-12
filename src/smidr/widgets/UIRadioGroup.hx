@@ -115,28 +115,28 @@ final class UIRadioGroup extends UIComponent {
 	override public function render():Void {
 		var rowH:Float = UITheme.px(rowHeightBase);
 		var i:Int = 0;
-		var n:Int = rows.length;
-		while (i < n) {
+		var count:Int = rows.length;
+		while (i < count) {
 			var row:UIRadioRow = rows[i];
 			row.y = i * rowH;
 			row.resize(w, rowH);
 			i++;
 		}
-		h = n * rowH;
+		h = count * rowH;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
 		for (row in rows)
 			row.invalidate();
-		return v;
+		return value;
 	}
 
-	function set_rowHeightBase(v:Float):Float {
-		rowHeightBase = v;
+	function set_rowHeightBase(value:Float):Float {
+		rowHeightBase = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }
 
@@ -158,28 +158,27 @@ private final class UIRadioRow extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var selected:Bool = (index == owner.selectedIndex);
 		var cx:Float = UITheme.px(9);
 		var cy:Float = h / 2;
 		var radius:Float = UITheme.px(7);
 		if (hovered && !selected) {
-			g.beginFill(UIColor.rgb(UITheme.panel3), 0.5);
-			g.drawCircle(cx, cy, radius);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3), 0.5);
+			graphics.drawCircle(cx, cy, radius);
+			graphics.endFill();
 		}
-		g.lineStyle(1.5, UIColor.rgb(selected ? UITheme.accent : UITheme.border2));
-		g.drawCircle(cx, cy, radius);
-		g.lineStyle();
+		graphics.lineStyle(1.5, UIColor.rgb(selected ? UITheme.accent : UITheme.border2));
+		graphics.drawCircle(cx, cy, radius);
+		graphics.lineStyle();
 		if (selected) {
-			g.beginFill(UIColor.rgb(UITheme.accent));
-			g.drawCircle(cx, cy, UITheme.px(3.5));
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.accent));
+			graphics.drawCircle(cx, cy, UITheme.px(3.5));
+			graphics.endFill();
 		}
 
 		if (labelField == null) {

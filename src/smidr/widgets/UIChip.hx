@@ -95,47 +95,46 @@ final class UIChip extends UIComponent {
 			base = UIColor.darken(base, 0.12);
 		var line:Int = (hasDot && on) ? UITheme.accentDark : UITheme.border;
 
-		var g = graphics;
-		g.clear();
-		var r:Float = height / 2;
-		g.beginFill(UIColor.rgb(base));
-		g.drawRoundRect(0, 0, width, height, r * 2, r * 2);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(line));
-		g.drawRoundRect(0.5, 0.5, width - 1, height - 1, r * 2, r * 2);
-		g.lineStyle();
+		graphics.clear();
+		var radius:Float = height / 2;
+		graphics.beginFill(UIColor.rgb(base));
+		graphics.drawRoundRect(0, 0, width, height, radius * 2, radius * 2);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(line));
+		graphics.drawRoundRect(0.5, 0.5, width - 1, height - 1, radius * 2, radius * 2);
+		graphics.lineStyle();
 		if (hasDot) {
-			g.beginFill(UIColor.rgb(on ? UITheme.success : UITheme.border2));
-			g.drawCircle(padX + UITheme.px(4), height / 2, UITheme.px(4.5) * dotPop);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(on ? UITheme.success : UITheme.border2));
+			graphics.drawCircle(padX + UITheme.px(4), height / 2, UITheme.px(4.5) * dotPop);
+			graphics.endFill();
 		}
 		labelField.x = padX + dotSpace;
 		labelField.y = (height - labelField.height) / 2;
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_on(v:Bool):Bool {
-		if (on == v)
-			return v;
-		on = v;
+	function set_on(value:Bool):Bool {
+		if (on == value)
+			return value;
+		on = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

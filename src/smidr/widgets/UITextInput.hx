@@ -123,17 +123,17 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 	}
 
 	function indexAt(px:Float):Int {
-		var n:Int = text.length;
-		if (n == 0 || px <= 0)
+		var length:Int = text.length;
+		if (length == 0 || px <= 0)
 			return 0;
 		var i:Int = 0;
-		while (i < n) {
-			var b = valueField.getCharBoundaries(i);
-			if (b != null && px < b.x + b.width * 0.5 - 2)
+		while (i < length) {
+			var bounds = valueField.getCharBoundaries(i);
+			if (bounds != null && px < bounds.x + bounds.width * 0.5 - 2)
 				return i;
 			i++;
 		}
-		return n;
+		return length;
 	}
 
 	public function onKeyDown(keyCode:Int, charCode:Int, ctrl:Bool, shift:Bool, alt:Bool):Bool {
@@ -223,14 +223,14 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 		return true;
 	}
 
-	function insert(s:String):Void {
+	function insert(content:String):Void {
 		if (hasSelection())
 			deleteSelection();
-		var next:String = text.substring(0, caret) + s + text.substring(caret);
+		var next:String = text.substring(0, caret) + content + text.substring(caret);
 		if (maxLength > 0 && next.length > maxLength)
 			return;
 		setTextInternal(next);
-		caret += s.length;
+		caret += content.length;
 		anchor = caret;
 	}
 
@@ -239,25 +239,25 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 	}
 
 	function selectionText():String {
-		var a:Int = (caret < anchor) ? caret : anchor;
-		var b:Int = (caret < anchor) ? anchor : caret;
-		return text.substring(a, b);
+		var start:Int = (caret < anchor) ? caret : anchor;
+		var end:Int = (caret < anchor) ? anchor : caret;
+		return text.substring(start, end);
 	}
 
 	function deleteSelection():Void {
-		var a:Int = (caret < anchor) ? caret : anchor;
-		var b:Int = (caret < anchor) ? anchor : caret;
-		setTextInternal(text.substring(0, a) + text.substring(b));
-		caret = a;
-		anchor = a;
+		var start:Int = (caret < anchor) ? caret : anchor;
+		var end:Int = (caret < anchor) ? anchor : caret;
+		setTextInternal(text.substring(0, start) + text.substring(end));
+		caret = start;
+		anchor = start;
 	}
 
-	function setTextInternal(v:String):Void {
-		@:bypassAccessor text = v;
+	function setTextInternal(value:String):Void {
+		@:bypassAccessor text = value;
 		resetBlink();
 		invalidate();
 		if (onChange != null)
-			onChange(v);
+			onChange(value);
 	}
 
 	inline function resetBlink():Void {
@@ -267,21 +267,20 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var ix:Float = inputX();
 		var bw:Float = w - ix;
-		var r:Float = UITheme.px(6);
-		g.beginFill(UIColor.rgb(UITheme.inputBg));
-		g.drawRoundRect(ix, 1, bw, h - 2, r, r);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(focusedNow ? UITheme.accent : UITheme.border));
-		g.drawRoundRect(ix + 0.5, 1.5, bw - 1, h - 3, r, r);
-		g.lineStyle();
+		var radius:Float = UITheme.px(6);
+		graphics.beginFill(UIColor.rgb(UITheme.inputBg));
+		graphics.drawRoundRect(ix, 1, bw, h - 2, radius, radius);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(focusedNow ? UITheme.accent : UITheme.border));
+		graphics.drawRoundRect(ix + 0.5, 1.5, bw - 1, h - 3, radius, radius);
+		graphics.lineStyle();
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
@@ -312,19 +311,19 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 
 		if (focusedNow) {
 			if (hasSelection()) {
-				var a:Int = (caret < anchor) ? caret : anchor;
-				var b:Int = (caret < anchor) ? anchor : caret;
-				var x0:Float = caretX(a);
-				var x1:Float = caretX(b);
-				g.beginFill(UIColor.rgb(UITheme.accentDark), 0.45);
-				g.drawRect(valueField.x + x0, valueField.y + 1, x1 - x0, valueField.height - 2);
-				g.endFill();
+				var start:Int = (caret < anchor) ? caret : anchor;
+				var end:Int = (caret < anchor) ? anchor : caret;
+				var x0:Float = caretX(start);
+				var x1:Float = caretX(end);
+				graphics.beginFill(UIColor.rgb(UITheme.accentDark), 0.45);
+				graphics.drawRect(valueField.x + x0, valueField.y + 1, x1 - x0, valueField.height - 2);
+				graphics.endFill();
 			}
 			if (caretVisible) {
 				var cx:Float = valueField.x + caretX(caret);
-				g.beginFill(UIColor.rgb(UITheme.text));
-				g.drawRect(cx, valueField.y + 1, 1.5, valueField.height - 2);
-				g.endFill();
+				graphics.beginFill(UIColor.rgb(UITheme.text));
+				graphics.drawRect(cx, valueField.y + 1, 1.5, valueField.height - 2);
+				graphics.endFill();
 			}
 		}
 	}
@@ -338,8 +337,8 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 			return 0;
 		if (index > text.length)
 			index = text.length;
-		var b = valueField.getCharBoundaries(index - 1);
-		return (b != null) ? (b.x + b.width) : 0;
+		var bounds = valueField.getCharBoundaries(index - 1);
+		return (bounds != null) ? (bounds.x + bounds.width) : 0;
 	}
 
 	override public function dispose():Void {
@@ -348,33 +347,33 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 		super.dispose();
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_text(v:String):String {
-		if (text == v)
-			return v;
-		text = v;
-		if (caret > v.length)
-			caret = v.length;
-		if (anchor > v.length)
-			anchor = v.length;
+	function set_text(value:String):String {
+		if (text == value)
+			return value;
+		text = value;
+		if (caret > value.length)
+			caret = value.length;
+		if (anchor > value.length)
+			anchor = value.length;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

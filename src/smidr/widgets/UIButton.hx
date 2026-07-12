@@ -66,9 +66,9 @@ final class UIButton extends UIComponent {
 		@return the configured button
 	**/
 	public static function icon(icon:UIIcon, size:Float, ?onClick:Void->Void):UIButton {
-		var b:UIButton = new UIButton("", size, size, onClick);
-		b.setIcon(icon);
-		return b;
+		var button:UIButton = new UIButton("", size, size, onClick);
+		button.setIcon(icon);
+		return button;
 	}
 
 	/**
@@ -82,17 +82,16 @@ final class UIButton extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		var r:Float = UITheme.px(UITheme.radius);
+		graphics.clear();
+		var radius:Float = UITheme.px(UITheme.radius);
 		var textColor:Int;
 		if (gradient != null) {
-			gradient.fillRect(g, 0, 0, w, h, r * 2);
+			gradient.fillRect(graphics, 0, 0, w, h, radius * 2);
 			// hover lightens, press dips — as a translucent scrim over the fixed gradient
 			if (pressed || hovered) {
-				g.beginFill(pressed ? 0x000000 : 0xFFFFFF, pressed ? 0.18 : 0.10);
-				g.drawRoundRect(0, 0, w, h, r * 2, r * 2);
-				g.endFill();
+				graphics.beginFill(pressed ? 0x000000 : 0xFFFFFF, pressed ? 0.18 : 0.10);
+				graphics.drawRoundRect(0, 0, w, h, radius * 2, radius * 2);
+				graphics.endFill();
 			}
 			textColor = UIColor.contrastText(gradient.colors[0]);
 		} else {
@@ -101,17 +100,17 @@ final class UIButton extends UIComponent {
 				base = UIColor.darken(base, 0.18);
 			else if (hovered)
 				base = UIColor.lighten(base, 0.10);
-			g.beginFill(UIColor.rgb(base));
-			g.drawRoundRect(0, 0, w, h, r * 2, r * 2);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(base));
+			graphics.drawRoundRect(0, 0, w, h, radius * 2, radius * 2);
+			graphics.endFill();
 			// accent/danger fills are dark in every theme, so pick contrast from the fill rather
 			// than UITheme.text (which flips to dark on light themes and would vanish on the button)
 			textColor = (accent || danger) ? UIColor.contrastText(base) : UITheme.text2;
 		}
 		var line:Int = accent ? UITheme.accent : (danger ? UITheme.danger : UITheme.border);
-		g.lineStyle(1, UIColor.rgb(line));
-		g.drawRoundRect(0.5, 0.5, w - 1, h - 1, r * 2, r * 2);
-		g.lineStyle();
+		graphics.lineStyle(1, UIColor.rgb(line));
+		graphics.drawRoundRect(0.5, 0.5, w - 1, h - 1, radius * 2, radius * 2);
+		graphics.lineStyle();
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), textColor, TextFormatAlign.CENTER);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
 		if (resolved == null)
@@ -147,51 +146,51 @@ final class UIButton extends UIComponent {
 		@param v the icon to show, or `null` to remove it
 		@return this button (for chaining)
 	**/
-	public function setIcon(v:UIIcon):UIButton {
-		if (iconObj == v)
+	public function setIcon(icon:UIIcon):UIButton {
+		if (iconObj == icon)
 			return this;
 		if (iconObj != null && iconObj.parent == this)
 			removeChild(iconObj);
-		iconObj = v;
+		iconObj = icon;
 		if (iconObj != null)
 			addChild(iconObj);
 		invalidate();
 		return this;
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_accent(v:Bool):Bool {
-		accent = v;
+	function set_accent(value:Bool):Bool {
+		accent = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_danger(v:Bool):Bool {
-		danger = v;
+	function set_danger(value:Bool):Bool {
+		danger = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_gradient(v:UIGradient):UIGradient {
-		gradient = v;
+	function set_gradient(value:UIGradient):UIGradient {
+		gradient = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

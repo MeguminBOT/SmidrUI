@@ -262,14 +262,13 @@ private class UIDataGridHeader extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(0, h - 1, w, 1);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel2));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(0, h - 1, w, 1);
+		graphics.endFill();
 
 		var count:Int = grid.columnCount();
 		while (titleFields.length > count) {
@@ -290,9 +289,9 @@ private class UIDataGridHeader extends UIComponent {
 			var cellX:Float = grid.columnX(i);
 			var cellW:Float = UITheme.px(column.width);
 			if (i > 0) {
-				g.beginFill(UIColor.rgb(UITheme.border), 0.5);
-				g.drawRect(cellX, UITheme.px(7), 1, h - UITheme.px(14));
-				g.endFill();
+				graphics.beginFill(UIColor.rgb(UITheme.border), 0.5);
+				graphics.drawRect(cellX, UITheme.px(7), 1, h - UITheme.px(14));
+				graphics.endFill();
 			}
 
 			var field:TextField = titleFields[i];
@@ -314,17 +313,17 @@ private class UIDataGridHeader extends UIComponent {
 				var arrowX:Float = cellX + cellW - padRight - UITheme.px(6);
 				var arrowY:Float = h / 2;
 				var reach:Float = UITheme.px(3);
-				g.beginFill(UIColor.rgb(UITheme.accent));
+				graphics.beginFill(UIColor.rgb(UITheme.accent));
 				if (grid.sortAscending) {
-					g.moveTo(arrowX - reach, arrowY + reach * 0.6);
-					g.lineTo(arrowX + reach, arrowY + reach * 0.6);
-					g.lineTo(arrowX, arrowY - reach * 0.8);
+					graphics.moveTo(arrowX - reach, arrowY + reach * 0.6);
+					graphics.lineTo(arrowX + reach, arrowY + reach * 0.6);
+					graphics.lineTo(arrowX, arrowY - reach * 0.8);
 				} else {
-					g.moveTo(arrowX - reach, arrowY - reach * 0.6);
-					g.lineTo(arrowX + reach, arrowY - reach * 0.6);
-					g.lineTo(arrowX, arrowY + reach * 0.8);
+					graphics.moveTo(arrowX - reach, arrowY - reach * 0.6);
+					graphics.lineTo(arrowX + reach, arrowY - reach * 0.6);
+					graphics.lineTo(arrowX, arrowY + reach * 0.8);
 				}
-				g.endFill();
+				graphics.endFill();
 			}
 		}
 	}
@@ -360,21 +359,20 @@ private class UIDataRow extends UIListRow {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var selected:Bool = (index >= 0 && index == owner.selectedIndex);
 		if (selected) {
-			g.beginFill(UIColor.rgb(UITheme.panel3));
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3));
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		} else if (hovered) {
-			g.beginFill(UIColor.rgb(UITheme.panel3), 0.5);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3), 0.5);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		} else {
-			g.beginFill(0, 0);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(0, 0);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		}
 
 		var count:Int = grid.columnCount();

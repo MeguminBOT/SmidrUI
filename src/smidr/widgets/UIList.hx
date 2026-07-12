@@ -143,10 +143,10 @@ class UIList extends UIComponent implements IUIFocusable {
 	public function refresh():Void {
 		var i:Int = rows.length;
 		while (--i >= 0) {
-			var r:UIListRow = rows[i];
-			if (r.__index >= 0) {
-				r.bind(r.__index);
-				r.invalidate();
+			var row:UIListRow = rows[i];
+			if (row.__index >= 0) {
+				row.bind(row.__index);
+				row.invalidate();
 			}
 		}
 	}
@@ -185,8 +185,8 @@ class UIList extends UIComponent implements IUIFocusable {
 	public var maxScroll(get, never):Float;
 
 	inline function get_maxScroll():Float {
-		var m:Float = itemCount * rowHeight - h;
-		return (m > 0) ? m : 0;
+		var max:Float = itemCount * rowHeight - h;
+		return (max > 0) ? max : 0;
 	}
 
 	/**
@@ -194,11 +194,11 @@ class UIList extends UIComponent implements IUIFocusable {
 		@param value the target offset in pixels
 	**/
 	public function setScroll(value:Float):Void {
-		var m:Float = maxScroll;
+		var max:Float = maxScroll;
 		if (value < 0)
 			value = 0;
-		if (value > m)
-			value = m;
+		if (value > max)
+			value = max;
 		scrollY = value;
 		clipRect.setTo(0, scrollY, w, h);
 		viewport.scrollRect = clipRect;
@@ -207,28 +207,28 @@ class UIList extends UIComponent implements IUIFocusable {
 	}
 
 	function updateRows():Void {
-		var n:Int = rows.length;
-		if (n == 0)
+		var count:Int = rows.length;
+		if (count == 0)
 			return;
 		var first:Int = Std.int(scrollY / rowHeight);
 		if (first < 0)
 			first = 0;
 		var i:Int = first;
-		var end:Int = first + n;
+		var end:Int = first + count;
 		while (i < end) {
-			var r:UIListRow = rows[i % n];
+			var row:UIListRow = rows[i % count];
 			if (i < itemCount) {
-				if (r.__index != i) {
-					r.__index = i;
-					r.y = i * rowHeight;
-					r.resize(w, rowHeight);
-					r.bind(i);
-					r.invalidate();
+				if (row.__index != i) {
+					row.__index = i;
+					row.y = i * rowHeight;
+					row.resize(w, rowHeight);
+					row.bind(i);
+					row.invalidate();
 				}
-				r.visible = true;
+				row.visible = true;
 			} else {
-				r.__index = -1;
-				r.visible = false;
+				row.__index = -1;
+				row.visible = false;
 			}
 			i++;
 		}
@@ -237,9 +237,9 @@ class UIList extends UIComponent implements IUIFocusable {
 	function invalidateRowAt(index:Int):Void {
 		if (index < 0 || rows.length == 0)
 			return;
-		var r:UIListRow = rows[index % rows.length];
-		if (r.__index == index)
-			r.invalidate();
+		var row:UIListRow = rows[index % rows.length];
+		if (row.__index == index)
+			row.invalidate();
 	}
 
 	function buildPool(need:Int):Void {
@@ -249,10 +249,10 @@ class UIList extends UIComponent implements IUIFocusable {
 		rows.resize(0);
 		i = 0;
 		while (i < need) {
-			var r:UIListRow = (rowFactory != null) ? rowFactory(this) : new UIListRow(this);
-			r.visible = false;
-			viewport.addChild(r);
-			rows.push(r);
+			var row:UIListRow = (rowFactory != null) ? rowFactory(this) : new UIListRow(this);
+			row.visible = false;
+			viewport.addChild(row);
+			rows.push(row);
 			i++;
 		}
 	}
@@ -265,51 +265,50 @@ class UIList extends UIComponent implements IUIFocusable {
 		else {
 			var i:Int = rows.length;
 			while (--i >= 0) {
-				var r:UIListRow = rows[i];
-				if (r.__index >= 0) {
-					r.y = r.__index * rowHeight;
-					r.resize(w, rowHeight);
+				var row:UIListRow = rows[i];
+				if (row.__index >= 0) {
+					row.y = row.__index * rowHeight;
+					row.resize(w, rowHeight);
 				}
 			}
 		}
 		setScroll(scrollY);
 
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 		drawThumb();
 	}
 
 	function drawThumb():Void {
-		var g = thumb.graphics;
-		g.clear();
-		var m:Float = maxScroll;
-		thumb.visible = (m > 0);
-		if (m <= 0)
+		var thumbGraphics = thumb.graphics;
+		thumbGraphics.clear();
+		var max:Float = maxScroll;
+		thumb.visible = (max > 0);
+		if (max <= 0)
 			return;
 		var barW:Float = UITheme.px(4);
 		var trackH:Float = h - 4;
 		var thumbH:Float = trackH * (h / (itemCount * rowHeight));
 		if (thumbH < 24)
 			thumbH = 24;
-		g.beginFill(UIColor.rgb(UITheme.border2));
-		g.drawRoundRect(0, 0, barW, thumbH, barW, barW);
-		g.endFill();
+		thumbGraphics.beginFill(UIColor.rgb(UITheme.border2));
+		thumbGraphics.drawRoundRect(0, 0, barW, thumbH, barW, barW);
+		thumbGraphics.endFill();
 		positionThumb();
 	}
 
 	function positionThumb():Void {
-		var m:Float = maxScroll;
-		if (m <= 0)
+		var max:Float = maxScroll;
+		if (max <= 0)
 			return;
 		var trackH:Float = h - 4;
 		var thumbH:Float = trackH * (h / (itemCount * rowHeight));
 		if (thumbH < 24)
 			thumbH = 24;
 		thumb.x = w - UITheme.px(4) - 2;
-		thumb.y = 2 + (trackH - thumbH) * (scrollY / m);
+		thumb.y = 2 + (trackH - thumbH) * (scrollY / max);
 	}
 
 	@:allow(smidr.widgets.UIListRow)
@@ -371,40 +370,40 @@ class UIList extends UIComponent implements IUIFocusable {
 		return false;
 	}
 
-	function __onWheel(e:MouseEvent):Void {
+	function __onWheel(event:MouseEvent):Void {
 		if (maxScroll <= 0)
 			return;
-		setScroll(scrollY - e.delta * wheelStep);
-		e.stopPropagation();
+		setScroll(scrollY - event.delta * wheelStep);
+		event.stopPropagation();
 	}
 
-	function __onDown(e:MouseEvent):Void {
+	function __onDown(event:MouseEvent):Void {
 		UIFocus.set(this);
 		stopFling();
 		if (maxScroll <= 0)
 			return;
 		if (mouseX >= w - UITheme.px(4) - 4) {
 			mode = MODE_THUMB;
-			dragStartStageY = e.stageY;
+			dragStartStageY = event.stageY;
 			dragStartScroll = scrollY;
 			beginCapture();
-			e.stopPropagation();
+			event.stopPropagation();
 			return;
 		}
 		if (touchScroll) {
 			dragPending = true;
-			dragStartStageY = e.stageY;
+			dragStartStageY = event.stageY;
 			dragStartScroll = scrollY;
-			lastPointerY = e.stageY;
+			lastPointerY = event.stageY;
 			lastPointerTime = Lib.getTimer();
 			velocity = 0;
 		}
 	}
 
-	function __onMove(e:MouseEvent):Void {
+	function __onMove(event:MouseEvent):Void {
 		if (!dragPending || mode != MODE_NONE)
 			return;
-		if (Math.abs(e.stageY - dragStartStageY) < UITheme.px(8) * scaleFactorY())
+		if (Math.abs(event.stageY - dragStartStageY) < UITheme.px(8) * scaleFactorY())
 			return;
 		// steal the press: the row must neither stay pressed nor click on release
 		var pt:UIComponent = UIPointer.pressTarget;
@@ -521,9 +520,9 @@ class UIListRow extends UIComponent {
 			labelField = UIFonts.make(UITheme.fs(12), UITheme.text);
 			addChild(labelField);
 		}
-		var s:String = owner.labelOf(index);
-		if (labelField.text != s)
-			labelField.text = s;
+		var text:String = owner.labelOf(index);
+		if (labelField.text != text)
+			labelField.text = text;
 	}
 
 	override function click():Void {
@@ -533,24 +532,23 @@ class UIListRow extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var selected:Bool = (__index >= 0 && __index == owner.selectedIndex);
 		if (selected) {
-			g.beginFill(UIColor.rgb(UITheme.panel3));
-			g.drawRect(0, 0, w, h);
-			g.endFill();
-			g.beginFill(UIColor.rgb(UITheme.accent));
-			g.drawRect(0, UITheme.px(3), UITheme.px(2.5), h - UITheme.px(6));
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3));
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.accent));
+			graphics.drawRect(0, UITheme.px(3), UITheme.px(2.5), h - UITheme.px(6));
+			graphics.endFill();
 		} else if (hovered) {
-			g.beginFill(UIColor.rgb(UITheme.panel3), 0.5);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3), 0.5);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		} else {
-			g.beginFill(0, 0);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(0, 0);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		}
 		if (labelField != null) {
 			UIFonts.restyle(labelField, UITheme.fs(12), selected ? UITheme.text : UITheme.text2);

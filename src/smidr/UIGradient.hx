@@ -79,12 +79,12 @@ final class UIGradient {
 		return linear([left, right], 0);
 	}
 
-	static function evenRatios(n:Int):Array<Int> {
-		if (n <= 1)
+	static function evenRatios(count:Int):Array<Int> {
+		if (count <= 1)
 			return [0];
 		var out:Array<Int> = [];
-		for (i in 0...n)
-			out.push(Std.int(i / (n - 1) * 255 + 0.5));
+		for (i in 0...count)
+			out.push(Std.int(i / (count - 1) * 255 + 0.5));
 		return out;
 	}
 

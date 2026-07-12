@@ -106,8 +106,8 @@ final class UIDockGroup extends UIComponent {
 
 	function tabAt(localX:Float):Int {
 		var i:Int = 0;
-		var n:Int = tabX.length;
-		while (i < n) {
+		var count:Int = tabX.length;
+		while (i < count) {
 			if (localX >= tabX[i] && localX < tabX[i] + tabW[i])
 				return i;
 			i++;
@@ -153,23 +153,22 @@ final class UIDockGroup extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var tabH:Float = tabBarPx();
 
-		g.beginFill(UIColor.rgb(UITheme.panel));
-		g.drawRect(0, tabH, w, h - tabH);
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRect(0, 0, w, tabH);
-		g.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.panel));
+		graphics.drawRect(0, tabH, w, h - tabH);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.panel2));
+		graphics.drawRect(0, 0, w, tabH);
+		graphics.endFill();
 
 		var x:Float = UITheme.px(2);
 		tabX.resize(0);
 		tabW.resize(0);
 		var i:Int = 0;
-		var n:Int = panels.length;
-		while (i < n) {
+		var count:Int = panels.length;
+		while (i < count) {
 			var field:TextField = tabFields[i];
 			var active:Bool = (i == activeIndex);
 			UIFonts.restyle(field, UITheme.fs(12), active ? UITheme.text : UITheme.text2);
@@ -178,12 +177,12 @@ final class UIDockGroup extends UIComponent {
 				field.text = label;
 			var tw:Float = field.width + UITheme.px(22);
 			if (active) {
-				g.beginFill(UIColor.rgb(UITheme.panel3));
-				g.drawRoundRect(x + 1, UITheme.px(3), tw - 2, tabH - UITheme.px(4), UITheme.px(5), UITheme.px(5));
-				g.endFill();
-				g.beginFill(UIColor.rgb(UITheme.accent));
-				g.drawRect(x + 1, tabH - UITheme.px(2.5), tw - 2, UITheme.px(2.5));
-				g.endFill();
+				graphics.beginFill(UIColor.rgb(UITheme.panel3));
+				graphics.drawRoundRect(x + 1, UITheme.px(3), tw - 2, tabH - UITheme.px(4), UITheme.px(5), UITheme.px(5));
+				graphics.endFill();
+				graphics.beginFill(UIColor.rgb(UITheme.accent));
+				graphics.drawRect(x + 1, tabH - UITheme.px(2.5), tw - 2, UITheme.px(2.5));
+				graphics.endFill();
 			}
 			field.x = x + UITheme.px(11);
 			field.y = (tabH - field.height) / 2 - 1;
@@ -193,15 +192,15 @@ final class UIDockGroup extends UIComponent {
 			i++;
 		}
 
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(0, tabH - 1, w, 1);
-		g.endFill();
-		g.lineStyle(1, UIColor.rgb(UITheme.border));
-		g.drawRect(0.5, 0.5, w - 1, h - 1);
-		g.lineStyle();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(0, tabH - 1, w, 1);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(UITheme.border));
+		graphics.drawRect(0.5, 0.5, w - 1, h - 1);
+		graphics.lineStyle();
 
 		i = 0;
-		while (i < n) {
+		while (i < count) {
 			var panel:UIDockPanel = panels[i];
 			var active:Bool = (i == activeIndex);
 			panel.visible = active;

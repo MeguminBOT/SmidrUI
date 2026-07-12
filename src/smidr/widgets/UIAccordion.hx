@@ -59,26 +59,25 @@ final class UIAccordion extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		// chevron
-		var c:Int = UIColor.rgb(UITheme.text3);
+		var color:Int = UIColor.rgb(UITheme.text3);
 		var cy:Float = h / 2;
-		g.beginFill(c);
+		graphics.beginFill(color);
 		if (expanded) {
-			g.moveTo(UITheme.px(1), cy - UITheme.px(2.5));
-			g.lineTo(UITheme.px(9), cy - UITheme.px(2.5));
-			g.lineTo(UITheme.px(5), cy + UITheme.px(3));
+			graphics.moveTo(UITheme.px(1), cy - UITheme.px(2.5));
+			graphics.lineTo(UITheme.px(9), cy - UITheme.px(2.5));
+			graphics.lineTo(UITheme.px(5), cy + UITheme.px(3));
 		} else {
-			g.moveTo(UITheme.px(2), cy - UITheme.px(4));
-			g.lineTo(UITheme.px(7.5), cy);
-			g.lineTo(UITheme.px(2), cy + UITheme.px(4));
+			graphics.moveTo(UITheme.px(2), cy - UITheme.px(4));
+			graphics.lineTo(UITheme.px(7.5), cy);
+			graphics.lineTo(UITheme.px(2), cy + UITheme.px(4));
 		}
-		g.endFill();
+		graphics.endFill();
 
 		UIFonts.restyle(labelField, UITheme.fs(10), UITheme.text3);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : title;
@@ -102,34 +101,34 @@ final class UIAccordion extends UIComponent {
 		} else if (hintField != null)
 			hintField.visible = false;
 
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(0, h - 1, w, 1);
-		g.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(0, h - 1, w, 1);
+		graphics.endFill();
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_title(v:String):String {
-		title = v;
+	function set_title(value:String):String {
+		title = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_hint(v:String):String {
-		hint = v;
+	function set_hint(value:String):String {
+		hint = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_expanded(v:Bool):Bool {
-		if (expanded == v)
-			return v;
-		expanded = v;
+	function set_expanded(value:Bool):Bool {
+		if (expanded == value)
+			return value;
+		expanded = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

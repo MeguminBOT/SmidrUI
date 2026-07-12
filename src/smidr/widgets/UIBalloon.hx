@@ -147,13 +147,12 @@ final class UIBalloon extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.lineStyle(1, UIColor.rgb(UITheme.border2));
-		drawBubble(g);
-		g.endFill();
-		g.lineStyle();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel2));
+		graphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+		drawBubble(graphics);
+		graphics.endFill();
+		graphics.lineStyle();
 
 		var top:Float = UITheme.px(10);
 		if (titleLabel != null) {
@@ -206,14 +205,14 @@ final class UIBalloon extends UIComponent {
 		super.dispose();
 	}
 
-	function set_titleText(v:String):String {
-		titleText = v;
-		if (v != null && titleLabel == null) {
-			titleLabel = new UILabel(v, 13, PRIMARY);
+	function set_titleText(value:String):String {
+		titleText = value;
+		if (value != null && titleLabel == null) {
+			titleLabel = new UILabel(value, 13, PRIMARY);
 			addChild(titleLabel);
 		} else if (titleLabel != null)
-			titleLabel.text = (v != null) ? v : "";
+			titleLabel.text = (value != null) ? value : "";
 		invalidate();
-		return v;
+		return value;
 	}
 }

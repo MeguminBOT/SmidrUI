@@ -129,8 +129,8 @@ final class UIProgressBar extends UIComponent {
 		setProgress(0, false);
 	}
 
-	function applyShown(v:Float):Void {
-		shownProgress = v;
+	function applyShown(value:Float):Void {
+		shownProgress = value;
 		invalidate();
 	}
 
@@ -152,8 +152,8 @@ final class UIProgressBar extends UIComponent {
 		invalidate();
 	}
 
-	static inline function clamp(v:Float):Float {
-		return (v < 0) ? 0 : (v > 1 ? 1 : v);
+	static inline function clamp(value:Float):Float {
+		return (value < 0) ? 0 : (value > 1 ? 1 : value);
 	}
 
 	inline function barX():Float {
@@ -161,21 +161,20 @@ final class UIProgressBar extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(0, 0);
-		g.drawRect(0, 0, w, h);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(0, 0);
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
 
 		var bx:Float = barX();
 		var bw:Float = w - bx;
-		var t:Float = UITheme.px(thickness);
-		var by:Float = (h - t) / 2;
-		var r:Float = t;
+		var barThickness:Float = UITheme.px(thickness);
+		var by:Float = (h - barThickness) / 2;
+		var radius:Float = barThickness;
 
-		g.beginFill(UIColor.rgb(UITheme.panel3));
-		g.drawRoundRect(bx, by, bw, t, r, r);
-		g.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.panel3));
+		graphics.drawRoundRect(bx, by, bw, barThickness, radius, radius);
+		graphics.endFill();
 
 		var fill:Int = (fillOverride != 0) ? fillOverride : UITheme.accent;
 		if (indeterminate) {
@@ -188,17 +187,17 @@ final class UIProgressBar extends UIComponent {
 			if (x1 > bx + bw)
 				x1 = bx + bw;
 			if (x1 - x0 > 1) {
-				g.beginFill(UIColor.rgb(fill));
-				g.drawRoundRect(x0, by, x1 - x0, t, r, r);
-				g.endFill();
+				graphics.beginFill(UIColor.rgb(fill));
+				graphics.drawRoundRect(x0, by, x1 - x0, barThickness, radius, radius);
+				graphics.endFill();
 			}
 		} else if (shownProgress > 0) {
 			var fw:Float = bw * shownProgress;
-			if (fw < t)
-				fw = t;
-			g.beginFill(UIColor.rgb(fill));
-			g.drawRoundRect(bx, by, fw, t, r, r);
-			g.endFill();
+			if (fw < barThickness)
+				fw = barThickness;
+			graphics.beginFill(UIColor.rgb(fill));
+			graphics.drawRoundRect(bx, by, fw, barThickness, radius, radius);
+			graphics.endFill();
 		}
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
@@ -246,16 +245,16 @@ final class UIProgressBar extends UIComponent {
 		super.dispose();
 	}
 
-	function set_progress(v:Float):Float {
-		setProgress(v, smoothing);
+	function set_progress(value:Float):Float {
+		setProgress(value, smoothing);
 		return progress;
 	}
 
-	function set_indeterminate(v:Bool):Bool {
-		if (indeterminate == v)
-			return v;
-		indeterminate = v;
-		if (v) {
+	function set_indeterminate(value:Bool):Bool {
+		if (indeterminate == value)
+			return value;
+		indeterminate = value;
+		if (value) {
 			killTween();
 			phase = 0;
 			startTicker();
@@ -264,38 +263,38 @@ final class UIProgressBar extends UIComponent {
 			shownProgress = progress;
 		}
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_showPercent(v:Bool):Bool {
-		if (showPercent == v)
-			return v;
-		showPercent = v;
+	function set_showPercent(value:Bool):Bool {
+		if (showPercent == value)
+			return value;
+		showPercent = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fillOverride(v:Int):Int {
-		fillOverride = v;
+	function set_fillOverride(value:Int):Int {
+		fillOverride = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_key(v:String):String {
-		key = v;
+	function set_key(value:String):String {
+		key = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_label(v:String):String {
-		label = v;
+	function set_label(value:String):String {
+		label = value;
 		invalidate();
-		return v;
+		return value;
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }

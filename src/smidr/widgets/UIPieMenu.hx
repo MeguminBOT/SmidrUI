@@ -110,9 +110,9 @@ final class UIPieMenu extends UIComponent {
 		var idx:Int = -1;
 		if (dist >= innerRadius * 0.55 && dist <= outerRadius) {
 			var full:Float = Math.PI * 2;
-			var a:Float = Math.atan2(dy, dx) - startAngle;
-			a = (a % full + full) % full;
-			idx = Std.int(a / step);
+			var angle:Float = Math.atan2(dy, dx) - startAngle;
+			angle = (angle % full + full) % full;
+			idx = Std.int(angle / step);
 			if (idx >= items.length)
 				idx = items.length - 1;
 			if (items[idx].disabled == true)
@@ -162,27 +162,26 @@ final class UIPieMenu extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var cx:Float = outerRadius;
 		var cy:Float = outerRadius;
 		var pad:Float = UITheme.px(2) / outerRadius; // ~2px gap at the rim, as an angle
 		var midR:Float = (innerRadius + outerRadius) / 2;
 
 		var i:Int = 0;
-		var n:Int = items.length;
-		while (i < n) {
+		var count:Int = items.length;
+		while (i < count) {
 			var item:UIMenuItem = items[i];
 			var disabled:Bool = (item.disabled == true);
 			var hot:Bool = (i == hoveredSector);
 			var a0:Float = startAngle + i * step + pad;
 			var a1:Float = startAngle + (i + 1) * step - pad;
 
-			g.beginFill(UIColor.rgb(hot ? UITheme.accentDark : UITheme.panel2));
-			g.lineStyle(1, UIColor.rgb(hot ? UITheme.accent : UITheme.border));
-			sector(g, cx, cy, innerRadius, outerRadius, a0, a1);
-			g.endFill();
-			g.lineStyle();
+			graphics.beginFill(UIColor.rgb(hot ? UITheme.accentDark : UITheme.panel2));
+			graphics.lineStyle(1, UIColor.rgb(hot ? UITheme.accent : UITheme.border));
+			sector(graphics, cx, cy, innerRadius, outerRadius, a0, a1);
+			graphics.endFill();
+			graphics.lineStyle();
 
 			var mid:Float = startAngle + (i + 0.5) * step;
 			var field:TextField = labels[i];

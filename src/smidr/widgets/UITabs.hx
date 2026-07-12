@@ -61,9 +61,9 @@ final class UITabs extends UIComponent {
 		tabFields.resize(0);
 		i = 0;
 		while (i < tabs.length) {
-			var t:TextField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
-			addChild(t);
-			tabFields.push(t);
+			var field:TextField = UIFonts.make(UITheme.fs(fontSize), UITheme.text2);
+			addChild(field);
+			tabFields.push(field);
 			i++;
 		}
 		if (selectedIndex >= tabs.length)
@@ -113,8 +113,8 @@ final class UITabs extends UIComponent {
 
 	override function onPress(localX:Float, localY:Float):Void {
 		var i:Int = 0;
-		var n:Int = cellX.length;
-		while (i < n) {
+		var count:Int = cellX.length;
+		while (i < count) {
 			if (localX >= cellX[i] && localX < cellX[i] + cellW[i]) {
 				select(i);
 				return;
@@ -124,51 +124,50 @@ final class UITabs extends UIComponent {
 	}
 
 	override public function render():Void {
-		var g = graphics;
-		g.clear();
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRect(0, 0, w, h);
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(0, h - 1, w, 1);
-		g.endFill();
+		graphics.clear();
+		graphics.beginFill(UIColor.rgb(UITheme.panel2));
+		graphics.drawRect(0, 0, w, h);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(0, h - 1, w, 1);
+		graphics.endFill();
 
 		cellX.resize(0);
 		cellW.resize(0);
 		var pad:Float = UITheme.px(#if mobile 16 #else 12 #end);
 		var x:Float = UITheme.px(6);
 		var i:Int = 0;
-		var n:Int = tabs.length;
-		while (i < n) {
-			var t:TextField = tabFields[i];
-			var d:UITabDef = tabs[i];
+		var count:Int = tabs.length;
+		while (i < count) {
+			var field:TextField = tabFields[i];
+			var tab:UITabDef = tabs[i];
 			var active:Bool = (i == selectedIndex);
-			UIFonts.restyle(t, UITheme.fs(fontSize), active ? UITheme.text : UITheme.text2);
-			var resolved:String = (d.key != null) ? UILocale.t(d.key, d.fallback != null ? d.fallback : d.label) : d.label;
-			if (t.text != resolved)
-				t.text = resolved;
-			var cw:Float = t.width + pad * 2;
+			UIFonts.restyle(field, UITheme.fs(fontSize), active ? UITheme.text : UITheme.text2);
+			var resolved:String = (tab.key != null) ? UILocale.t(tab.key, tab.fallback != null ? tab.fallback : tab.label) : tab.label;
+			if (field.text != resolved)
+				field.text = resolved;
+			var cw:Float = field.width + pad * 2;
 			cellX.push(x);
 			cellW.push(cw);
 			if (active) {
-				g.beginFill(UIColor.rgb(UITheme.panel3));
-				g.drawRoundRect(x, UITheme.px(4), cw, h - UITheme.px(8), UITheme.px(6), UITheme.px(6));
-				g.endFill();
+				graphics.beginFill(UIColor.rgb(UITheme.panel3));
+				graphics.drawRoundRect(x, UITheme.px(4), cw, h - UITheme.px(8), UITheme.px(6), UITheme.px(6));
+				graphics.endFill();
 			}
-			t.x = x + pad;
-			t.y = (h - t.height) / 2 - 1;
+			field.x = x + pad;
+			field.y = (h - field.height) / 2 - 1;
 			x += cw + UITheme.px(2);
 			i++;
 		}
 
-		if (n > 0) {
+		if (count > 0) {
 			if (!indicatorAnimating) {
 				indicatorX = cellX[selectedIndex];
 				indicatorWidth = cellW[selectedIndex];
 			}
-			g.beginFill(UIColor.rgb(UITheme.accent));
-			g.drawRoundRect(indicatorX + UITheme.px(4), h - UITheme.px(3), indicatorWidth - UITheme.px(8), UITheme.px(2.5), 3, 3);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.accent));
+			graphics.drawRoundRect(indicatorX + UITheme.px(4), h - UITheme.px(3), indicatorWidth - UITheme.px(8), UITheme.px(2.5), 3, 3);
+			graphics.endFill();
 		}
 	}
 
@@ -177,9 +176,9 @@ final class UITabs extends UIComponent {
 		super.dispose();
 	}
 
-	function set_fontSize(v:Int):Int {
-		fontSize = v;
+	function set_fontSize(value:Int):Int {
+		fontSize = value;
 		invalidate();
-		return v;
+		return value;
 	}
 }
