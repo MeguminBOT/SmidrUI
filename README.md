@@ -15,6 +15,8 @@ no dependency on any game framework (flixel, HaxeFlixel, etc.) — just OpenFL.
 
 SmiðrUI is distributed as a **[haxelib](https://lib.haxe.org/)** named `smidr` — install it with
 `haxelib` and add `<haxelib name="smidr" />` to your `project.xml` (see [Install](#install)).
+> ⚠ Disclaimer: This libray may undergo drastic API changes until v1.0.0 is released
+> API changes may be anything from: Re-sorting the library classes, variable name changes or straight up logic changes.
 
 ## Why Smidr was made
 
