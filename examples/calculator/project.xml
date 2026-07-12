@@ -16,6 +16,13 @@
 
 	<haxelib name="openfl" />
 
+	<section unless="debug">
+		<haxeflag name="-dce" value="full" />
+		<haxedef name="no-traces" />
+		<haxedef name="analyzer-optimize" />
+		<haxedef name="openfl-disable-handle-error" />
+	</section>
+
 	<!-- optional embedded font (falls back to a default font when absent); build with -Dassets -->
 	<assets path="../assets" rename="assets" if="assets" />
 </project>
