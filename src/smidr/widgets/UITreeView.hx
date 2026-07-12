@@ -4,7 +4,9 @@ import openfl.text.TextField;
 import smidr.UIColor;
 import smidr.UIComponent;
 import smidr.UIFonts;
+import smidr.UIGlyphs;
 import smidr.UITheme;
+import smidr.types.UIGlyph;
 import smidr.widgets.UIList.UIListRow;
 
 /**
@@ -26,6 +28,12 @@ class UITreeView extends UIComponent {
 
 	/** Fired when a branch expands (`true`) or collapses (`false`). **/
 	public var onToggle:UITreeNode->Bool->Void = null;
+
+	/**
+		Fired on a right-click (or touch long-press) of a node, for a context menu. The node is
+		selected first, so `selectedNode` matches; the coordinates are in stage space.
+	**/
+	public var onNodeRightClick:(UITreeNode, Float, Float)->Void = null;
 
 	/** The backing virtualized list (its selection/scroll drive the tree). **/
 	public var list(default, null):UIList;
@@ -118,6 +126,18 @@ class UITreeView extends UIComponent {
 	}
 
 	@:allow(smidr.widgets.UITreeRow)
+	function nodeRightClick(index:Int, stageX:Float, stageY:Float):Void {
+		var node:UITreeNode = nodeAt(index);
+		if (node == null)
+			return;
+		list.select(index);
+		if (onSelect != null)
+			onSelect(node);
+		if (onNodeRightClick != null)
+			onNodeRightClick(node, stageX, stageY);
+	}
+
+	@:allow(smidr.widgets.UITreeRow)
 	function toggle(node:UITreeNode):Void {
 		if (node.children.length == 0)
 			return;
@@ -155,6 +175,9 @@ class UITreeNode {
 
 	/** Optional user payload carried with the node. **/
 	public var data:Any = null;
+
+	/** Optional small glyph badges drawn before the label (e.g. a pin or a lock). **/
+	public var icons:Array<UIGlyph> = null;
 
 	/** Depth from the roots (0 at top); set by the owning tree while flattening. **/
 	public var depth:Int = 0;
@@ -194,6 +217,12 @@ private class UITreeRow extends UIListRow {
 	public function new(owner:UIList, tree:UITreeView) {
 		super(owner);
 		this.tree = tree;
+		longPressable = true; // route touch long-press to the node context menu
+	}
+
+	override function onRightPress(localX:Float, localY:Float):Void {
+		var global = localToGlobal(new openfl.geom.Point(localX, localY));
+		tree.nodeRightClick(index, global.x, global.y);
 	}
 
 	inline function indentOf(node:UITreeNode):Float
@@ -222,24 +251,23 @@ private class UITreeRow extends UIListRow {
 
 	override public function render():Void {
 		var node:UITreeNode = tree.nodeAt(index);
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var selected:Bool = (index >= 0 && index == owner.selectedIndex);
 		if (selected) {
-			g.beginFill(UIColor.rgb(UITheme.panel3));
-			g.drawRect(0, 0, w, h);
-			g.endFill();
-			g.beginFill(UIColor.rgb(UITheme.accent));
-			g.drawRect(0, UITheme.px(3), UITheme.px(2.5), h - UITheme.px(6));
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3));
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.accent));
+			graphics.drawRect(0, UITheme.px(3), UITheme.px(2.5), h - UITheme.px(6));
+			graphics.endFill();
 		} else if (hovered) {
-			g.beginFill(UIColor.rgb(UITheme.panel3), 0.5);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(UIColor.rgb(UITheme.panel3), 0.5);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		} else {
-			g.beginFill(0, 0);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
+			graphics.beginFill(0, 0);
+			graphics.drawRect(0, 0, w, h);
+			graphics.endFill();
 		}
 
 		if (node == null)
@@ -250,23 +278,41 @@ private class UITreeRow extends UIListRow {
 			var centerX:Float = indent + UITheme.px(6);
 			var centerY:Float = h / 2;
 			var reach:Float = UITheme.px(4);
-			g.beginFill(UIColor.rgb(UITheme.text3));
+			graphics.beginFill(UIColor.rgb(UITheme.text3));
 			if (node.expanded) {
-				g.moveTo(centerX - reach, centerY - reach * 0.5);
-				g.lineTo(centerX + reach, centerY - reach * 0.5);
-				g.lineTo(centerX, centerY + reach * 0.7);
+				graphics.moveTo(centerX - reach, centerY - reach * 0.5);
+				graphics.lineTo(centerX + reach, centerY - reach * 0.5);
+				graphics.lineTo(centerX, centerY + reach * 0.7);
 			} else {
-				g.moveTo(centerX - reach * 0.5, centerY - reach);
-				g.lineTo(centerX + reach * 0.7, centerY);
-				g.lineTo(centerX - reach * 0.5, centerY + reach);
+				graphics.moveTo(centerX - reach * 0.5, centerY - reach);
+				graphics.lineTo(centerX + reach * 0.7, centerY);
+				graphics.lineTo(centerX - reach * 0.5, centerY + reach);
 			}
-			g.endFill();
+			graphics.endFill();
+		}
+
+		var textX:Float = indent + UITheme.px(16);
+		if (node.icons != null && node.icons.length > 0) {
+			var glyphSize:Float = UITheme.px(12);
+			var glyphY:Float = (h - glyphSize) / 2;
+			for (glyph in node.icons) {
+				UIGlyphs.draw(graphics, glyph, textX, glyphY, glyphSize, iconColor(glyph));
+				textX += glyphSize + UITheme.px(4);
+			}
 		}
 
 		if (labelField != null) {
 			UIFonts.restyle(labelField, UITheme.fs(12), selected ? UITheme.text : UITheme.text2);
-			labelField.x = indent + UITheme.px(16);
+			labelField.x = textX;
 			labelField.y = (h - labelField.height) / 2;
+		}
+	}
+
+	inline function iconColor(glyph:UIGlyph):Int {
+		return switch (glyph) {
+			case LOCK: UITheme.warning;
+			case PIN: UITheme.accent;
+			default: UITheme.text3;
 		}
 	}
 }

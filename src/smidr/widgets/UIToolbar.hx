@@ -20,9 +20,11 @@ final class UIToolbar extends UIComponent {
 	static inline var KIND_BUTTON:Int = 0;
 	static inline var KIND_SEP:Int = 1;
 	static inline var KIND_SPACER:Int = 2;
+	static inline var KIND_WIDGET:Int = 3;
 
 	var kinds:Array<Int> = [];
 	var buttons:Array<UIButton> = [];
+	var extras:Array<UIComponent> = [];
 	var heightBase:Float;
 	var sepPositions:Array<Float> = [];
 
@@ -75,6 +77,22 @@ final class UIToolbar extends UIComponent {
 		addEntry(KIND_SPACER, null);
 	}
 
+	/**
+		Adds an arbitrary widget to the bar (e.g. a `UIDropdown`), sized and vertically centered
+		like a button. Returns the widget for further configuration.
+		@param widget the component to host
+		@param width the widget's width on the bar
+	**/
+	public function addWidget(widget:UIComponent, width:Float):UIComponent {
+		widget.resize(width, buttonHeight());
+		kinds.push(KIND_WIDGET);
+		buttons.push(null);
+		extras[kinds.length - 1] = widget;
+		addChild(widget);
+		invalidate();
+		return widget;
+	}
+
 	function addEntry(kind:Int, button:UIButton):Void {
 		kinds.push(kind);
 		buttons.push(button);
@@ -85,7 +103,7 @@ final class UIToolbar extends UIComponent {
 
 	function layout():Void {
 		var pad:Float = UITheme.px(padding);
-		var g:Float = UITheme.px(gap);
+		var gapPx:Float = UITheme.px(gap);
 		var sepW:Float = UITheme.px(9);
 		var fixed:Float = 0;
 		var spacers:Int = 0;
@@ -100,9 +118,12 @@ final class UIToolbar extends UIComponent {
 					items++;
 				case KIND_SPACER:
 					spacers++;
+				case KIND_WIDGET:
+					fixed += extras[i].w;
+					items++;
 			}
 		}
-		var gaps:Float = (items > 1) ? (items - 1) * g : 0;
+		var gaps:Float = (items > 1) ? (items - 1) * gapPx : 0;
 		var spacerW:Float = 0;
 		if (spacers > 0) {
 			var leftover:Float = w - pad * 2 - fixed - gaps;
@@ -118,37 +139,43 @@ final class UIToolbar extends UIComponent {
 			switch (kinds[i]) {
 				case KIND_BUTTON:
 					if (!first)
-						x += g;
+						x += gapPx;
 					buttons[i].x = x;
 					buttons[i].y = btnY;
 					x += buttons[i].w;
 					first = false;
 				case KIND_SEP:
 					if (!first)
-						x += g;
+						x += gapPx;
 					sepPositions.push(x + sepW / 2);
 					x += sepW;
 					first = false;
 				case KIND_SPACER:
 					x += spacerW;
+				case KIND_WIDGET:
+					if (!first)
+						x += gapPx;
+					extras[i].x = x;
+					extras[i].y = (barH - extras[i].h) / 2;
+					x += extras[i].w;
+					first = false;
 			}
 		}
 	}
 
 	override public function render():Void {
 		layout();
-		var g = graphics;
-		g.clear();
+		graphics.clear();
 		var barH:Float = UITheme.px(heightBase);
-		g.beginFill(UIColor.rgb(UITheme.panel2));
-		g.drawRect(0, 0, w, barH);
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.border));
-		g.drawRect(0, barH - 1, w, 1);
-		g.endFill();
-		g.beginFill(UIColor.rgb(UITheme.border2));
+		graphics.beginFill(UIColor.rgb(UITheme.panel2));
+		graphics.drawRect(0, 0, w, barH);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.border));
+		graphics.drawRect(0, barH - 1, w, 1);
+		graphics.endFill();
+		graphics.beginFill(UIColor.rgb(UITheme.border2));
 		for (sx in sepPositions)
-			g.drawRect(sx, UITheme.px(padding) + UITheme.px(2), 1, barH - UITheme.px(padding) * 2 - UITheme.px(4));
-		g.endFill();
+			graphics.drawRect(sx, UITheme.px(padding) + UITheme.px(2), 1, barH - UITheme.px(padding) * 2 - UITheme.px(4));
+		graphics.endFill();
 	}
 }
