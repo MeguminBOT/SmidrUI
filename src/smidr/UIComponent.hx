@@ -61,8 +61,28 @@ class UIComponent extends Sprite {
 	/** Native cursor while hovering (interactive widgets; `null` keeps the arrow). **/
 	public var hoverCursor:MouseCursor = MouseCursor.BUTTON;
 
-	/** `true` while the cursor is over this widget. **/
-	public var hovered(default, null):Bool = false;
+	/** Pointer-over state. The public `hovered` folds this together with `highlighted`. **/
+	var _hover:Bool = false;
+
+	/** `true` while the cursor is over this widget, OR while `highlighted` is set. **/
+	public var hovered(get, never):Bool;
+
+	inline function get_hovered():Bool
+		return _hover || highlighted;
+
+	/**
+		Renders the hover visual without a pointer -- e.g. to mark the keyboard/controller-focused
+		control. Independent of the mouse, so pointer hit-testing never clears it.
+	**/
+	public var highlighted(default, set):Bool = false;
+
+	function set_highlighted(value:Bool):Bool {
+		if (highlighted == value)
+			return value;
+		highlighted = value;
+		onStateChanged();
+		return value;
+	}
 
 	/** `true` while a press that started here is held. **/
 	public var pressed(default, null):Bool = false;
@@ -148,9 +168,9 @@ class UIComponent extends Sprite {
 	}
 
 	function __onRollOver(_:MouseEvent):Void {
-		if (hovered)
+		if (_hover)
 			return;
-		hovered = true;
+		_hover = true;
 		onStateChanged();
 		UIRoot.tooltipEnter(this);
 		if (onHover != null)
@@ -158,9 +178,9 @@ class UIComponent extends Sprite {
 	}
 
 	function __onRollOut(_:MouseEvent):Void {
-		if (!hovered)
+		if (!_hover)
 			return;
-		hovered = false;
+		_hover = false;
 		onStateChanged();
 		UIRoot.tooltipLeave(this);
 	}
