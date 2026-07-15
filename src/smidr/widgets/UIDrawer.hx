@@ -50,6 +50,13 @@ final class UIDrawer extends UIComponent {
 	/** `true` once the drawer has settled open (not while animating/dragging). **/
 	public var isOpen(default, null):Bool = false;
 
+	/**
+		Gap kept between the drawer and its docked edge, for hosts whose viewport reaches past the
+		usable screen -- a display cutout or a rounded corner would otherwise clip the open drawer.
+		Set it before opening; the closed drawer parks that much further off-screen.
+	**/
+	public var edgeInset(default, set):Float = 0;
+
 	var scrim:UIComponent;
 	var edgeStrip:UIComponent;
 	var tween:UITween = null;
@@ -111,7 +118,7 @@ final class UIDrawer extends UIComponent {
 		edgeStrip.graphics.beginFill(0, 0);
 		edgeStrip.graphics.drawRect(0, 0, stripW, viewportHeight);
 		edgeStrip.graphics.endFill();
-		edgeStrip.x = (side == LEFT) ? 0 : viewportWidth - stripW;
+		edgeStrip.x = (side == LEFT) ? edgeInset : viewportWidth - edgeInset - stripW;
 		edgeStrip.y = 0;
 		root.popupLayer.addChild(edgeStrip);
 	}
@@ -162,7 +169,7 @@ final class UIDrawer extends UIComponent {
 
 	function applyProgress(value:Float):Void {
 		progress = value;
-		x = (side == LEFT) ? (value - 1) * w : viewportWidth - value * w;
+		x = (side == LEFT) ? edgeInset + (value - 1) * w : viewportWidth - edgeInset - value * w;
 		y = 0;
 		scrim.alpha = value;
 	}
@@ -290,6 +297,12 @@ final class UIDrawer extends UIComponent {
 		graphics.lineStyle();
 		content.x = 0;
 		content.y = 0;
+	}
+
+	function set_edgeInset(value:Float):Float {
+		edgeInset = value;
+		applyProgress(progress);
+		return value;
 	}
 
 	function set_edgeSwipeEnabled(value:Bool):Bool {
