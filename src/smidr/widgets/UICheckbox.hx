@@ -11,6 +11,9 @@ import smidr.UITheme;
 	A labelled checkbox row: label on the left, accent check square on the right (or standalone
 	square when the label is empty). Clicking anywhere on the row toggles; `onToggle(checked)`
 	fires after the flip.
+
+	Under `UITheme.pillSwitches` (the mobile preset) the square renders as a sliding pill switch
+	instead -- same API, the touch convention.
 **/
 final class UICheckbox extends UIComponent {
 	public var key(default, set):String = null;
@@ -64,24 +67,42 @@ final class UICheckbox extends UIComponent {
 		graphics.drawRect(0, 0, w, h);
 		graphics.endFill();
 
-		var box:Float = UITheme.px(16);
-		var bx:Float = w - box;
-		var by:Float = (h - box) / 2;
 		var fill:Int = checked ? UITheme.accentDark : UITheme.panel2;
 		if (hovered)
 			fill = UIColor.lighten(fill, 0.10);
-		graphics.beginFill(UIColor.rgb(fill));
-		graphics.drawRoundRect(bx, by, box, box, UITheme.px(6), UITheme.px(6));
-		graphics.endFill();
-		graphics.lineStyle(1, UIColor.rgb(UITheme.border2));
-		graphics.drawRoundRect(bx + 0.5, by + 0.5, box - 1, box - 1, UITheme.px(6), UITheme.px(6));
-		graphics.lineStyle();
-		if (checked) {
-			graphics.lineStyle(2, UIColor.rgb(UITheme.text));
-			graphics.moveTo(bx + box * 0.22, by + box * 0.52);
-			graphics.lineTo(bx + box * 0.44, by + box * 0.74);
-			graphics.lineTo(bx + box * 0.80, by + box * 0.28);
+
+		if (UITheme.pillSwitches) {
+			var trackW:Float = UITheme.px(34);
+			var trackH:Float = UITheme.px(18);
+			var bx:Float = w - trackW;
+			var by:Float = (h - trackH) / 2;
+			graphics.beginFill(UIColor.rgb(fill));
+			graphics.drawRoundRect(bx, by, trackW, trackH, trackH, trackH);
+			graphics.endFill();
+			graphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+			graphics.drawRoundRect(bx + 0.5, by + 0.5, trackW - 1, trackH - 1, trackH - 1, trackH - 1);
 			graphics.lineStyle();
+			var kx:Float = checked ? (bx + trackW - trackH * 0.5) : (bx + trackH * 0.5);
+			graphics.beginFill(UIColor.rgb(UITheme.text));
+			graphics.drawCircle(kx, by + trackH * 0.5, trackH * 0.5 - UITheme.px(2));
+			graphics.endFill();
+		} else {
+			var box:Float = UITheme.px(16);
+			var bx:Float = w - box;
+			var by:Float = (h - box) / 2;
+			graphics.beginFill(UIColor.rgb(fill));
+			graphics.drawRoundRect(bx, by, box, box, UITheme.px(6), UITheme.px(6));
+			graphics.endFill();
+			graphics.lineStyle(1, UIColor.rgb(UITheme.border2));
+			graphics.drawRoundRect(bx + 0.5, by + 0.5, box - 1, box - 1, UITheme.px(6), UITheme.px(6));
+			graphics.lineStyle();
+			if (checked) {
+				graphics.lineStyle(2, UIColor.rgb(UITheme.text));
+				graphics.moveTo(bx + box * 0.22, by + box * 0.52);
+				graphics.lineTo(bx + box * 0.44, by + box * 0.74);
+				graphics.lineTo(bx + box * 0.80, by + box * 0.28);
+				graphics.lineStyle();
+			}
 		}
 
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);

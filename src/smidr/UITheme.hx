@@ -104,6 +104,9 @@ final class UITheme {
 	/** Density multiplier applied by `applyMobilePreset` -- finger-sized controls on touch screens. **/
 	public static var mobileScale:Float = 1.4;
 
+	/** Draws `UICheckbox` as a sliding pill switch (the touch convention). Set by the mobile preset. **/
+	public static var pillSwitches:Bool = false;
+
 	static var savedScale:Float = -1;
 
 	/**
@@ -113,6 +116,7 @@ final class UITheme {
 	public static function applyMobilePreset():Void {
 		if (savedScale < 0)
 			savedScale = scale;
+		pillSwitches = true;
 		setScale(mobileScale);
 	}
 
@@ -122,6 +126,7 @@ final class UITheme {
 			return;
 		var prev:Float = savedScale;
 		savedScale = -1;
+		pillSwitches = false;
 		setScale(prev);
 	}
 
