@@ -332,6 +332,10 @@ final class UIRoot extends Sprite {
 		if (!inside)
 			@:privateAccess UIPointer.clearPress();
 		@:privateAccess UIPointer.downOnUI = inside;
+		// Refresh overUI on press too, not just on move: touch has no hover-move before a tap, so
+		// without this a canvas touch reads a stale overUI from the previous widget tap (blocking
+		// touch-canvas gestures that gate on overUI).
+		@:privateAccess UIPointer.setOverUI(inside);
 
 		if (longPressEnabled && inside) {
 			longPressArmed = true;
