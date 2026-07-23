@@ -13,10 +13,15 @@ import smidr.input.IUIFocusable;
 import smidr.input.UIFocus;
 
 /**
-	A labelled single-line text field: label left, input box right. Click to focus; while
-	focused it captures the keyboard (`UIFocus.typing`) — caret, Shift+arrow selection,
-	Home/End, Ctrl+A/C/X/V, Backspace/Delete word-aware basics, Enter commits (`onEnter`),
-	Escape blurs. `onChange(text)` fires on every edit.
+	A labelled text field: label left, input box right. Click to focus; while focused it
+	captures the keyboard (`UIFocus.typing`) — caret, Shift+arrow selection, Home/End,
+	Ctrl+A/C/X/V, Backspace/Delete word-aware basics, Enter commits (`onEnter`), Escape blurs.
+	`onChange(text)` fires on every edit.
+
+	Set `multiline` for a wrapping text area instead: the label moves above a full-width box,
+	Enter inserts a line break (and no longer commits), Up/Down walk lines and the box scrolls
+	vertically to follow the caret. Give it a taller `resize` height — the single-line default
+	shows one row.
 **/
 final class UITextInput extends UIComponent implements IUIFocusable {
 	public var key(default, set):String = null;
@@ -33,8 +38,11 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 
 	public var maxLength:Int = 0;
 
-	/** Width of the input box on the right; 0 = whole row. **/
+	/** Width of the input box on the right; 0 = whole row. Ignored while `multiline`. **/
 	public var controlWidth:Float = 0;
+
+	/** Wrapping text area: label above a full-width box, Enter inserts a line break. **/
+	public var multiline(default, set):Bool = false;
 
 	final valueField:TextField;
 	final labelField:TextField;
@@ -79,7 +87,14 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 	}
 
 	inline function inputX():Float {
+		if (multiline)
+			return 0;
 		return (controlWidth > 0) ? (w - controlWidth) : ((label != "" || key != null) ? w * 0.42 : 0);
+	}
+
+	/** Top of the input box: below the label in multiline mode, the whole row otherwise. **/
+	inline function inputY():Float {
+		return (multiline && labelField.visible) ? (labelField.height + UITheme.px(2)) : 0;
 	}
 
 	public function capturesKeyboard():Bool {
@@ -111,11 +126,15 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 
 	override function onPress(localX:Float, localY:Float):Void {
 		var ix:Float = inputX();
-		if (localX < ix) {
+		if (localX < ix || localY < inputY()) {
 			return;
 		}
 		UIFocus.set(this);
-		caret = indexAt(localX - ix - UITheme.px(6) + valueField.scrollH);
+		if (multiline) {
+			var hit:Int = valueField.getCharIndexAtPoint(localX - valueField.x, localY - valueField.y);
+			caret = (hit >= 0) ? hit : text.length;
+		} else
+			caret = indexAt(localX - ix - UITheme.px(6) + valueField.scrollH);
 		anchor = caret;
 		caretVisible = true;
 		blink = 0;
@@ -144,6 +163,10 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 				UIFocus.clear(this);
 				return true;
 			case 13: // enter
+				if (multiline) {
+					insert("\n");
+					return true;
+				}
 				UIFocus.clear(this);
 				if (onEnter != null)
 					onEnter(text);
@@ -177,14 +200,30 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 					anchor = caret;
 				resetBlink();
 				return true;
+			case 38: // up
+				if (multiline) {
+					caret = caretOnLine(lineOfCaret() - 1);
+					if (!shift)
+						anchor = caret;
+					resetBlink();
+					return true;
+				}
+			case 40: // down
+				if (multiline) {
+					caret = caretOnLine(lineOfCaret() + 1);
+					if (!shift)
+						anchor = caret;
+					resetBlink();
+					return true;
+				}
 			case 36: // home
-				caret = 0;
+				caret = multiline ? lineStart(lineOfCaret()) : 0;
 				if (!shift)
 					anchor = caret;
 				resetBlink();
 				return true;
 			case 35: // end
-				caret = text.length;
+				caret = multiline ? lineEnd(lineOfCaret()) : text.length;
 				if (!shift)
 					anchor = caret;
 				resetBlink();
@@ -221,6 +260,49 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 			return true;
 		}
 		return true;
+	}
+
+	/** The (wrapped) line the caret sits on, 0-based. **/
+	function lineOfCaret():Int {
+		var line:Int = valueField.getLineIndexOfChar(caret);
+		return (line >= 0) ? line : 0;
+	}
+
+	inline function lineCount():Int {
+		var n:Int = valueField.numLines;
+		return (n > 0) ? n : 1;
+	}
+
+	/** First character index of a (clamped) line. **/
+	function lineStart(line:Int):Int {
+		if (line < 0)
+			line = 0;
+		else if (line > lineCount() - 1)
+			line = lineCount() - 1;
+		var offset:Int = valueField.getLineOffset(line);
+		return (offset >= 0) ? offset : 0;
+	}
+
+	/** Index just past the last character of a line, excluding its line break. **/
+	function lineEnd(line:Int):Int {
+		var start:Int = lineStart(line);
+		var end:Int = start + valueField.getLineLength(line);
+		if (end > text.length)
+			end = text.length;
+		while (end > start && (text.charAt(end - 1) == "\n" || text.charAt(end - 1) == "\r"))
+			end--;
+		return end;
+	}
+
+	/** The caret moved to another line, keeping its column where the line is long enough. **/
+	function caretOnLine(line:Int):Int {
+		if (line < 0 || line > lineCount() - 1)
+			return caret;
+		var column:Int = caret - lineStart(lineOfCaret());
+		var start:Int = lineStart(line);
+		var end:Int = lineEnd(line);
+		var target:Int = start + column;
+		return (target > end) ? end : target;
 	}
 
 	function insert(content:String):Void {
@@ -272,33 +354,50 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 		graphics.drawRect(0, 0, w, h);
 		graphics.endFill();
 
-		var ix:Float = inputX();
-		var bw:Float = w - ix;
-		var radius:Float = UITheme.px(6);
-		graphics.beginFill(UIColor.rgb(UITheme.inputBg));
-		graphics.drawRoundRect(ix, 1, bw, h - 2, radius, radius);
-		graphics.endFill();
-		graphics.lineStyle(1, UIColor.rgb(focusedNow ? UITheme.accent : UITheme.border));
-		graphics.drawRoundRect(ix + 0.5, 1.5, bw - 1, h - 3, radius, radius);
-		graphics.lineStyle();
-
 		UIFonts.restyle(labelField, UITheme.fs(fontSize), UITheme.text2);
 		var resolved:String = (key != null) ? UILocale.t(key, fallback) : label;
 		if (labelField.text != resolved)
 			labelField.text = resolved;
 		labelField.visible = resolved != "";
 		labelField.x = 0;
-		labelField.y = (h - labelField.height) / 2;
+
+		var ix:Float = inputX();
+		var iy:Float = inputY();
+		var bw:Float = w - ix;
+		var bh:Float = h - iy;
+		var radius:Float = UITheme.px(6);
+		graphics.beginFill(UIColor.rgb(UITheme.inputBg));
+		graphics.drawRoundRect(ix, iy + 1, bw, bh - 2, radius, radius);
+		graphics.endFill();
+		graphics.lineStyle(1, UIColor.rgb(focusedNow ? UITheme.accent : UITheme.border));
+		graphics.drawRoundRect(ix + 0.5, iy + 1.5, bw - 1, bh - 3, radius, radius);
+		graphics.lineStyle();
+
+		labelField.y = multiline ? 0 : (h - labelField.height) / 2;
 
 		UIFonts.restyle(valueField, UITheme.fs(fontSize), UITheme.text);
+		valueField.multiline = multiline;
+		valueField.wordWrap = multiline;
 		if (valueField.text != text)
 			valueField.text = text;
 		valueField.width = bw - UITheme.px(12);
-		valueField.height = valueField.textHeight + 4;
 		valueField.x = ix + UITheme.px(6);
-		valueField.y = (h - valueField.height) / 2;
+		if (multiline) {
+			valueField.height = bh - UITheme.px(8);
+			valueField.y = iy + UITheme.px(4);
+		} else {
+			valueField.height = valueField.textHeight + 4;
+			valueField.y = iy + (bh - valueField.height) / 2;
+		}
 
-		// keep the caret inside the box (the field scrolls horizontally with it)
+		if (multiline)
+			renderMultilineCaret();
+		else
+			renderCaret();
+	}
+
+	/** Single-line caret/selection, with the field scrolling horizontally to follow the caret. **/
+	function renderCaret():Void {
 		if (focusedNow) {
 			var rawCaret:Float = rawCaretX(caret);
 			var innerW:Float = valueField.width - 4;
@@ -309,23 +408,85 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 		} else if (valueField.scrollH != 0)
 			valueField.scrollH = 0;
 
-		if (focusedNow) {
-			if (hasSelection()) {
-				var start:Int = (caret < anchor) ? caret : anchor;
-				var end:Int = (caret < anchor) ? anchor : caret;
-				var x0:Float = caretX(start);
-				var x1:Float = caretX(end);
-				graphics.beginFill(UIColor.rgb(UITheme.accentDark), 0.45);
-				graphics.drawRect(valueField.x + x0, valueField.y + 1, x1 - x0, valueField.height - 2);
-				graphics.endFill();
-			}
-			if (caretVisible) {
-				var cx:Float = valueField.x + caretX(caret);
-				graphics.beginFill(UIColor.rgb(UITheme.text));
-				graphics.drawRect(cx, valueField.y + 1, 1.5, valueField.height - 2);
-				graphics.endFill();
-			}
+		if (!focusedNow)
+			return;
+
+		if (hasSelection()) {
+			var start:Int = (caret < anchor) ? caret : anchor;
+			var end:Int = (caret < anchor) ? anchor : caret;
+			var x0:Float = caretX(start);
+			var x1:Float = caretX(end);
+			graphics.beginFill(UIColor.rgb(UITheme.accentDark), 0.45);
+			graphics.drawRect(valueField.x + x0, valueField.y + 1, x1 - x0, valueField.height - 2);
+			graphics.endFill();
 		}
+		if (caretVisible) {
+			var cx:Float = valueField.x + caretX(caret);
+			graphics.beginFill(UIColor.rgb(UITheme.text));
+			graphics.drawRect(cx, valueField.y + 1, 1.5, valueField.height - 2);
+			graphics.endFill();
+		}
+	}
+
+	/** Text-area caret/selection: a band per selected line, the box scrolling vertically. **/
+	function renderMultilineCaret():Void {
+		if (!focusedNow)
+			return;
+
+		var lineH:Float = lineHeight();
+		var caretLine:Int = lineOfCaret();
+		// scrollV/bottomScrollV are 1-based line numbers
+		if (caretLine + 1 < valueField.scrollV)
+			valueField.scrollV = caretLine + 1;
+		else if (caretLine + 1 > valueField.bottomScrollV)
+			valueField.scrollV += caretLine + 1 - valueField.bottomScrollV;
+		var top:Int = valueField.scrollV - 1;
+
+		if (hasSelection()) {
+			var start:Int = (caret < anchor) ? caret : anchor;
+			var end:Int = (caret < anchor) ? anchor : caret;
+			var first:Int = valueField.getLineIndexOfChar(start);
+			var last:Int = valueField.getLineIndexOfChar(end);
+			if (first < 0)
+				first = 0;
+			if (last < 0)
+				last = lineCount() - 1;
+			graphics.beginFill(UIColor.rgb(UITheme.accentDark), 0.45);
+			for (line in first...last + 1) {
+				var from:Int = (line == first) ? start : lineStart(line);
+				var to:Int = (line == last) ? end : lineEnd(line);
+				var x0:Float = columnX(from);
+				var x1:Float = columnX(to);
+				if (x1 <= x0)
+					x1 = x0 + UITheme.px(4); // a selected (empty) line break still reads as selected
+				graphics.drawRect(valueField.x + x0, valueField.y + (line - top) * lineH, x1 - x0, lineH);
+			}
+			graphics.endFill();
+		}
+
+		if (caretVisible) {
+			graphics.beginFill(UIColor.rgb(UITheme.text));
+			graphics.drawRect(valueField.x + columnX(caret), valueField.y + (caretLine - top) * lineH + 1, 1.5, lineH - 2);
+			graphics.endFill();
+		}
+	}
+
+	inline function lineHeight():Float {
+		var lines:Int = lineCount();
+		var total:Float = valueField.textHeight;
+		return (total > 0 && lines > 0) ? total / lines : UITheme.fs(fontSize) * 1.2;
+	}
+
+	/** Horizontal offset of a character index inside its own line. **/
+	function columnX(index:Int):Float {
+		if (index <= 0 || text.length == 0)
+			return 0;
+		if (index > text.length)
+			index = text.length;
+		if (index == lineStart(valueField.getLineIndexOfChar(index)))
+			return 0;
+		var bounds = valueField.getCharBoundaries(index - 1);
+		return (bounds != null) ? (bounds.x + bounds.width) : 0;
 	}
 
 	function caretX(index:Int):Float {
@@ -367,6 +528,18 @@ final class UITextInput extends UIComponent implements IUIFocusable {
 			caret = value.length;
 		if (anchor > value.length)
 			anchor = value.length;
+		invalidate();
+		return value;
+	}
+
+	function set_multiline(value:Bool):Bool {
+		if (multiline == value)
+			return value;
+		multiline = value;
+		if (!value)
+			valueField.scrollV = 1;
+		else
+			valueField.scrollH = 0;
 		invalidate();
 		return value;
 	}
